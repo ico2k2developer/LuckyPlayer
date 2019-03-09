@@ -25,6 +25,7 @@ public class InfoActivity extends BaseActivity
             ActivityManager.TaskDescription taskDescription = new ActivityManager.TaskDescription(
                     title.toString());
             setTaskDescription(taskDescription);
+
         }
     }
 }

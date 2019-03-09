@@ -1,7 +1,7 @@
 <resources>
 
     <string name="exit" formatted="false">Esci</string>
-    <string name="activity_info" formatted="false">Visualizza dettagli</string>
+    <string name="song_info" formatted="false">Visualizza dettagli</string>
     <string name="info_tag_category" formatted="false">Tag</string>
     <string name="info_quality_category" formatted="false">Qualità</string>
     <string name="info_title" formatted="false">Titolo</string>

@@ -5,7 +5,7 @@
     <item
         android:icon="@android:drawable/ic_menu_info_details"
         android:id="@+id/menuInfo"
-        android:title="@string/activity_info"
+        android:title="@string/song_info"
         android:orderInCategory="65"/>
 
     <item

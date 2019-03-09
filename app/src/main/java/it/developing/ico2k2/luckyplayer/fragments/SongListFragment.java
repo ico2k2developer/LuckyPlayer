@@ -1,8 +1,12 @@
 package it.developing.ico2k2.luckyplayer.fragments;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.TypedValue;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -12,14 +16,19 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import it.developing.ico2k2.luckyplayer.R;
+import it.developing.ico2k2.luckyplayer.activities.InfoActivity;
 import it.developing.ico2k2.luckyplayer.adapters.SongsAdapter;
 
 public class SongListFragment extends Fragment
 {
     public static final String KEY_INDEX = "index";
 
+    private static final int ID_MENU_INFO = 0XAAAA;
+
     private RecyclerView list;
     private SongsAdapter adapter;
+    private int contextClickPosition;
 
     public static SongListFragment create(int index)
     {
@@ -55,12 +64,35 @@ public class SongListFragment extends Fragment
                 Toast.makeText(getContext(),adapter.get(position).getTitle(),Toast.LENGTH_SHORT).show();
             }
         });
-        adapter.setOnSongLongClickListener(new SongsAdapter.OnSongLongClickListener(){
+        adapter.setOnContextMenuListener(new SongsAdapter.OnContextMenuListener(){
             @Override
-            public boolean onSongLongClick(SongsAdapter.SongHandle songHandle,int position){
-                return false;
+            public void onContextMenu(ContextMenu menu,View v,ContextMenu.ContextMenuInfo menuInfo,int position){
+                menu.setHeaderTitle(adapter.get(position).getTitle());
+                menu.add(Menu.NONE,ID_MENU_INFO,70,R.string.song_info);
+                contextClickPosition = position;
             }
         });
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item)
+    {
+        boolean result = true;
+        switch(item.getItemId())
+        {
+            case ID_MENU_INFO:
+            {
+                Intent intent = new Intent(getActivity(),InfoActivity.class);
+                intent.setData(Uri.parse(adapter.get(contextClickPosition).getPath()));
+                startActivity(intent);
+                break;
+            }
+            default:
+            {
+                result = false;
+            }
+        }
+        return result;
     }
 
     @Override

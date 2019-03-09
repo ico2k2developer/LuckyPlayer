@@ -61,6 +61,11 @@
             android:label="@string/settings"
             android:launchMode="singleTop"/>
 
+        <activity
+            android:name=".activities.InfoActivity"
+            android:label="@string/song_info"
+            android:documentLaunchMode="always"/>
+
 
 
     </application>

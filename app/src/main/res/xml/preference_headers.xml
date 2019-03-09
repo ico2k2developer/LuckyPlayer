@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<preference-headers
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--<header
+        android:title="@string/settings_file_formats"
+        android:icon="?attr/ic_file"
+        android:fragment="it.developing.ico2k2.luckyplayer$SettingsFragment">
+
+        <extra
+            android:name="preference"
+            android:value="file formats"/>
+
+    </header>-->
+
+    <header
+        android:title="@string/settings_mediafile"
+        android:icon="?attr/ic_file"
+        android:fragment="it.developing.ico2k2.luckyplayer.activities.SettingsActivity$SettingsPreferenceFragment">
+
+        <extra
+            android:name="preference"
+            android:value="media file"/>
+
+    </header>
+
+    <header
+        android:title="@string/settings_theme"
+        android:icon="?ic_image"
+        android:fragment="it.developing.ico2k2.luckyplayer.activities.SettingsActivity$SettingsFragment">
+
+        <extra
+            android:name="preference"
+            android:value="theme"/>
+
+    </header>
+
+    <header
+        android:title="@string/settings_advanced"
+        android:icon="?ic_settings"
+        android:fragment="it.developing.ico2k2.luckyplayer.activities.SettingsActivity$SettingsPreferenceFragment">
+
+        <extra
+            android:name="preference"
+            android:value="advanced settings"/>
+
+    </header>
+
+    <header
+        android:title="@string/settings_licenses"
+        android:icon="?ic_license"
+        android:fragment="it.developing.ico2k2.luckyplayer.activities.SettingsActivity$SettingsPreferenceFragment">
+
+        <extra
+            android:name="preference"
+            android:value="licenses"/>
+
+    </header>
+
+    <header
+        android:title="@string/settings_about"
+        android:icon="?ic_info"
+        android:fragment="it.developing.ico2k2.luckyplayer.activities.SettingsActivity$SettingsFragment">
+
+        <extra
+            android:name="preference"
+            android:value="about"/>
+
+    </header>
+
+</preference-headers>

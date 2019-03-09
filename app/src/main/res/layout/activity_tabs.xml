@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<it.developing.ico2k2.luckyplayer.views.DefaultLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".activities.TabsActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?actionBarSize"
+        android:background="?colorPrimary"
+        android:animateLayoutChanges="true">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/tabs_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            android:background="?toolbarBackgroundColor"/>
+
+        <com.google.android.material.tabs.TabLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tabs_tab_layout"
+            android:background="?toolbarBackgroundColor"
+            android:layout_gravity="center"
+            app:tabIndicatorColor="?titleTextColor"
+            app:tabTextAppearance="@style/Theme.Style.TabLayout.TabTextAppearance"
+            app:tabSelectedTextColor="?titleTextColor"
+            app:tabMode="scrollable"
+            app:tabGravity="center"/>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <include
+        layout="@layout/activity_tabs_content"/>
+
+</it.developing.ico2k2.luckyplayer.views.DefaultLayout>

@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Standard.Dark" parent="Theme.AppCompat">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="actionOverflowButtonStyle">@style/Theme.Dark.Style.ActionButton.Overflow</item>
+        <item name="homeAsUpIndicator">@drawable/ic_back_material_dark</item>
+        <item name="actionModeShareDrawable">@drawable/ic_share_material_dark</item>
+        <item name="preferenceTheme">@style/Theme.Style.Preference</item>
+        <item name="searchViewStyle">@style/Theme.Style.SearchView</item>
+        <item name="titleTextColor">@android:color/white</item>
+        <item name="subtitleTextColor">?titleTextColor</item>
+        <item name="toolbarBackgroundColor">?colorPrimary</item>
+        <item name="playButton">@drawable/player_button_dark</item>
+        <item name="cardViewBackgroundColor">@color/card_view_background</item>
+        <item name="toolbarShadow">@drawable/shadow_default</item>
+        <item name="toolbarShadowLateral">@drawable/shadow_lateral</item>
+
+        <item name="ic_add">@drawable/ic_add_material_dark</item>
+        <item name="ic_album">@drawable/ic_album_material_dark</item>
+        <item name="ic_back">@drawable/ic_back_material_dark</item>
+        <item name="ic_chronometer">@drawable/ic_chrono_material_dark</item>
+        <item name="ic_debug">@drawable/ic_debug_material_dark</item>
+        <item name="ic_delete_all">@drawable/ic_delete_all_material_dark</item>
+        <item name="ic_delete">@drawable/ic_delete_material_dark</item>
+        <item name="ic_edit">@drawable/ic_edit_material_dark</item>
+        <item name="ic_equalizer">@drawable/ic_equalizer_material_dark</item>
+        <item name="ic_error">@drawable/ic_error_material_dark</item>
+        <item name="ic_exit">@drawable/ic_exit_material_dark</item>
+        <item name="ic_file">@drawable/ic_file_material_dark</item>
+        <item name="ic_folder">@drawable/ic_folder_material_dark</item>
+        <item name="ic_forward">@drawable/ic_forward_material_dark</item>
+        <item name="ic_image">@drawable/ic_image_material_dark</item>
+        <item name="ic_info">@drawable/ic_info_material_dark</item>
+        <item name="ic_library">@drawable/ic_library_material_dark</item>
+        <item name="ic_license">@drawable/ic_license_material_dark</item>
+        <item name="ic_mime">@drawable/ic_mime_material_dark</item>
+        <item name="ic_more">@drawable/ic_more_material_dark</item>
+        <item name="ic_next">@drawable/ic_next_material_dark</item>
+        <item name="ic_pause">@drawable/ic_pause_material_dark</item>
+        <item name="ic_play">@drawable/ic_play_material_dark</item>
+        <item name="ic_playlist">@drawable/ic_playlist_material_dark</item>
+        <item name="ic_playlist_complete">@drawable/ic_playlist_complete_material_dark</item>
+        <item name="ic_previous">@drawable/ic_previous_material_dark</item>
+        <item name="ic_refresh">@drawable/ic_refresh_material_dark</item>
+        <item name="ic_repeat">@drawable/ic_repeat_material_dark</item>
+        <item name="ic_repeat_single">@drawable/ic_repeat_single_material_dark</item>
+        <item name="ic_restore">@drawable/ic_restore_material_dark</item>
+        <item name="ic_search">@drawable/ic_search_material_dark</item>
+        <item name="ic_select_all">@drawable/ic_selectall_material_dark</item>
+        <item name="ic_settings">@drawable/ic_settings_material_dark</item>
+        <item name="ic_share">@drawable/ic_share_material_dark</item>
+        <item name="ic_shuffle">@drawable/ic_shuffle_material_dark</item>
+        <item name="ic_title">@drawable/ic_title_material_dark</item>
+        <item name="ic_today">@drawable/ic_today_material_dark</item>
+        <item name="ic_track">@drawable/ic_track_material_dark</item>
+        <item name="ic_update">@drawable/ic_update_material_dark</item>
+        <item name="ic_user">@drawable/ic_user_material_dark</item>
+        <item name="ic_writer">@drawable/ic_writer_material_dark</item>
+
+        <item name="ic_add_actionbar">@drawable/ic_add_material_dark</item>
+        <item name="ic_album_actionbar">@drawable/ic_album_material_dark</item>
+        <item name="ic_back_actionbar">@drawable/ic_back_material_dark</item>
+        <item name="ic_chronometer_actionbar">@drawable/ic_chrono_material_dark</item>
+        <item name="ic_debug_actionbar">@drawable/ic_debug_material_dark</item>
+        <item name="ic_delete_all_actionbar">@drawable/ic_delete_all_material_dark</item>
+        <item name="ic_delete_actionbar">@drawable/ic_delete_material_dark</item>
+        <item name="ic_edit_actionbar">@drawable/ic_edit_material_dark</item>
+        <item name="ic_equalizer_actionbar">@drawable/ic_equalizer_material_dark</item>
+        <item name="ic_error_actionbar">@drawable/ic_error_material_dark</item>
+        <item name="ic_exit_actionbar">@drawable/ic_exit_material_dark</item>
+        <item name="ic_file_actionbar">@drawable/ic_file_material_dark</item>
+        <item name="ic_folder_actionbar">@drawable/ic_folder_material_dark</item>
+        <item name="ic_forward_actionbar">@drawable/ic_forward_material_dark</item>
+        <item name="ic_image_actionbar">@drawable/ic_image_material_dark</item>
+        <item name="ic_info_actionbar">@drawable/ic_info_material_dark</item>
+        <item name="ic_library_actionbar">@drawable/ic_library_material_dark</item>
+        <item name="ic_license_actionbar">@drawable/ic_license_material_dark</item>
+        <item name="ic_mime_actionbar">@drawable/ic_mime_material_dark</item>
+        <item name="ic_more_actionbar">@drawable/ic_more_material_dark</item>
+        <item name="ic_next_actionbar">@drawable/ic_next_material_dark</item>
+        <item name="ic_pause_actionbar">@drawable/ic_pause_material_dark</item>
+        <item name="ic_play_actionbar">@drawable/ic_play_material_dark</item>
+        <item name="ic_playlist_actionbar">@drawable/ic_playlist_material_dark</item>
+        <item name="ic_playlist_complete_actionbar">@drawable/ic_playlist_complete_material_dark</item>
+        <item name="ic_previous_actionbar">@drawable/ic_previous_material_dark</item>
+        <item name="ic_refresh_actionbar">@drawable/ic_refresh_material_dark</item>
+        <item name="ic_repeat_actionbar">@drawable/ic_repeat_material_dark</item>
+        <item name="ic_repeat_single_actionbar">@drawable/ic_repeat_single_material_dark</item>
+        <item name="ic_restore_actionbar">@drawable/ic_restore_material_dark</item>
+        <item name="ic_search_actionbar">@drawable/ic_search_material_dark</item>
+        <item name="ic_select_all_actionbar">@drawable/ic_selectall_material_dark</item>
+        <item name="ic_settings_actionbar">@drawable/ic_settings_material_dark</item>
+        <item name="ic_share_actionbar">@drawable/ic_share_material_dark</item>
+        <item name="ic_shuffle_actionbar">@drawable/ic_shuffle_material_dark</item>
+        <item name="ic_title_actionbar">@drawable/ic_title_material_dark</item>
+        <item name="ic_today_actionbar">@drawable/ic_today_material_dark</item>
+        <item name="ic_track_actionbar">@drawable/ic_track_material_dark</item>
+        <item name="ic_update_actionbar">@drawable/ic_update_material_dark</item>
+        <item name="ic_user_actionbar">@drawable/ic_user_material_dark</item>
+        <item name="ic_writer_actionbar">@drawable/ic_writer_material_dark</item>
+
+    </style>
+
+    <style name="Theme.Standard.Light" parent="Theme.AppCompat.Light">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="actionOverflowButtonStyle">@style/Theme.Light.Style.ActionButton.Overflow</item>
+        <item name="homeAsUpIndicator">@drawable/ic_back_material_light</item>
+        <item name="actionModeShareDrawable">@drawable/ic_share_material_light</item>
+        <item name="preferenceTheme">@style/Theme.Style.Preference</item>
+        <item name="searchViewStyle">@style/Theme.Style.SearchView</item>
+        <item name="titleTextColor">@android:color/black</item>
+        <item name="subtitleTextColor">?titleTextColor</item>
+        <item name="toolbarBackgroundColor">?colorPrimary</item>
+        <item name="playButton">@drawable/player_button_light</item>
+        <item name="cardViewBackgroundColor">@color/card_view_light_background</item>
+        <item name="toolbarShadow">@drawable/shadow_default_light</item>
+        <item name="toolbarShadowLateral">@drawable/shadow_lateral_light</item>
+
+        <item name="ic_add">@drawable/ic_add_material_light</item>
+        <item name="ic_album">@drawable/ic_album_material_light</item>
+        <item name="ic_back">@drawable/ic_back_material_light</item>
+        <item name="ic_chronometer">@drawable/ic_chrono_material_light</item>
+        <item name="ic_debug">@drawable/ic_debug_material_light</item>
+        <item name="ic_delete_all">@drawable/ic_delete_all_material_light</item>
+        <item name="ic_delete">@drawable/ic_delete_material_light</item>
+        <item name="ic_edit">@drawable/ic_edit_material_light</item>
+        <item name="ic_equalizer">@drawable/ic_equalizer_material_light</item>
+        <item name="ic_error">@drawable/ic_error_material_light</item>
+        <item name="ic_exit">@drawable/ic_exit_material_light</item>
+        <item name="ic_file">@drawable/ic_file_material_light</item>
+        <item name="ic_folder">@drawable/ic_folder_material_light</item>
+        <item name="ic_forward">@drawable/ic_forward_material_light</item>
+        <item name="ic_image">@drawable/ic_image_material_light</item>
+        <item name="ic_info">@drawable/ic_info_material_light</item>
+        <item name="ic_library">@drawable/ic_library_material_light</item>
+        <item name="ic_license">@drawable/ic_license_material_light</item>
+        <item name="ic_mime">@drawable/ic_mime_material_light</item>
+        <item name="ic_more">@drawable/ic_more_material_light</item>
+        <item name="ic_next">@drawable/ic_next_material_light</item>
+        <item name="ic_pause">@drawable/ic_pause_material_light</item>
+        <item name="ic_play">@drawable/ic_play_material_light</item>
+        <item name="ic_playlist">@drawable/ic_playlist_material_light</item>
+        <item name="ic_playlist_complete">@drawable/ic_playlist_complete_material_light</item>
+        <item name="ic_previous">@drawable/ic_previous_material_light</item>
+        <item name="ic_refresh">@drawable/ic_refresh_material_light</item>
+        <item name="ic_repeat">@drawable/ic_repeat_material_light</item>
+        <item name="ic_repeat_single">@drawable/ic_repeat_single_material_light</item>
+        <item name="ic_restore">@drawable/ic_restore_material_light</item>
+        <item name="ic_search">@drawable/ic_search_material_light</item>
+        <item name="ic_select_all">@drawable/ic_selectall_material_light</item>
+        <item name="ic_settings">@drawable/ic_settings_material_light</item>
+        <item name="ic_share">@drawable/ic_share_material_light</item>
+        <item name="ic_shuffle">@drawable/ic_shuffle_material_light</item>
+        <item name="ic_title">@drawable/ic_title_material_light</item>
+        <item name="ic_today">@drawable/ic_today_material_light</item>
+        <item name="ic_track">@drawable/ic_track_material_light</item>
+        <item name="ic_update">@drawable/ic_update_material_light</item>
+        <item name="ic_user">@drawable/ic_user_material_light</item>
+        <item name="ic_writer">@drawable/ic_writer_material_light</item>
+
+        <item name="ic_add_actionbar">@drawable/ic_add_material_light</item>
+        <item name="ic_album_actionbar">@drawable/ic_album_material_light</item>
+        <item name="ic_back_actionbar">@drawable/ic_back_material_light</item>
+        <item name="ic_chronometer_actionbar">@drawable/ic_chrono_material_light</item>
+        <item name="ic_debug_actionbar">@drawable/ic_debug_material_light</item>
+        <item name="ic_delete_all_actionbar">@drawable/ic_delete_all_material_light</item>
+        <item name="ic_delete_actionbar">@drawable/ic_delete_material_light</item>
+        <item name="ic_edit_actionbar">@drawable/ic_edit_material_light</item>
+        <item name="ic_equalizer_actionbar">@drawable/ic_equalizer_material_light</item>
+        <item name="ic_error_actionbar">@drawable/ic_error_material_light</item>
+        <item name="ic_exit_actionbar">@drawable/ic_exit_material_light</item>
+        <item name="ic_file_actionbar">@drawable/ic_file_material_light</item>
+        <item name="ic_folder_actionbar">@drawable/ic_folder_material_light</item>
+        <item name="ic_forward_actionbar">@drawable/ic_forward_material_light</item>
+        <item name="ic_image_actionbar">@drawable/ic_image_material_light</item>
+        <item name="ic_info_actionbar">@drawable/ic_info_material_light</item>
+        <item name="ic_library_actionbar">@drawable/ic_library_material_light</item>
+        <item name="ic_license_actionbar">@drawable/ic_license_material_light</item>
+        <item name="ic_mime_actionbar">@drawable/ic_mime_material_light</item>
+        <item name="ic_more_actionbar">@drawable/ic_more_material_light</item>
+        <item name="ic_next_actionbar">@drawable/ic_next_material_light</item>
+        <item name="ic_pause_actionbar">@drawable/ic_pause_material_light</item>
+        <item name="ic_play_actionbar">@drawable/ic_play_material_light</item>
+        <item name="ic_playlist_actionbar">@drawable/ic_playlist_material_light</item>
+        <item name="ic_playlist_complete_actionbar">@drawable/ic_playlist_complete_material_light</item>
+        <item name="ic_previous_actionbar">@drawable/ic_previous_material_light</item>
+        <item name="ic_refresh_actionbar">@drawable/ic_refresh_material_light</item>
+        <item name="ic_repeat_actionbar">@drawable/ic_repeat_material_light</item>
+        <item name="ic_repeat_single_actionbar">@drawable/ic_repeat_single_material_light</item>
+        <item name="ic_restore_actionbar">@drawable/ic_restore_material_light</item>
+        <item name="ic_search_actionbar">@drawable/ic_search_material_light</item>
+        <item name="ic_select_all_actionbar">@drawable/ic_selectall_material_light</item>
+        <item name="ic_settings_actionbar">@drawable/ic_settings_material_light</item>
+        <item name="ic_share_actionbar">@drawable/ic_share_material_light</item>
+        <item name="ic_shuffle_actionbar">@drawable/ic_shuffle_material_light</item>
+        <item name="ic_title_actionbar">@drawable/ic_title_material_light</item>
+        <item name="ic_today_actionbar">@drawable/ic_today_material_light</item>
+        <item name="ic_track_actionbar">@drawable/ic_track_material_light</item>
+        <item name="ic_update_actionbar">@drawable/ic_update_material_light</item>
+        <item name="ic_user_actionbar">@drawable/ic_user_material_light</item>
+        <item name="ic_writer_actionbar">@drawable/ic_writer_material_light</item>
+
+    </style>
+
+    <style name="Theme.Standard.Light.DarkActionBar" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="actionOverflowButtonStyle">@style/Theme.Dark.Style.ActionButton.Overflow</item>
+        <item name="homeAsUpIndicator">@drawable/ic_back_material_dark</item>
+        <item name="actionModeShareDrawable">@drawable/ic_share_material_dark</item>
+        <item name="preferenceTheme">@style/Theme.Style.Preference</item>
+        <item name="searchViewStyle">@style/Theme.Style.SearchView</item>
+        <item name="titleTextColor">@android:color/white</item>
+        <item name="subtitleTextColor">?titleTextColor</item>
+        <item name="toolbarBackgroundColor">?colorPrimary</item>
+        <item name="playButton">@drawable/player_button_light</item>
+        <item name="cardViewBackgroundColor">@color/card_view_light_background</item>
+        <item name="toolbarShadow">@drawable/shadow_default</item>
+        <item name="toolbarShadowLateral">@drawable/shadow_lateral</item>
+
+        <item name="ic_add">@drawable/ic_add_material_light</item>
+        <item name="ic_album">@drawable/ic_album_material_light</item>
+        <item name="ic_back">@drawable/ic_back_material_light</item>
+        <item name="ic_chronometer">@drawable/ic_chrono_material_light</item>
+        <item name="ic_debug">@drawable/ic_debug_material_light</item>
+        <item name="ic_delete_all">@drawable/ic_delete_all_material_light</item>
+        <item name="ic_delete">@drawable/ic_delete_material_light</item>
+        <item name="ic_edit">@drawable/ic_edit_material_light</item>
+        <item name="ic_equalizer">@drawable/ic_equalizer_material_light</item>
+        <item name="ic_error">@drawable/ic_error_material_light</item>
+        <item name="ic_exit">@drawable/ic_exit_material_light</item>
+        <item name="ic_file">@drawable/ic_file_material_light</item>
+        <item name="ic_folder">@drawable/ic_folder_material_light</item>
+        <item name="ic_forward">@drawable/ic_forward_material_light</item>
+        <item name="ic_image">@drawable/ic_image_material_light</item>
+        <item name="ic_info">@drawable/ic_info_material_light</item>
+        <item name="ic_library">@drawable/ic_library_material_light</item>
+        <item name="ic_license">@drawable/ic_license_material_light</item>
+        <item name="ic_mime">@drawable/ic_mime_material_light</item>
+        <item name="ic_more">@drawable/ic_more_material_light</item>
+        <item name="ic_next">@drawable/ic_next_material_light</item>
+        <item name="ic_pause">@drawable/ic_pause_material_light</item>
+        <item name="ic_play">@drawable/ic_play_material_light</item>
+        <item name="ic_playlist">@drawable/ic_playlist_material_light</item>
+        <item name="ic_previous">@drawable/ic_previous_material_light</item>
+        <item name="ic_refresh">@drawable/ic_refresh_material_light</item>
+        <item name="ic_repeat">@drawable/ic_repeat_material_light</item>
+        <item name="ic_repeat_single">@drawable/ic_repeat_single_material_light</item>
+        <item name="ic_restore">@drawable/ic_restore_material_light</item>
+        <item name="ic_search">@drawable/ic_search_material_light</item>
+        <item name="ic_select_all">@drawable/ic_selectall_material_light</item>
+        <item name="ic_settings">@drawable/ic_settings_material_light</item>
+        <item name="ic_share">@drawable/ic_share_material_light</item>
+        <item name="ic_shuffle">@drawable/ic_shuffle_material_light</item>
+        <item name="ic_title">@drawable/ic_title_material_light</item>
+        <item name="ic_today">@drawable/ic_today_material_light</item>
+        <item name="ic_track">@drawable/ic_track_material_light</item>
+        <item name="ic_update">@drawable/ic_update_material_light</item>
+        <item name="ic_user">@drawable/ic_user_material_light</item>
+        <item name="ic_writer">@drawable/ic_writer_material_light</item>
+
+        <item name="ic_add_actionbar">@drawable/ic_add_material_dark</item>
+        <item name="ic_album_actionbar">@drawable/ic_album_material_dark</item>
+        <item name="ic_back_actionbar">@drawable/ic_back_material_dark</item>
+        <item name="ic_chronometer_actionbar">@drawable/ic_chrono_material_dark</item>
+        <item name="ic_debug_actionbar">@drawable/ic_debug_material_dark</item>
+        <item name="ic_delete_all_actionbar">@drawable/ic_delete_all_material_dark</item>
+        <item name="ic_delete_actionbar">@drawable/ic_delete_material_dark</item>
+        <item name="ic_edit_actionbar">@drawable/ic_edit_material_dark</item>
+        <item name="ic_equalizer_actionbar">@drawable/ic_equalizer_material_dark</item>
+        <item name="ic_error_actionbar">@drawable/ic_error_material_dark</item>
+        <item name="ic_exit_actionbar">@drawable/ic_exit_material_dark</item>
+        <item name="ic_file_actionbar">@drawable/ic_file_material_dark</item>
+        <item name="ic_folder_actionbar">@drawable/ic_folder_material_dark</item>
+        <item name="ic_forward_actionbar">@drawable/ic_forward_material_dark</item>
+        <item name="ic_image_actionbar">@drawable/ic_image_material_dark</item>
+        <item name="ic_info_actionbar">@drawable/ic_info_material_dark</item>
+        <item name="ic_library_actionbar">@drawable/ic_library_material_dark</item>
+        <item name="ic_license_actionbar">@drawable/ic_license_material_dark</item>
+        <item name="ic_mime_actionbar">@drawable/ic_mime_material_dark</item>
+        <item name="ic_more_actionbar">@drawable/ic_more_material_dark</item>
+        <item name="ic_next_actionbar">@drawable/ic_next_material_dark</item>
+        <item name="ic_pause_actionbar">@drawable/ic_pause_material_dark</item>
+        <item name="ic_play_actionbar">@drawable/ic_play_material_dark</item>
+        <item name="ic_playlist_actionbar">@drawable/ic_playlist_material_dark</item>
+        <item name="ic_previous_actionbar">@drawable/ic_previous_material_dark</item>
+        <item name="ic_refresh_actionbar">@drawable/ic_refresh_material_dark</item>
+        <item name="ic_repeat_actionbar">@drawable/ic_repeat_material_dark</item>
+        <item name="ic_repeat_single_actionbar">@drawable/ic_repeat_single_material_dark</item>
+        <item name="ic_restore_actionbar">@drawable/ic_restore_material_dark</item>
+        <item name="ic_search_actionbar">@drawable/ic_search_material_dark</item>
+        <item name="ic_select_all_actionbar">@drawable/ic_selectall_material_dark</item>
+        <item name="ic_settings_actionbar">@drawable/ic_settings_material_dark</item>
+        <item name="ic_share_actionbar">@drawable/ic_share_material_dark</item>
+        <item name="ic_shuffle_actionbar">@drawable/ic_shuffle_material_dark</item>
+        <item name="ic_title_actionbar">@drawable/ic_title_material_dark</item>
+        <item name="ic_today_actionbar">@drawable/ic_today_material_dark</item>
+        <item name="ic_track_actionbar">@drawable/ic_track_material_dark</item>
+        <item name="ic_update_actionbar">@drawable/ic_update_material_dark</item>
+        <item name="ic_user_actionbar">@drawable/ic_user_material_dark</item>
+        <item name="ic_writer_actionbar">@drawable/ic_writer_material_dark</item>
+
+    </style>
+
+    <style name="Theme.Standard.Dark.Red" parent="Theme.Standard.Dark">
+        <item name="colorAccent">@color/colorAccentRed</item>
+        <item name="colorPrimary">@color/colorPrimaryRed</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkRed</item>
+        <item name="playButton">@drawable/player_button_red</item>
+    </style>
+
+    <style name="Theme.Standard.Light.Red" parent="Theme.Standard.Light">
+        <item name="colorAccent">@color/colorAccentRed</item>
+        <item name="colorPrimary">@color/colorPrimaryRed</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkRed</item>
+        <item name="playButton">@drawable/player_button_red</item>
+        <item name="titleTextColor">@color/colorPrimaryRed</item>
+        <item name="subtitleTextColor">@color/colorPrimaryRed</item>
+        <item name="toolbarBackgroundColor">@android:color/white</item>
+    </style>
+
+    <style name="Theme.Standard.Light.DarkActionBar.Red" parent="Theme.Standard.Light.DarkActionBar">
+        <item name="colorAccent">@color/colorAccentRed</item>
+        <item name="colorPrimary">@color/colorPrimaryRed</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkRed</item>
+        <item name="playButton">@drawable/player_button_red</item>
+    </style>
+
+    <style name="Theme.Standard.Dark.Blue" parent="Theme.Standard.Dark">
+        <item name="colorAccent">@color/colorAccentBlue</item>
+        <item name="colorPrimary">@color/colorPrimaryBlue</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkBlue</item>
+        <item name="playButton">@drawable/player_button_blue</item>
+    </style>
+
+    <style name="Theme.Standard.Light.Blue" parent="Theme.Standard.Light">
+        <item name="colorAccent">@color/colorAccentBlue</item>
+        <item name="colorPrimary">@color/colorPrimaryBlue</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkBlue</item>
+        <item name="playButton">@drawable/player_button_blue</item>
+        <item name="titleTextColor">@color/colorPrimaryBlue</item>
+        <item name="subtitleTextColor">@color/colorPrimaryBlue</item>
+        <item name="toolbarBackgroundColor">@android:color/white</item>
+    </style>
+
+    <style name="Theme.Standard.Light.DarkActionBar.Blue" parent="Theme.Standard.Light.DarkActionBar">
+        <item name="colorAccent">@color/colorAccentBlue</item>
+        <item name="colorPrimary">@color/colorPrimaryBlue</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkBlue</item>
+        <item name="playButton">@drawable/player_button_blue</item>
+    </style>
+
+    <style name="Theme.Standard.Dark.Orange" parent="Theme.Standard.Dark">
+        <item name="colorAccent">@color/colorAccentOrange</item>
+        <item name="colorPrimary">@color/colorPrimaryOrange</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkOrange</item>
+        <item name="playButton">@drawable/player_button_orange</item>
+    </style>
+
+    <style name="Theme.Standard.Light.Orange" parent="Theme.Standard.Light">
+        <item name="colorAccent">@color/colorAccentOrange</item>
+        <item name="colorPrimary">@color/colorPrimaryOrange</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkOrange</item>
+        <item name="playButton">@drawable/player_button_orange</item>
+        <item name="titleTextColor">@color/colorPrimaryOrange</item>
+        <item name="subtitleTextColor">@color/colorPrimaryOrange</item>
+        <item name="toolbarBackgroundColor">@android:color/white</item>
+    </style>
+
+    <style name="Theme.Standard.Light.DarkActionBar.Orange" parent="Theme.Standard.Light.DarkActionBar">
+        <item name="colorAccent">@color/colorAccentOrange</item>
+        <item name="colorPrimary">@color/colorPrimaryOrange</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkOrange</item>
+        <item name="playButton">@drawable/player_button_orange</item>
+    </style>
+
+    <style name="Theme.Standard.Dark.Green" parent="Theme.Standard.Dark">
+        <item name="colorAccent">@color/colorAccentGreen</item>
+        <item name="colorPrimary">@color/colorPrimaryGreen</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkGreen</item>
+        <item name="playButton">@drawable/player_button_green</item>
+    </style>
+
+    <style name="Theme.Standard.Light.Green" parent="Theme.Standard.Light">
+        <item name="colorAccent">@color/colorAccentGreen</item>
+        <item name="colorPrimary">@color/colorPrimaryGreen</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkGreen</item>
+        <item name="playButton">@drawable/player_button_green</item>
+        <item name="titleTextColor">@color/colorPrimaryGreen</item>
+        <item name="subtitleTextColor">@color/colorPrimaryGreen</item>
+        <item name="toolbarBackgroundColor">@android:color/white</item>
+    </style>
+
+    <style name="Theme.Standard.Light.DarkActionBar.Green" parent="Theme.Standard.Light.DarkActionBar">
+        <item name="colorAccent">@color/colorAccentGreen</item>
+        <item name="colorPrimary">@color/colorPrimaryGreen</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkGreen</item>
+        <item name="playButton">@drawable/player_button_green</item>
+    </style>
+
+    <style name="Theme.Dark" parent="Theme.Standard.Dark" />
+
+    <style name="Theme.Light" parent="Theme.Standard.Light" />
+
+    <style name="Theme.Light.DarkActionBar" parent="Theme.Standard.Light.DarkActionBar" />
+
+    <style name="Theme.Dark.Red" parent="Theme.Standard.Dark.Red" />
+
+    <style name="Theme.Light.Red" parent="Theme.Standard.Light.Red" />
+
+    <style name="Theme.Light.DarkActionBar.Red" parent="Theme.Standard.Light.DarkActionBar.Red" />
+
+    <style name="Theme.Dark.Blue" parent="Theme.Standard.Dark.Blue" />
+
+    <style name="Theme.Light.Blue" parent="Theme.Standard.Light.Blue" />
+
+    <style name="Theme.Light.DarkActionBar.Blue" parent="Theme.Standard.Light.DarkActionBar.Blue" />
+
+    <style name="Theme.Dark.Orange" parent="Theme.Standard.Dark.Orange" />
+
+    <style name="Theme.Light.Orange" parent="Theme.Standard.Light.Orange" />
+
+    <style name="Theme.Light.DarkActionBar.Orange" parent="Theme.Standard.Light.DarkActionBar.Orange" />
+
+    <style name="Theme.Dark.Green" parent="Theme.Standard.Dark.Green" />
+
+    <style name="Theme.Light.Green" parent="Theme.Standard.Light.Green" />
+
+    <style name="Theme.Light.DarkActionBar.Green" parent="Theme.Standard.Light.DarkActionBar.Green" />
+
+    <style name="Theme.Dark.Style.ActionButton.Overflow" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_more_material_dark</item>
+    </style>
+
+    <style name="Theme.Light.Style.ActionButton.Overflow" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_more_material_light</item>
+    </style>
+
+    <style name="Theme.Standard.Style.Preference" parent="PreferenceThemeOverlay.v14.Material">
+        <item name="android:dividerHeight">0px</item>
+    </style>
+
+    <style name="Theme.Style.Preference" parent="Theme.Standard.Style.Preference" />
+
+    <style name="Theme.Style.SearchView" parent="Base.Widget.AppCompat.SearchView">
+        <item name="closeIcon">?ic_exit</item>
+    </style>
+
+    <style name="Theme.Style.TabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabIndicatorColor">?tabSelectedTextColor</item>
+        <item name="tabTextAppearance">@style/Theme.Style.TabLayout.TabTextAppearance</item>
+    </style>
+
+    <style name="Theme.Style.TabLayout.TabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textColor">?titleTextColor</item>
+    </style>
+
+    <style name="Theme.Button.Colored" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="Theme.Default" parent="Theme.Dark.Red"/>
+
+</resources>

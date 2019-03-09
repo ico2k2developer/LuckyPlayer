@@ -1,0 +1,190 @@
+<resources>
+
+    <string name="app_name" formatted="false" translatable="false">Lucky Player</string>
+    <string name="exit" formatted="false">Exit</string>
+    <string name="info_notavailable" formatted="false">Unavailable info</string>
+    <string name="activity_info" formatted="false">View details</string>
+    <string name="activity_info_title" formatted="false" translatable="false">%s - %s</string>
+    <string name="info_tag_category" formatted="false">Tag</string>
+    <string name="info_quality_category" formatted="false">Quality</string>
+    <string name="info_other_info_category" formatted="false">Other info</string>
+    <string name="info_nocover" formatted="false">No album cover</string>
+    <string name="info_title" formatted="false">Title</string>
+    <string name="info_album" formatted="false">Album</string>
+    <string name="info_albumartist" formatted="false">Album artist</string>
+    <string name="info_artist" formatted="false">Artist</string>
+    <string name="info_author" formatted="false">Author</string>
+    <string name="info_cd_track" formatted="false">Track number</string>
+    <string name="info_compilation" formatted="false">Part of a compilation</string>
+    <string name="info_composer" formatted="false">Composer</string>
+    <string name="info_date" formatted="false">Release date</string>
+    <string name="info_disc_number" formatted="false">Disk number</string>
+    <string name="info_duration" formatted="false">Duration</string>
+    <string name="info_genre" formatted="false">Genre</string>
+    <string name="info_writer" formatted="false">Writer</string>
+    <string name="info_year" formatted="false">Release year</string>
+    <string name="info_bitrate" formatted="false">Bitrate</string>
+    <string name="info_bitrate_sub" formatted="false" translatable="false">%d1 kbps</string>
+    <string name="share" formatted="false">Share</string>
+    <string name="saved" formatted="false">Saved</string>
+    <string name="info_save_cover" formatted="false">Save cover to Download</string>
+    <string name="duration_format" formatted="false" translatable="false">%d2:%d1</string>
+    <string name="duration_format_hour" formatted="false" translatable="false">%d3:%d2:%d1</string>
+    <string name="duration_format_ms" formatted="false" translatable="false">%d1 ms</string>
+    <string name="duration_format_long" formatted="false">%d2:%d1 (%d0 milliseconds)</string>
+    <string name="beta_pick" formatted="false">Pick file</string>
+    <string name="error" formatted="false">An error occurred</string>
+    <string name="info_uri" formatted="false">File uri</string>
+    <string name="info_mime" formatted="false">Mime type</string>
+    <string name="info_format" formatted="false">File format</string>
+    <string name="copied" formatted="false">Copied</string>
+    <string name="yes" formatted="false">Yes</string>
+    <string name="no" formatted="false">No</string>
+    <string name="settings" formatted="false">Settings</string>
+    <string name="close" formatted="false">Close</string>
+    <string name="app_about_share" formatted="false">Try %s! It\'s a great music player!\n%s</string>
+    <string name="google_play_store_package" formatted="false" translatable="false">com.android.vending</string>
+    <string name="google_play_store_url" formatted="false" translatable="false">http://play.google.com/store/apps/details?id=it.developing.ico2k2.luckyplayer</string>
+    <string name="app_about" formatted="false">%s is a great music player. It has many features that you\'ll enjoy</string>
+    <string name="settings_about" formatted="false">About</string>
+    <string name="continue_" formatted="false">Continue</string>
+    <string name="delete" formatted="false">Delete</string>
+    <string name="settings_advanced" formatted="false">Advanced settings</string>
+    <string name="restore_formats" formatted="false">Restore default formats</string>
+    <string name="settings_theme" formatted="false">Theme</string>
+    <string name="settings_category_data" formatted="false">Data</string>
+    <string name="settings_delete_all" formatted="false">Delete all data</string>
+    <string name="actionmode_selected" formatted="false">%d1 selected</string>
+    <string name="settings_delete_all_sub" formatted="false">Delete all application\'s own data</string>
+    <string name="dialog_confirm_message_default" formatted="false">Do you confirm?</string>
+    <string name="settings_theme_hint" formatted="false">Here you can choose which theme the app will use. It will be applied at the next app launch</string>
+    <string name="app_about_version" formatted="false">Version name: %s\nVersion code: %s</string>
+    <string name="info_notification_channel" formatted="false">Service notifications</string>
+    <string name="main_notification_channel" formatted="false">Most important notifications</string>
+    <string name="info_notification_channel_id" formatted="false" translatable="false">info</string>
+    <string name="main_notification_channel_id" formatted="false" translatable="false">main</string>
+    <string name="scan_notification_title" formatted="false">Searching&#8230;</string>
+    <string name="scan_notification_text" formatted="false">Looking for audio files</string>
+    <string name="song_show_details" formatted="false">Show details</string>
+    <string name="settings_mediafile" formatted="false">Media files</string>
+    <string name="settings_mediafile_systemmedia_category" formatted="false">System media files</string>
+    <string name="settings_include_systemmedia" formatted="false">Include system media files</string>
+    <string name="settings_include_systemmedia_sub" formatted="false">Include system files in media scan</string>
+    <string name="systemMediaPath" formatted="false" translatable="false">system/media/audio</string>
+    <string name="refresh_songlist" formatted="false">Refresh song list</string>
+    <string name="songs_count" formatted="false">%d1 songs</string>
+    <string name="songs_sum" formatted="false">Total time: %s</string>
+    <string name="saving" formatted="false">Saving&#8230;\n\nBig images may take long time to save</string>
+    <string name="no_songs_found" formatted="false">No songs found!</string>
+    <string name="stop_play_service" formatted="false">Stop</string>
+    <string name="play" formatted="false">Play</string>
+    <string name="play_media" formatted="false">Play media</string>
+    <string name="pause" formatted="false">Pause</string>
+    <string name="settings_licenses" formatted="false">Licenses</string>
+    <string name="stream" formatted="false">Media stream</string>
+    <string name="stream_url" formatted="false">Stream URL</string>
+    <string name="search_song" formatted="false">Search a song</string>
+    <string name="search_song_hint" formatted="false">Type song\'s name</string>
+    <string name="search_category" formatted="false">Songs</string>
+    <string name="tab_songs" formatted="false">Songs</string>
+    <string name="tab_albums" formatted="false">Albums</string>
+    <string name="tab_artists" formatted="false">Artists</string>
+    <string name="tab_years" formatted="false">Years</string>
+    <string name="invalid" formatted="false">Invalid!</string>
+    <string name="playlist" formatted="false">Play queue</string>
+    <string name="tools" formatted="false">Tools</string>
+    <string name="elements" formatted="false">Elements</string>
+    <string name="theme_message" formatted="false">New theme will be applied when you exit the settings page</string>
+    <string name="theme_apply" formatted="false">Apply</string>
+    <string name="logs" formatted="false">Logs</string>
+    <string name="logs_clear" formatted="false">Clear logs</string>
+    <string name="share_songlist" formatted="false">Share songs list</string>
+    <string name="share_albumlist" formatted="false">Share albums list</string>
+    <string name="share_artistlist" formatted="false">Share artists list</string>
+    <string name="repeat_playlist" formatted="false">Loop</string>
+    <string name="random_playlist" formatted="false">Shuffle</string>
+    <string name="repeat_single_playlist" formatted="false">Repeat</string>
+    <string name="shuffle_on" formatted="false">Shuffle enabled</string>
+    <string name="shuffle_off" formatted="false">Shuffle disabled</string>
+    <string name="repeat_on" formatted="false">Loop enabled</string>
+    <string name="repeat_off" formatted="false">Loop disabled</string>
+    <string name="repeat_single_on" formatted="false">Repeat enabled</string>
+    <string name="repeat_single_off" formatted="false">Repeat disabled</string>
+    <string name="song_play_background" formatted="false">Play in background</string>
+    <string name="wait_end_enable" formatted="false">Stop at song end</string>
+    <string name="wait_end_disable" formatted="false">Don\'t stop at song end</string>
+    <string name="settings_category_debug" formatted="false">Debug</string>
+    <string name="settings_compatibility_mode" formatted="false">Compatibility mode</string>
+    <string name="settings_compatibility_mode_sub" formatted="false">Enable this in case of crashes or other type of issues</string>
+
+    <string-array name="preference_headers">
+        <item>@string/settings_mediafile</item>
+        <item>@string/settings_theme</item>
+        <item>@string/settings_advanced</item>
+        <item>@string/settings_licenses</item>
+        <item>@string/settings_about</item>
+    </string-array>
+
+    <string-array name="tools" formatted="false">
+        <item>@string/share_songlist</item>
+        <item>@string/share_albumlist</item>
+        <item>@string/share_artistlist</item>
+    </string-array>
+
+    <string-array name="tabs" formatted="false">
+        <item>@string/tab_songs</item>
+        <item>@string/tab_albums</item>
+        <item>@string/tab_artists</item>
+        <item>@string/tab_years</item>
+    </string-array>
+
+    <string-array name="themes" formatted="false" translatable="false">
+
+        <item>Theme Dark</item>
+        <item>Theme Light</item>
+        <item>Theme Light DarkActionBar</item>
+        <item>Theme Dark Red</item>
+        <item>Theme Light Red</item>
+        <item>Theme Light DarkActionBar Red</item>
+        <item>Theme Dark Blue</item>
+        <item>Theme Light Blue</item>
+        <item>Theme Light DarkActionBar Blue</item>
+        <item>Theme Dark Orange</item>
+        <item>Theme Light Orange</item>
+        <item>Theme Light DarkActionBar Orange</item>
+        <item>Theme Dark Green</item>
+        <item>Theme Light Green</item>
+        <item>Theme Light DarkActionBar Green</item>
+
+    </string-array>
+
+    <string name="missing_license" formatted="true">Missing license</string>
+    <string name="apache_2_0_license" formatted="false" translatable="false">
+        Apache License\n\n
+        Version 2.0, January 2004\n\n
+        http://www.apache.org/licenses/\n\n
+        TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION\n\n
+        1. Definitions.\n\n
+        "License" shall mean the terms and conditions for use, reproduction, and distribution as defined by Sections 1 through 9 of this document.\n\n
+        "Licensor" shall mean the copyright owner or entity authorized by the copyright owner that is granting the License.\n\n
+        "Legal Entity" shall mean the union of the acting entity and all other entities that control, are controlled by, or are under common control with that entity. For the purposes of this definition, "control" means (i) the power, direct or indirect, to cause the direction or management of such entity, whether by contract or otherwise, or (ii) ownership of fifty percent (50%) or more of the outstanding shares, or (iii) beneficial ownership of such entity.\n\n
+        "You" (or "Your") shall mean an individual or Legal Entity exercising permissions granted by this License.\n\n
+        "Source" form shall mean the preferred form for making modifications, including but not limited to software source code, documentation source, and configuration files.\n\n
+        "Object" form shall mean any form resulting from mechanical transformation or translation of a Source form, including but not limited to compiled object code, generated documentation, and conversions to other media types.\n\n
+        "Work" shall mean the work of authorship, whether in Source or Object form, made available under the License, as indicated by a copyright notice that is included in or attached to the work (an example is provided in the Appendix below).\n\n
+        "Derivative Works" shall mean any work, whether in Source or Object form, that is based on (or derived from) the Work and for which the editorial revisions, annotations, elaborations, or other modifications represent, as a whole, an original work of authorship. For the purposes of this License, Derivative Works shall not include works that remain separable from, or merely link (or bind by name) to the interfaces of, the Work and Derivative Works thereof.\n\n
+        "Contribution" shall mean any work of authorship, including the original version of the Work and any modifications or additions to that Work or Derivative Works thereof, that is intentionally submitted to Licensor for inclusion in the Work by the copyright owner or by an individual or Legal Entity authorized to submit on behalf of the copyright owner. For the purposes of this definition, "submitted" means any form of electronic, verbal, or written communication sent to the Licensor or its representatives, including but not limited to communication on electronic mailing lists, source code control systems, and issue tracking systems that are managed by, or on behalf of, the Licensor for the purpose of discussing and improving the Work, but excluding communication that is conspicuously marked or otherwise designated in writing by the copyright owner as "Not a Contribution."\n\n
+        "Contributor" shall mean Licensor and any individual or Legal Entity on behalf of whom a Contribution has been received by Licensor and subsequently incorporated within the Work.\n\n
+        2. Grant of Copyright License. Subject to the terms and conditions of this License, each Contributor hereby grants to You a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable copyright license to reproduce, prepare Derivative Works of, publicly display, publicly perform, sublicense, and distribute the Work and such Derivative Works in Source or Object form.\n\n
+        3. Grant of Patent License. Subject to the terms and conditions of this License, each Contributor hereby grants to You a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable (except as stated in this section) patent license to make, have made, use, offer to sell, sell, import, and otherwise transfer the Work, where such license applies only to those patent claims licensable by such Contributor that are necessarily infringed by their Contribution(s) alone or by combination of their Contribution(s) with the Work to which such Contribution(s) was submitted. If You institute patent litigation against any entity (including a cross-claim or counterclaim in a lawsuit) alleging that the Work or a Contribution incorporated within the Work constitutes direct or contributory patent infringement, then any patent licenses granted to You under this License for that Work shall terminate as of the date such litigation is filed.\n\n
+        4. Redistribution. You may reproduce and distribute copies of the Work or Derivative Works thereof in any medium, with or without modifications, and in Source or Object form, provided that You meet the following conditions:\n\n
+        You must give any other recipients of the Work or Derivative Works a copy of this License; andààààààààYou must cause any modified files to carry prominent notices stating that You changed the files; andààààààààYou must retain, in the Source form of any Derivative Works that You distribute, all copyright, patent, trademark, and attribution notices from the Source form of the Work, excluding those notices that do not pertain to any part of the Derivative Works; andààààààààIf the Work includes a "NOTICE" text file as part of its distribution, then any Derivative Works that You distribute must include a readable copy of the attribution notices contained within such NOTICE file, excluding those notices that do not pertain to any part of the Derivative Works, in at least one of the following places: within a NOTICE text file distributed as part of the Derivative Works; within the Source form or documentation, if provided along with the Derivative Works; or, within a display generated by the Derivative Works, if and wherever such third-party notices normally appear. The contents of the NOTICE file are for informational purposes only and do not modify the License. You may add Your own attribution notices within Derivative Works that You distribute, alongside or as an addendum to the NOTICE text from the Work, provided that such additional attribution notices cannot be construed as modifying the License.\n\n
+        You may add Your own copyright statement to Your modifications and may provide additional or different license terms and conditions for use, reproduction, or distribution of Your modifications, or for any such Derivative Works as a whole, provided Your use, reproduction, and distribution of the Work otherwise complies with the conditions stated in this License.àààààààà5. Submission of Contributions. Unless You explicitly state otherwise, any Contribution intentionally submitted for inclusion in the Work by You to the Licensor shall be under the terms and conditions of this License, without any additional terms or conditions. Notwithstanding the above, nothing herein shall supersede or modify the terms of any separate license agreement you may have executed with Licensor regarding such Contributions.\n\n
+        6. Trademarks. This License does not grant permission to use the trade names, trademarks, service marks, or product names of the Licensor, except as required for reasonable and customary use in describing the origin of the Work and reproducing the content of the NOTICE file.\n\n
+        7. Disclaimer of Warranty. Unless required by applicable law or agreed to in writing, Licensor provides the Work (and each Contributor provides its Contributions) on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied, including, without limitation, any warranties or conditions of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A PARTICULAR PURPOSE. You are solely responsible for determining the appropriateness of using or redistributing the Work and assume any risks associated with Your exercise of permissions under this License.\n\n
+        8. Limitation of Liability. In no event and under no legal theory, whether in tort (including negligence), contract, or otherwise, unless required by applicable law (such as deliberate and grossly negligent acts) or agreed to in writing, shall any Contributor be liable to You for damages, including any direct, indirect, special, incidental, or consequential damages of any character arising as a result of this License or out of the use or inability to use the Work (including but not limited to damages for loss of goodwill, work stoppage, computer failure or malfunction, or any and all other commercial damages or losses), even if such Contributor has been advised of the possibility of such damages.\n\n
+        9. Accepting Warranty or Additional Liability. While redistributing the Work or Derivative Works thereof, You may choose to offer, and charge a fee for, acceptance of support, warranty, indemnity, or other liability obligations and/or rights consistent with this License. However, in accepting such obligations, You may act only on Your own behalf and on Your sole responsibility, not on behalf of any other Contributor, and only if You agree to indemnify, defend, and hold each Contributor harmless for any liability incurred by, or claims asserted against, such Contributor by reason of your accepting any such warranty or additional liability.\n\n
+        END OF TERMS AND CONDITIONS
+    </string>
+
+</resources>

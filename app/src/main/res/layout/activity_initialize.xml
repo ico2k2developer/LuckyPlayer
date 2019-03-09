@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:fitsSystemWindows="true"
+    tools:context=".activities.InitializeActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/initialize_appbar"
+        android:minHeight="?actionBarSize"
+        android:background="?colorPrimary"
+        android:animateLayoutChanges="true"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/initialize_toolbar"
+            android:minHeight="?attr/actionBarSize"
+            android:background="?toolbarBackgroundColor"/>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:id="@+id/initialize_about_fragment"
+        class="it.developing.ico2k2.luckyplayer.fragments.AboutFragment"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/initialize_appbar"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/initialize_fab"
+        app:srcCompat="@drawable/ic_forward_material_dark"
+        android:layout_marginRight="@dimen/default_small_margin"
+        android:layout_marginEnd="@dimen/default_small_margin"
+        app:useCompatPadding="true"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

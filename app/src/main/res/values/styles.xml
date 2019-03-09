@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Logs" parent="android:Theme.Holo"/>
+
+    <attr name="playButton" format="reference" />
+    <attr name="cardViewBackgroundColor" format="reference" />
+    <attr name="titleTextColor" format="color" />
+    <attr name="subtitleTextColor" format="color" />
+    <attr name="toolbarBackgroundColor" format="color" />
+    <attr name="toolbarShadow" format="reference" />
+    <attr name="toolbarShadowLateral" format="reference" />
+
+    <attr name="ic_add" format="integer" />
+    <attr name="ic_album" format="integer" />
+    <attr name="ic_back" format="integer" />
+    <attr name="ic_chronometer" format="integer" />
+    <attr name="ic_debug" format="integer" />
+    <attr name="ic_delete_all" format="integer" />
+    <attr name="ic_delete" format="integer" />
+    <attr name="ic_edit" format="integer" />
+    <attr name="ic_equalizer" format="integer" />
+    <attr name="ic_error" format="integer" />
+    <attr name="ic_exit" format="integer" />
+    <attr name="ic_file" format="integer" />
+    <attr name="ic_folder" format="integer" />
+    <attr name="ic_forward" format="integer" />
+    <attr name="ic_image" format="integer" />
+    <attr name="ic_info" format="integer" />
+    <attr name="ic_library" format="integer" />
+    <attr name="ic_license" format="integer" />
+    <attr name="ic_mime" format="integer" />
+    <attr name="ic_more" format="integer" />
+    <attr name="ic_next" format="integer" />
+    <attr name="ic_pause" format="integer" />
+    <attr name="ic_play" format="integer" />
+    <attr name="ic_playlist" format="integer" />
+    <attr name="ic_playlist_complete" format="integer" />
+    <attr name="ic_previous" format="integer" />
+    <attr name="ic_refresh" format="integer" />
+    <attr name="ic_repeat" format="integer" />
+    <attr name="ic_repeat_single" format="integer" />
+    <attr name="ic_restore" format="integer" />
+    <attr name="ic_search" format="integer" />
+    <attr name="ic_select_all" format="integer" />
+    <attr name="ic_settings" format="integer" />
+    <attr name="ic_share" format="integer" />
+    <attr name="ic_shuffle" format="integer" />
+    <attr name="ic_title" format="integer" />
+    <attr name="ic_today" format="integer" />
+    <attr name="ic_track" format="integer" />
+    <attr name="ic_update" format="integer" />
+    <attr name="ic_user" format="integer" />
+    <attr name="ic_writer" format="integer" />
+
+    <attr name="ic_add_actionbar" format="integer" />
+    <attr name="ic_album_actionbar" format="integer" />
+    <attr name="ic_back_actionbar" format="integer" />
+    <attr name="ic_chronometer_actionbar" format="integer" />
+    <attr name="ic_debug_actionbar" format="integer" />
+    <attr name="ic_delete_all_actionbar" format="integer" />
+    <attr name="ic_delete_actionbar" format="integer" />
+    <attr name="ic_edit_actionbar" format="integer" />
+    <attr name="ic_equalizer_actionbar" format="integer" />
+    <attr name="ic_error_actionbar" format="integer" />
+    <attr name="ic_exit_actionbar" format="integer" />
+    <attr name="ic_file_actionbar" format="integer" />
+    <attr name="ic_folder_actionbar" format="integer" />
+    <attr name="ic_forward_actionbar" format="integer" />
+    <attr name="ic_image_actionbar" format="integer" />
+    <attr name="ic_info_actionbar" format="integer" />
+    <attr name="ic_library_actionbar" format="integer" />
+    <attr name="ic_license_actionbar" format="integer" />
+    <attr name="ic_mime_actionbar" format="integer" />
+    <attr name="ic_more_actionbar" format="integer" />
+    <attr name="ic_next_actionbar" format="integer" />
+    <attr name="ic_pause_actionbar" format="integer" />
+    <attr name="ic_play_actionbar" format="integer" />
+    <attr name="ic_playlist_actionbar" format="integer" />
+    <attr name="ic_playlist_complete_actionbar" format="integer" />
+    <attr name="ic_previous_actionbar" format="integer" />
+    <attr name="ic_refresh_actionbar" format="integer" />
+    <attr name="ic_repeat_actionbar" format="integer" />
+    <attr name="ic_repeat_single_actionbar" format="integer" />
+    <attr name="ic_restore_actionbar" format="integer" />
+    <attr name="ic_search_actionbar" format="integer" />
+    <attr name="ic_select_all_actionbar" format="integer" />
+    <attr name="ic_settings_actionbar" format="integer" />
+    <attr name="ic_share_actionbar" format="integer" />
+    <attr name="ic_shuffle_actionbar" format="integer" />
+    <attr name="ic_title_actionbar" format="integer" />
+    <attr name="ic_today_actionbar" format="integer" />
+    <attr name="ic_track_actionbar" format="integer" />
+    <attr name="ic_update_actionbar" format="integer" />
+    <attr name="ic_user_actionbar" format="integer" />
+    <attr name="ic_writer_actionbar" format="integer" />
+
+</resources>

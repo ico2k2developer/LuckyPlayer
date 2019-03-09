@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="default_extra_big_margin">50dp</dimen>
+    <dimen name="default_big_margin">25dp</dimen>
+    <dimen name="default_medium_margin">16dp</dimen>
+    <dimen name="default_small_margin">5dp</dimen>
+    <dimen name="default_extra_small_margin">2dp</dimen>
+    <dimen name="card_width">2.5dp</dimen>
+    <dimen name="card_radius">3dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="album_cover">180dp</dimen>
+    <dimen name="item_albumart_width">60dp</dimen>
+    <dimen name="item_albumart_height">60dp</dimen>
+    <dimen name="play_button_dimen">65dp</dimen>
+    <dimen name="default_button_dimen">45dp</dimen>
+    <dimen name="default_button_ripple">22.5dp</dimen>
+    <dimen name="play_small_button_dimen">50dp</dimen>
+    <dimen name="play_small_button_ripple">25dp</dimen>
+    <dimen name="default_small_button_dimen">35dp</dimen>
+    <dimen name="toolbar_cardview_height">46dp</dimen>
+    <dimen name="toolbar_cardview_child_height">38dp</dimen>
+    <dimen name="toolbar_cardview_margin">5dp</dimen>
+    <dimen name="tab_min_width">75dp</dimen>
+    <dimen name="tab_min_height">50dp</dimen>
+    <dimen name="toolbar_shadow_height">4dp</dimen>
+
+</resources>

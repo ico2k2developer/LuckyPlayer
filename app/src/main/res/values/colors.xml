@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="colorAccentDefaultLightTranslucent">#7f009688</color>
+    <color name="colorAccentDefaultDarkTranslucent">#7f80cbc4</color>
+    <color name="colorPrimaryRed">#d50000</color>
+    <color name="colorPrimaryDarkRed">#D32F2F</color>
+    <color name="colorAccentRed">#ff3232</color>
+    <color name="colorAccentRedTranslucent">#7fff3232</color>
+    <color name="colorPrimaryBlue">#03A9F4</color>
+    <color name="colorPrimaryDarkBlue">#0288D1</color>
+    <color name="colorAccentBlue">#33b5e5</color>
+    <color name="colorAccentBlueTranslucent">#7f33b5e5</color>
+    <color name="colorPrimaryOrange">#FF5722</color>
+    <color name="colorPrimaryDarkOrange">#E64A19</color>
+    <color name="colorAccentOrange">#FFC107</color>
+    <color name="colorAccentOrangeTranslucent">#7fFFC107</color>
+    <color name="colorPrimaryGreen">#8BC34A</color>
+    <color name="colorPrimaryDarkGreen">#689F38</color>
+    <color name="colorAccentGreen">#4CAF50</color>
+    <color name="colorAccentGreenTranslucent">#7f4CAF50</color>
+    <color name="grey">#888888</color>
+    <color name="greyTranslucent">#4b888888</color>
+    <color name="default_button_disabled">#c87d7d7d</color>
+    <color name="grey_shadow">#80191919</color>
+    <color name="grey_shadow_light">#807D7D7D</color>
+    <color name="panel_background">#424142</color>
+    <color name="background_grey">#303030</color>
+    <color name="card_view_background">#424242</color>
+    <color name="card_view_light_background">@android:color/white</color>
+
+</resources>

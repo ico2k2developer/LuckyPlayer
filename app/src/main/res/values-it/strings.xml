@@ -1,0 +1,110 @@
+<resources>
+
+    <string name="exit" formatted="false">Esci</string>
+    <string name="activity_info" formatted="false">Visualizza dettagli</string>
+    <string name="info_tag_category" formatted="false">Tag</string>
+    <string name="info_quality_category" formatted="false">Qualità</string>
+    <string name="info_title" formatted="false">Titolo</string>
+    <string name="info_album" formatted="false">Album</string>
+    <string name="info_albumartist" formatted="false">Artista album</string>
+    <string name="info_artist" formatted="false">Artista</string>
+    <string name="info_year" formatted="false">Anno pubblicazione</string>
+    <string name="info_bitrate" formatted="false">Bitrate</string>
+    <string name="info_nocover" formatted="false">Copertina non disponibile</string>
+    <string name="share" formatted="false">Condividi</string>
+    <string name="info_notavailable" formatted="false">Informazione non disponibile</string>
+    <string name="info_author" formatted="false">Autore</string>
+    <string name="info_cd_track" formatted="false">Numero traccia</string>
+    <string name="info_compilation" formatted="false">Parte di una compilation</string>
+    <string name="info_composer" formatted="false">Compositore</string>
+    <string name="info_date" formatted="false">Data pubblicazione</string>
+    <string name="info_disc_number" formatted="false">Disco</string>
+    <string name="info_duration" formatted="false">Durata</string>
+    <string name="info_genre" formatted="false">Genere</string>
+    <string name="info_writer" formatted="false">Scrittore</string>
+    <string name="saved" formatted="false">Salvato</string>
+    <string name="info_save_cover" formatted="false">Salva copertina in Download</string>
+    <string name="duration_format_long" formatted="false">%d2:%d1 (%d0 millisecondi)</string>
+    <string name="beta_pick" formatted="false">Scegli file</string>
+    <string name="error" formatted="false">Si è verificato un errore</string>
+    <string name="info_other_info_category" formatted="false">Altre informazioni</string>
+    <string name="info_uri" formatted="false">URI file</string>
+    <string name="copied" formatted="false">Copiato</string>
+    <string name="info_mime" formatted="false">Tipo Mime</string>
+    <string name="info_format" formatted="false">Formato file</string>
+    <string name="yes" formatted="false">Sì</string>
+    <string name="no" formatted="false">No</string>
+    <string name="settings" formatted="false">Impostazioni</string>
+    <string name="settings_theme_hint" formatted="false">Qui puoi scegliere quale tema l\'app userà. Sarà applicato al prossimo avvio dell\'app</string>
+    <string name="close" formatted="false">Chiudi</string>
+    <string name="settings_about" formatted="false">A proposito di</string>
+    <string name="app_about_share" formatted="false">Prova %s! E\' un lettore musicale ben fatto!\n%s</string>
+    <string name="app_about" formatted="false">%s è un lettore musicale ben fatto. Ha molte funzionalità che apprezzerai</string>
+    <string name="app_about_version" formatted="false">Nome versione: %s\nCodice versione: %s</string>
+    <string name="delete" formatted="false">Elimina</string>
+    <string name="continue_" formatted="false">Continua</string>
+    <string name="invalid" formatted="false">Invalido!</string>
+    <string name="settings_advanced" formatted="false">Impostazioni avanzate</string>
+    <string name="restore_formats" formatted="false">Ripristina formati standard</string>
+    <string name="settings_category_data" formatted="false">Dati</string>
+    <string name="settings_delete_all" formatted="false">Cancella tutti i dati</string>
+    <string name="actionmode_selected" formatted="false">%d1 selezionati</string>
+    <string name="settings_delete_all_sub" formatted="false">Cancella tutti i dati dell\'app</string>
+    <string name="dialog_confirm_message_default" formatted="false">Confermi?</string>
+    <string name="settings_theme" formatted="false">Tema</string>
+    <string name="info_notification_channel" formatted="false">Notifiche di servizio</string>
+    <string name="main_notification_channel" formatted="false">Notifiche più importanti</string>
+    <string name="scan_notification_title" formatted="false">Ricerca in corso&#8230;</string>
+    <string name="scan_notification_text" formatted="false">Ricerca file audio in corso</string>
+    <string name="song_show_details" formatted="false">Mostra dettagli</string>
+    <string name="settings_mediafile" formatted="false">File multimediali</string>
+    <string name="settings_mediafile_systemmedia_category" formatted="false">File multimediali di sistema</string>
+    <string name="settings_include_systemmedia" formatted="false">Includi file multimediali di sistema</string>
+    <string name="settings_include_systemmedia_sub" formatted="false">Includi file multimediali di sistema nella scansione multimediale</string>
+    <string name="refresh_songlist" formatted="false">Aggiorna lista canzoni</string>
+    <string name="songs_count" formatted="false">%d1 canzoni</string>
+    <string name="songs_sum" formatted="false">Tempo totale: %s</string>
+    <string name="saving" formatted="false">Salvataggio&#8230;\n\nGrandi immagini possono richiedere molto tempo per il salvataggio</string>
+    <string name="no_songs_found" formatted="false">Nessuna canzone disponibile!</string>
+    <string name="stop_play_service" formatted="false">Ferma</string>
+    <string name="play" formatted="false">Play</string>
+    <string name="pause" formatted="false">Pausa</string>
+    <string name="play_media" formatted="false">Riproduci</string>
+    <string name="settings_licenses" formatted="false">Licenze</string>
+    <string name="stream" formatted="false">Stream audio</string>
+    <string name="stream_url" formatted="false">URL stream</string>
+    <string name="search_song" formatted="false">Cerca una canzone</string>
+    <string name="search_song_hint" formatted="false">Scrivi il nome della canzone</string>
+    <string name="search_category" formatted="false">Canzoni</string>
+    <string name="tab_songs" formatted="false">Canzoni</string>
+    <string name="tab_albums" formatted="false">Album</string>
+    <string name="tab_artists" formatted="false">Artisti</string>
+    <string name="tab_years" formatted="false">Anni</string>
+    <string name="playlist" formatted="false">Coda riproduzione</string>
+    <string name="tools" formatted="false">Strumenti</string>
+    <string name="elements" formatted="false">Elementi</string>
+    <string name="share_songlist" formatted="false">Condividi lista di canzoni</string>
+    <string name="share_albumlist" formatted="false">Condividi lista di album</string>
+    <string name="share_artistlist" formatted="false">Condividi lista di artisti</string>
+    <string name="repeat_playlist" formatted="false">Loop</string>
+    <string name="random_playlist" formatted="false">Casuale</string>
+    <string name="repeat_single_playlist" formatted="false">Ripeti</string>
+    <string name="shuffle_on" formatted="false">Ordine casuale attivo</string>
+    <string name="shuffle_off" formatted="false">Ordine casuale disattivo</string>
+    <string name="repeat_on" formatted="false">Loop attivo</string>
+    <string name="repeat_off" formatted="false">Loop disattivo</string>
+    <string name="repeat_single_on" formatted="false">Ripetizione attiva</string>
+    <string name="repeat_single_off" formatted="false">Repeat disattiva</string>
+    <string name="song_play_background" formatted="false">Riproduci in background</string>
+    <string name="wait_end_enable" formatted="false">Ferma al termine</string>
+    <string name="wait_end_disable" formatted="false">Non fermare al termine</string>
+    <string name="missing_license" formatted="true">Licenza non trovata</string>
+    <string name="settings_category_debug" formatted="false">Debug</string>
+    <string name="settings_compatibility_mode" formatted="false">Modalità compatibilità</string>
+    <string name="settings_compatibility_mode_sub" formatted="false">Attiva questa modalità in caso di interruzioni impreviste o altri tipi di problemi</string>
+    <string name="logs">Log</string>
+    <string name="logs_clear">Svuota log</string>
+    <string name="theme_message">Il nuovo tema verrà applicato quando uscirai dalle impostazioni</string>
+    <string name="theme_apply" formatted="false">Applica</string>
+
+</resources>

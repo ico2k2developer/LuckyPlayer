@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/settings_mediafile_systemmedia_category">
+
+        <SwitchPreference
+            android:title="@string/settings_include_systemmedia"
+            android:summary="@string/settings_include_systemmedia_sub"
+            android:key="@string/systemMediaKey"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

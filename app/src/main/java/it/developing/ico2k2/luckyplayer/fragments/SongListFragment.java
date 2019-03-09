@@ -60,16 +60,16 @@ public class SongListFragment extends Fragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,ViewGroup container,Bundle savedInstance)
     {
-        list = new RecyclerView(getContext());
+        list = new RecyclerView(getActivity());
         list.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
-        container.addView(list);
+        //container.addView(list);
         return list;
     }
 
     @Override
     public void onViewCreated(@NonNull View view,@Nullable Bundle savedInstanceState)
     {
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         list.setLayoutManager(layoutManager);
         list.setHasFixedSize(false);
         list.setAdapter(adapter);

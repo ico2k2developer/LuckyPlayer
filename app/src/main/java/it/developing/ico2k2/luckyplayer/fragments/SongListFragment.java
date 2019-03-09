@@ -55,6 +55,12 @@ public class SongListFragment extends Fragment
                 Toast.makeText(getContext(),adapter.get(position).getTitle(),Toast.LENGTH_SHORT).show();
             }
         });
+        adapter.setOnSongLongClickListener(new SongsAdapter.OnSongLongClickListener(){
+            @Override
+            public boolean onSongLongClick(SongsAdapter.SongHandle songHandle,int position){
+                return false;
+            }
+        });
     }
 
     @Override

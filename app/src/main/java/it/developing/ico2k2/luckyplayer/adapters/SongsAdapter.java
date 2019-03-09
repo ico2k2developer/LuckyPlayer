@@ -36,6 +36,7 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongHandle>
     private Ordering order = Ordering.NO_ORDER;
     private boolean showIndexes = false;
     private OnSongClickListener listener;
+    private OnSongLongClickListener longListener;
 
     public SongsAdapter()
     {
@@ -52,6 +53,11 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongHandle>
     public void setOnSongClickListener(OnSongClickListener songClickListener)
     {
         listener = songClickListener;
+    }
+
+    public void setOnSongLongClickListener(OnSongLongClickListener songLongClickListener)
+    {
+        longListener = songLongClickListener;
     }
 
     public void addAll(Collection<? extends Song> collection)
@@ -163,6 +169,7 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongHandle>
     {
         Log.d("UWUWU","Writing item " + Integer.toString(position));
         holder.setOnClickListener(listener,position);
+        holder.setOnLongClickListener(longListener,position);
         Song song;
         if(order == Ordering.NO_ORDER)
             song = songs.get(position);
@@ -209,6 +216,19 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongHandle>
                 public void onClick(View v){
                     if(listener != null)
                         listener.onSongClick(SongHandle.this,position);
+                }
+            });
+        }
+
+        void setOnLongClickListener(final OnSongLongClickListener listener,final int position)
+        {
+            itemView.setOnLongClickListener(new View.OnLongClickListener(){
+                @Override
+                public boolean onLongClick(View v){
+                    boolean result = false;
+                    if(listener != null)
+                        result = listener.onSongLongClick(SongHandle.this,position);
+                    return result;
                 }
             });
         }
@@ -379,6 +399,11 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongHandle>
     public interface OnSongClickListener
     {
         void onSongClick(SongHandle songHandle,int position);
+    }
+
+    public interface OnSongLongClickListener
+    {
+        boolean onSongLongClick(SongHandle songHandle,int position);
     }
 
     public static String getSongTimeDescription(long ms)

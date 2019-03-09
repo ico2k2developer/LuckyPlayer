@@ -3,7 +3,7 @@
     <string name="app_name" formatted="false" translatable="false">Lucky Player</string>
     <string name="exit" formatted="false">Exit</string>
     <string name="info_notavailable" formatted="false">Unavailable info</string>
-    <string name="activity_info" formatted="false">View details</string>
+    <string name="song_info" formatted="false">View details</string>
     <string name="activity_info_title" formatted="false" translatable="false">%s - %s</string>
     <string name="info_tag_category" formatted="false">Tag</string>
     <string name="info_quality_category" formatted="false">Quality</string>

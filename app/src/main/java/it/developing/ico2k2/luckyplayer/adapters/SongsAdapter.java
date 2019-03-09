@@ -6,6 +6,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,8 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongHandle>
     private Ordering order = Ordering.NO_ORDER;
     private boolean showIndexes = false;
     private OnSongClickListener listener;
+    private OnSongLongClickListener longListener;
+    private OnContextMenuListener contextListener;
 
     public SongsAdapter()
     {
@@ -52,6 +55,16 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongHandle>
     public void setOnSongClickListener(OnSongClickListener songClickListener)
     {
         listener = songClickListener;
+    }
+
+    public void setOnSongLongClickListener(OnSongLongClickListener songLongClickListener)
+    {
+        longListener = songLongClickListener;
+    }
+
+    public void setOnContextMenuListener(OnContextMenuListener contextMenuListener)
+    {
+        contextListener = contextMenuListener;
     }
 
     public void addAll(Collection<? extends Song> collection)
@@ -163,6 +176,8 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongHandle>
     {
         Log.d("UWUWU","Writing item " + Integer.toString(position));
         holder.setOnClickListener(listener,position);
+        holder.setOnLongClickListener(longListener,position);
+        holder.setOnContextMenuListener(contextListener,position);
         Song song;
         if(order == Ordering.NO_ORDER)
             song = songs.get(position);
@@ -209,6 +224,30 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongHandle>
                 public void onClick(View v){
                     if(listener != null)
                         listener.onSongClick(SongHandle.this,position);
+                }
+            });
+        }
+
+        void setOnLongClickListener(final OnSongLongClickListener listener,final int position)
+        {
+            itemView.setOnLongClickListener(new View.OnLongClickListener(){
+                @Override
+                public boolean onLongClick(View v){
+                    boolean result = false;
+                    if(listener != null)
+                        result = listener.onSongLongClick(SongHandle.this,position);
+                    return result;
+                }
+            });
+        }
+
+        void setOnContextMenuListener(final OnContextMenuListener listener,final int position)
+        {
+            itemView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener(){
+                @Override
+                public void onCreateContextMenu(ContextMenu menu,View v,ContextMenu.ContextMenuInfo menuInfo){
+                    if(listener != null)
+                        listener.onContextMenu(menu,v,menuInfo,position);
                 }
             });
         }
@@ -379,6 +418,16 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongHandle>
     public interface OnSongClickListener
     {
         void onSongClick(SongHandle songHandle,int position);
+    }
+
+    public interface OnSongLongClickListener
+    {
+        boolean onSongLongClick(SongHandle songHandle,int position);
+    }
+
+    public interface OnContextMenuListener
+    {
+        void onContextMenu(ContextMenu menu,View v,ContextMenu.ContextMenuInfo menuInfo,int position);
     }
 
     public static String getSongTimeDescription(long ms)

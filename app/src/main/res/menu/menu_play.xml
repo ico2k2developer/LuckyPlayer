@@ -12,7 +12,7 @@
     <item
         android:icon="?ic_info_actionbar"
         android:id="@+id/menuInfo"
-        android:title="@string/activity_info"
+        android:title="@string/song_info"
         android:orderInCategory="75"
         app:showAsAction="never"/>
 

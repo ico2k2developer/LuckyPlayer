@@ -44,7 +44,7 @@ public class SongListFragment extends Fragment
     {
         super.onCreate(savedInstanceState);
         adapter = new SongsAdapter();
-        SongsAdapter.Song song = new SongsAdapter.Song("");
+        SongsAdapter.Song song = new SongsAdapter.Song("abcdef.mp3");
         song.setTitle("Hey Hey!");
         song.setArtist("Somebody in Caselette City");
         song.setAlbum("Flaming mountain");

@@ -5,27 +5,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    tools:context=".activities.InfoActivity">
 
-    <include
-        layout="@layout/app_bar_image"/>
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/info_appbar"
+        android:minHeight="?actionBarSize"
+        android:animateLayoutChanges="true"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <RelativeLayout
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/info_appbar_collapsingLayout"
+            android:fitsSystemWindows="true"
+            app:contentScrim="?toolbarBackgroundColor"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <it.developing.ico2k2.luckyplayer.SquareImageView
+                android:id="@+id/info_album_art"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:sizingMode="widthSized"
+                app:layout_collapseMode="parallax"
+                android:scaleType="centerCrop"/>
+
+            <androidx.appcompat.widget.Toolbar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/info_toolbar"
+                android:minHeight="?attr/actionBarSize"
+                app:layout_collapseMode="pin"/>
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <FrameLayout
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/info_framelayout"
-            android:layout_alignParentTop="true"/>
+            android:id="@+id/info_card"
+            android:layout_margin="@dimen/default_medium_margin"/>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/default_small_margin"
-            android:layout_alignParentTop="true"/>
-
-    </RelativeLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

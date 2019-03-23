@@ -4,6 +4,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextMenu;
@@ -16,11 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.RecyclerView;
 import it.developing.ico2k2.luckyplayer.R;
 
 public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongHandle>
@@ -126,7 +125,6 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongHandle>
 
     public void reorder()
     {
-        Log.d("UWUWU","Reordering items, count: " + Integer.toString(getItemCount()));
         indexes.clear();
         if(order != Ordering.NO_ORDER)
         {
@@ -163,7 +161,6 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongHandle>
     @NonNull
     public SongHandle onCreateViewHolder(@NonNull ViewGroup parent,int viewType) {
         // create a new view
-        Log.d("UWUWU","Creating handle");
         ConstraintLayout v = (ConstraintLayout)LayoutInflater.from(
                 parent.getContext()).inflate(R.layout.list_song_item,
                 parent,
@@ -174,7 +171,6 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongHandle>
     @Override
     public void onBindViewHolder(@NonNull SongHandle holder,int position)
     {
-        Log.d("UWUWU","Writing item " + Integer.toString(position));
         holder.setOnClickListener(listener,position);
         holder.setOnLongClickListener(longListener,position);
         holder.setOnContextMenuListener(contextListener,position);
@@ -198,7 +194,6 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongHandle>
 
     @Override
     public int getItemCount() {
-        Log.d("UWUWU","Item count requested: " + Integer.toString(songs.size()));
         return songs.size();
     }
 

@@ -2,7 +2,7 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory
+    <!--<PreferenceCategory
         android:title="@string/settings_category_debug">
 
         <CheckBoxPreference
@@ -12,13 +12,13 @@
             android:summary="@string/settings_compatibility_mode_sub"
             android:enabled="false"/>
 
-    </PreferenceCategory>
+    </PreferenceCategory>-->
 
     <PreferenceCategory
         android:title="@string/settings_category_data">
 
         <Preference
-            android:key="@string/deleteDataKey"
+            android:key="@string/settings_delete_all"
             android:icon="?attr/ic_delete_all"
             android:title="@string/settings_delete_all"
             android:summary="@string/settings_delete_all_sub" />

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import androidx.annotation.StyleRes;
 import it.developing.ico2k2.luckyplayer.R;
 
 public final class Utils

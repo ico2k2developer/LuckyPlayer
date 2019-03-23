@@ -7,6 +7,17 @@ import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.widget.AppCompatSpinner;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -17,25 +28,13 @@ import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.SimpleAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceFragmentCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import it.developing.ico2k2.luckyplayer.DataManager;
 import it.developing.ico2k2.luckyplayer.LuckyPlayer;
 import it.developing.ico2k2.luckyplayer.R;
@@ -43,6 +42,7 @@ import it.developing.ico2k2.luckyplayer.activities.base.BaseActivity;
 import it.developing.ico2k2.luckyplayer.dialogs.ConfirmDialog;
 import it.developing.ico2k2.luckyplayer.dialogs.DefaultDialog;
 
+import static it.developing.ico2k2.luckyplayer.Keys.KEY_THEME;
 import static it.developing.ico2k2.luckyplayer.lib.Utils.adapterMapsFromAdapterList;
 import static it.developing.ico2k2.luckyplayer.lib.Utils.getThemeFromName;
 
@@ -127,23 +127,21 @@ public class SettingsActivity extends BaseActivity
                     index = extras.getInt(ARGUMENT_INDEX);
                 }
             }
+            Log.d("UWUWU","Settings: " + Integer.toString(index));
             View v = list.getChildAt(index);
             if(v == null)
             {
-                Log.d("UWUWU","View is null");
                 final int i = index;
                 list.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
                     @Override
                     public void onGlobalLayout(){
                         list.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                        Log.d("UWUWU","Index: " + Integer.toString(i));
                         list.getChildAt(i).performClick();
                     }
                 });
             }
             else
             {
-                Log.d("UWUWU","View isn\'t null");
                 v.performClick();
             }
         }
@@ -163,7 +161,6 @@ public class SettingsActivity extends BaseActivity
             intent.putExtra(ARGUMENT_PREFERENCE,headerTitle);
             intent.putExtra(ARGUMENT_INDEX,position);
             startActivity(intent);
-            finish();
         }
     }
 
@@ -192,7 +189,6 @@ public class SettingsActivity extends BaseActivity
                 fragment = SettingsFragment.instantiate(activity,SettingsFragment.class.getName(),bundle);
             }
         }
-        Log.d("UWUWU","Is frame null? " + Boolean.toString(activity.findViewById(R.id.settings_frame) == null));
         FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.settings_frame,fragment);
         transaction.commit();
@@ -406,14 +402,6 @@ public class SettingsActivity extends BaseActivity
         }
 
         @Override
-        public void onBackPressed()
-        {
-            Intent intent = new Intent(this,SettingsActivity.class);
-            startActivity(intent);
-            finish();
-        }
-
-        @Override
         public void onStart() {
             super.onStart();
             if(onIsMultiPane(getResources().getConfiguration()))
@@ -492,39 +480,34 @@ public class SettingsActivity extends BaseActivity
                 case R.string.settings_theme:
                 {
                     final DataManager dataManager = ((LuckyPlayer)getActivity().getApplication()).getDataManager();
-                    Spinner themeSpinner = view.findViewById(R.id.theme_spinner);
+                    final AppCompatSpinner themeSpinner = view.findViewById(R.id.theme_spinner);
                     final ArrayList<String> items = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.themes)));
-                    final Map<String,Integer> themes = new HashMap<>(items.size());
-                    int selection = 0,a;
+                    final ArrayList<Integer> themes = new ArrayList<>(items.size());
+                    int a;
                     for(a = 0; a < items.size(); a++)
                     {
                         String item = items.get(a);
                         try
                         {
-                            themes.put(item,getThemeFromName(item));
-                            if(themes.get(item) == dataManager.getInt(getString(R.string.themeKey)))
-                                selection = items.indexOf(item);
+                            themes.add(a,getThemeFromName(item));
                         }
                         catch(Exception e)
                         {
-                            themes.put(item,-1);
+                            //themes.add(a,-1);
                             items.remove(item);
                         }
                     }
                     SimpleAdapter adapter = new SimpleAdapter(getActivity(),adapterMapsFromAdapterList(items,LIST_TITLE),android.R.layout.simple_list_item_1,new String[]{LIST_TITLE},new int[]{android.R.id.text1});
                     themeSpinner.setAdapter(adapter);
-                    themeSpinner.setSelection(selection);
+                    themeSpinner.setSelection(themes.indexOf(dataManager.getInt(KEY_THEME)));
                     themeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-                        boolean first = true;
                         @Override
                         public void onItemSelected(AdapterView<?> parent,View v,int position,long id){
-                            if(first)
-                                first = false;
+                            int currentTheme = dataManager.getInt(KEY_THEME);
+                            if(currentTheme == themes.get(position))
+                                view.findViewById(R.id.theme_apply).setVisibility(View.GONE);
                             else
-                            {
-                                dataManager.putInt(getString(R.string.themeKey),themes.get(items.get(position)));
                                 view.findViewById(R.id.theme_apply).setVisibility(View.VISIBLE);
-                            }
 
                         }
 
@@ -537,7 +520,8 @@ public class SettingsActivity extends BaseActivity
                     view.findViewById(R.id.theme_apply).setOnClickListener(new View.OnClickListener(){
                         @Override
                         public void onClick(View v){
-                            Intent intent = new Intent(getActivity(),SettingsActivity.class);
+                            dataManager.putInt(KEY_THEME,themes.get(themeSpinner.getSelectedItemPosition()));
+                            Intent intent = new Intent(getActivity(),getActivity().getClass());
                             intent.putExtra(ARGUMENT_PREFERENCE,preference);
                             intent.putExtra(ARGUMENT_INDEX,preferenceIndex);
                             startActivity(intent);
@@ -640,7 +624,7 @@ public class SettingsActivity extends BaseActivity
             {
                 case R.string.settings_advanced:
                 {
-                    Preference deleteData = getPreferenceScreen().findPreference(getString(R.string.deleteDataKey));
+                    Preference deleteData = getPreferenceScreen().findPreference(getString(R.string.settings_delete_all));
                     deleteData.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
                     {
                         @Override
@@ -653,7 +637,7 @@ public class SettingsActivity extends BaseActivity
                             dialog.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    ((SettingsActivity)getActivity()).getDataManager().clearAll();
+                                    ((LuckyPlayer)getActivity().getApplication()).getDataManager().clearAll();
                                     getActivity().onBackPressed();
                                 }
                             });

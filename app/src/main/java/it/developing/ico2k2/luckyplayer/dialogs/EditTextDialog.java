@@ -1,10 +1,10 @@
 package it.developing.ico2k2.luckyplayer.dialogs;
 
 import android.content.Context;
+import android.support.v7.widget.AppCompatEditText;
 import android.text.Editable;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import androidx.appcompat.widget.AppCompatEditText;
 
 import static android.text.InputType.*;
 

@@ -4,6 +4,9 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.StyleRes;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MenuItem;
@@ -13,13 +16,13 @@ import android.view.WindowManager;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
-import androidx.annotation.CallSuper;
-import androidx.annotation.StyleRes;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import it.developing.ico2k2.luckyplayer.DataManager;
 import it.developing.ico2k2.luckyplayer.LuckyPlayer;
 import it.developing.ico2k2.luckyplayer.R;
+import it.developing.ico2k2.luckyplayer.activities.MainActivity;
+
+import static it.developing.ico2k2.luckyplayer.Keys.KEY_INITIALIZED;
+import static it.developing.ico2k2.luckyplayer.Keys.KEY_THEME;
 
 public abstract class BaseActivity extends AppCompatActivity
 {
@@ -30,7 +33,7 @@ public abstract class BaseActivity extends AppCompatActivity
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-        currentTheme = setTheme(getDataManager().getInt(getString(R.string.themeKey)),THEME_DEFAULT);
+        currentTheme = setTheme(getDataManager().getInt(KEY_THEME),THEME_DEFAULT);
         super.onCreate(savedInstanceState);
         setKitKatStatusBarColor(getColorPrimaryDark());
         Log.d("UWUWU",getClass().getName() + ": created");
@@ -41,16 +44,24 @@ public abstract class BaseActivity extends AppCompatActivity
     {
         super.onResume();
         Log.d("UWUWU",getClass().getName() + ": resumed");
-        int theme = getDataManager().getInt(getString(R.string.themeKey));
-        if(theme != currentTheme)
+        if(getDataManager().getBoolean(KEY_INITIALIZED,false))
         {
-            if(onThemeChanged(currentTheme,theme))
+            int theme = getDataManager().getInt(KEY_THEME);
+            if(getDataManager().getBoolean(KEY_INITIALIZED,false) && theme != currentTheme)
             {
-                Log.d("UWUWU","Restarting " + getClass().getName()+ " because of theme change");
-                startActivity(new Intent(this,getClass()));
-                finish();
-            }
+                if(onThemeChanged(currentTheme,theme))
+                {
+                    Log.d("UWUWU","Restarting " + getClass().getName()+ " because of theme change");
+                    startActivity(getIntent());
+                    finish();
+                }
 
+            }
+        }
+        else
+        {
+            startActivity(new Intent(this,MainActivity.class));
+            finish();
         }
 
     }

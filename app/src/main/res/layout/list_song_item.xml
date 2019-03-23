@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -10,7 +10,7 @@
     android:clickable="true"
     android:background="?selectableItemBackground">
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <android.support.v7.widget.AppCompatTextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/itemN"
@@ -25,7 +25,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <android.support.v7.widget.AppCompatTextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/itemTitle"
@@ -39,7 +39,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/itemDescription"/>
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <android.support.v7.widget.AppCompatTextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/itemDescription"
@@ -51,7 +51,7 @@
         app:layout_constraintEnd_toStartOf="@id/itemDescription2"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <android.support.v7.widget.AppCompatTextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/itemDescription2"
@@ -65,7 +65,7 @@
         app:layout_constraintEnd_toStartOf="@id/itemIcon"
         app:layout_constraintTop_toBottomOf="@id/itemTitle"/>
 
-    <ImageView
+    <android.support.v7.widget.AppCompatImageView
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:id="@+id/itemIcon"
@@ -78,4 +78,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         tools:ignore="ContentDescription"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</android.support.constraint.ConstraintLayout>

@@ -10,4 +10,6 @@ public final class Keys
     public static final String KEY_SYSTEM_MEDIA = "system media";
     public static final String KEY_THEME = "theme";
     public static final String KEY_NOTIFICATION_TINT = "notification tint";
+
+    public static final String EXTRA_URI = "intent uri";
 }

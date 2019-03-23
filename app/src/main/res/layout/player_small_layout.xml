@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
+<android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -7,7 +7,7 @@
     android:id="@+id/player_card_view"
     app:cardPreventCornerOverlap="false">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/player_layout"
@@ -16,7 +16,7 @@
         android:layout_marginEnd="@dimen/default_small_margin"
         android:layout_marginRight="@dimen/default_small_margin">
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <android.support.v7.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/player_time"
@@ -24,7 +24,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/player_title"/>
 
-        <androidx.appcompat.widget.AppCompatSeekBar
+        <android.support.v7.widget.AppCompatSeekBar
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/player_bar"
@@ -32,7 +32,7 @@
             app:layout_constraintStart_toEndOf="@id/player_time"
             app:layout_constraintEnd_toStartOf="@id/player_time_end"/>
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/player_time_end"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/player_next"/>
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <android.support.v7.widget.AppCompatTextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/player_title"
@@ -55,7 +55,7 @@
             app:layout_constraintTop_toBottomOf="@id/player_bar"
             app:layout_constraintEnd_toStartOf="@id/player_previous"/>
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <android.support.v7.widget.AppCompatTextView
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:id="@+id/player_subtitle"
@@ -70,7 +70,7 @@
             app:layout_constraintEnd_toStartOf="@id/player_previous"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <androidx.appcompat.widget.AppCompatImageButton
+        <android.support.v7.widget.AppCompatImageButton
             android:layout_width="@dimen/default_button_dimen"
             android:layout_height="@dimen/default_button_dimen"
             android:id="@+id/player_previous"
@@ -79,7 +79,7 @@
             app:layout_constraintEnd_toStartOf="@id/player_play"
             app:layout_constraintTop_toBottomOf="@id/player_bar"/>
 
-        <androidx.appcompat.widget.AppCompatImageButton
+        <android.support.v7.widget.AppCompatImageButton
             android:layout_width="@dimen/default_button_dimen"
             android:layout_height="@dimen/default_button_dimen"
             android:id="@+id/player_play"
@@ -88,7 +88,7 @@
             app:layout_constraintEnd_toStartOf="@id/player_next"
             app:layout_constraintTop_toBottomOf="@id/player_bar"/>
 
-        <androidx.appcompat.widget.AppCompatImageButton
+        <android.support.v7.widget.AppCompatImageButton
             android:layout_width="@dimen/default_button_dimen"
             android:layout_height="@dimen/default_button_dimen"
             android:id="@+id/player_next"
@@ -97,6 +97,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/player_bar"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </android.support.constraint.ConstraintLayout>
 
-</androidx.cardview.widget.CardView>
+</android.support.v7.widget.CardView>

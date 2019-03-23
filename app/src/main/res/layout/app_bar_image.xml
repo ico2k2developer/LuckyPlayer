@@ -10,7 +10,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/toolbar_collapsingLayout"
+        android:id="@+id/info_appbar_collapsingLayout"
         android:fitsSystemWindows="true"
         app:contentScrim="?toolbarBackgroundColor"
         app:expandedTitleMarginBottom="32dp"
@@ -26,7 +26,7 @@
             android:scaleType="centerCrop">
 
             <it.developing.ico2k2.luckyplayer.SquareImageView
-                android:id="@+id/toolbar_image"
+                android:id="@+id/info_album_art"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:sizingMode="widthSized"/>
@@ -37,8 +37,8 @@
 
         </RelativeLayout>
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/main_toolbar"
+        <Toola
+            android:id="@+id/info_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="?attr/actionBarSize"

@@ -12,4 +12,6 @@ public final class Keys
     public static final String KEY_NOTIFICATION_TINT = "notification tint";
 
     public static final String EXTRA_URI = "intent uri";
+
+    public static final String FILE_PROVIDER_AUTHORITY = "it.developing.ico2k2.luckyplayer.fileprovider";
 }

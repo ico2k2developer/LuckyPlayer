@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Dark" parent="Theme.Standard.Dark"/>
+    <style name="Theme.Dark" parent="Theme.Standard.Dark">
+        <item name="navigationBarDefaultColor">@color/dark_grey</item>
+        <item name="navigationBarPlayingColor">@color/medium_grey</item>
+        <item name="navigationBarColored">true</item>
+    </style>
 
-    <style name="Theme.Light" parent="Theme.Standard.Light"/>
+    <style name="Theme.Light" parent="Theme.Standard.Light">
+        <item name="navigationBarColored">false</item>
+    </style>
 
-    <style name="Theme.Light.DarkActionBar" parent="Theme.Standard.Light.DarkActionBar"/>
+    <style name="Theme.Light.DarkActionBar" parent="Theme.Standard.Light.DarkActionBar">
+        <item name="navigationBarColored">false</item>
+    </style>
 
     <style name="Theme.Dark.Red" parent="Theme.Standard.Dark.Red"/>
 

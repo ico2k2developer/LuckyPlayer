@@ -1,16 +1,21 @@
 package it.developing.ico2k2.luckyplayer.activities.base;
 
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.app.FragmentTransaction;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import com.google.android.material.appbar.AppBarLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.fragment.app.FragmentTransaction;
+
+import android.os.Build;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+
+import java.sql.BatchUpdateException;
+
 import it.developing.ico2k2.luckyplayer.fragments.SmallPlayerFragment;
 
 import static it.developing.ico2k2.luckyplayer.Keys.KEY_LOGS;
@@ -70,6 +75,11 @@ public abstract class BasePlayingActivity extends BaseActivity
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.add(ID_FRAME_LAYOUT,fragment);
         transaction.commit();
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH)
+        {
+            if(getNavigationBarColored())
+                getWindow().setNavigationBarColor(getNavigationBarPlayingColor());
+        }
     }
 
     protected void removePlayer()

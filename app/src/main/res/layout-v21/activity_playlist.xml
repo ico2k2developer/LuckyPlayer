@@ -24,7 +24,7 @@
             android:layout_weight="1"
             android:id="@+id/list_fragment"
             class="it.developing.ico2k2.luckyplayer.SongListFragment"
-            tools:layout="@layout/songlist_layout"/>
+            tools:layout="@layout/fragment_songlist"/>
 
         <fragment
             android:layout_width="match_parent"

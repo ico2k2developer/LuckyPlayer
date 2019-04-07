@@ -25,8 +25,9 @@
     <color name="grey_shadow">#80191919</color>
     <color name="grey_shadow_light">#807D7D7D</color>
     <color name="panel_background">#424142</color>
-    <color name="background_grey">#303030</color>
-    <color name="card_view_background">#424242</color>
-    <color name="card_view_light_background">@android:color/white</color>
+    <color name="dark_grey">#303030</color>
+    <color name="medium_grey">#424242</color>
+    <color name="light_white">@android:color/white</color>
+    <color name="medium_white">#fafafa</color>
 
 </resources>

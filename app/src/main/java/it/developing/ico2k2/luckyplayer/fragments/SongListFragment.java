@@ -3,11 +3,11 @@ package it.developing.ico2k2.luckyplayer.fragments;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,6 +19,7 @@ import android.widget.Toast;
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.InfoActivity;
 import it.developing.ico2k2.luckyplayer.adapters.SongsAdapter;
+import it.developing.ico2k2.luckyplayer.adapters.lib.ViewHandle;
 
 public class SongListFragment extends Fragment
 {
@@ -58,13 +59,13 @@ public class SongListFragment extends Fragment
         adapter.setOrder(SongsAdapter.Ordering.ALPHABETICAL);
         adapter.setShowIndexes(true);
         adapter.reorder();
-        adapter.setOnSongClickListener(new SongsAdapter.OnSongClickListener(){
+        adapter.setOnItemClickListener(new ViewHandle.OnItemClickListener(){
             @Override
-            public void onSongClick(SongsAdapter.SongHandle songHandle,int position){
+            public void onItemClick(ViewHandle handle,int position){
                 Toast.makeText(getContext(),adapter.get(position).getTitle(),Toast.LENGTH_SHORT).show();
             }
         });
-        adapter.setOnContextMenuListener(new SongsAdapter.OnContextMenuListener(){
+        adapter.setOnItemContextMenuListener(new ViewHandle.OnItemContextMenuListener(){
             @Override
             public void onContextMenu(ContextMenu menu,View v,ContextMenu.ContextMenuInfo menuInfo,int position){
                 menu.setHeaderTitle(adapter.get(position).getTitle());

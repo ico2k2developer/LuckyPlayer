@@ -4,9 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 
 public class AlbumArtLoadTask extends AsyncTask<AlbumArtLoadTask.AlbumArtLoadConfig,Void,Bitmap>
 {
@@ -48,7 +47,6 @@ public class AlbumArtLoadTask extends AsyncTask<AlbumArtLoadTask.AlbumArtLoadCon
             {
                 retriever.setDataSource(config.uri);
                 byte[] bytes = retriever.getEmbeddedPicture();
-                retriever.release();
                 if(bytes != null)
                 {
                     bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
@@ -62,7 +60,6 @@ public class AlbumArtLoadTask extends AsyncTask<AlbumArtLoadTask.AlbumArtLoadCon
         catch(Exception e)
         {
             e.printStackTrace();
-            retriever.release();
         }
         retriever.release();
         return bitmap;

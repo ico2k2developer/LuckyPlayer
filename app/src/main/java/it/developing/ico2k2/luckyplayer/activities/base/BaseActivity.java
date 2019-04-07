@@ -1,18 +1,28 @@
 package it.developing.ico2k2.luckyplayer.activities.base;
 
+import android.Manifest;
 import android.annotation.TargetApi;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.StyleRes;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.annotation.StyleRes;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
@@ -36,6 +46,11 @@ public abstract class BaseActivity extends AppCompatActivity
         currentTheme = setTheme(getDataManager().getInt(KEY_THEME),THEME_DEFAULT);
         super.onCreate(savedInstanceState);
         setKitKatStatusBarColor(getColorPrimaryDark());
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH)
+        {
+            if(getNavigationBarColored())
+                getWindow().setNavigationBarColor(getNavigationBarDefaultColor());
+        }
         Log.d("UWUWU",getClass().getName() + ": created");
     }
 
@@ -47,7 +62,7 @@ public abstract class BaseActivity extends AppCompatActivity
         if(getDataManager().getBoolean(KEY_INITIALIZED,false))
         {
             int theme = getDataManager().getInt(KEY_THEME);
-            if(getDataManager().getBoolean(KEY_INITIALIZED,false) && theme != currentTheme)
+            if(theme != currentTheme)
             {
                 if(onThemeChanged(currentTheme,theme))
                 {
@@ -57,11 +72,20 @@ public abstract class BaseActivity extends AppCompatActivity
                 }
 
             }
+            else
+            {
+                if(ActivityCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE) !=  PackageManager.PERMISSION_GRANTED)
+                    ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},0);
+            }
+
         }
         else
         {
-            startActivity(new Intent(this,MainActivity.class));
-            finish();
+            if(onNoDataFound())
+            {
+                startActivity(new Intent(this,MainActivity.class));
+                finish();
+            }
         }
 
     }
@@ -69,6 +93,12 @@ public abstract class BaseActivity extends AppCompatActivity
     public boolean onThemeChanged(@StyleRes int oldTheme,@StyleRes int newTheme)
     {
         Log.d("UWUWU",getClass().getName() + ": theme has changed! " + Integer.toString(oldTheme) + " to " + Integer.toString(newTheme));
+        return true;
+    }
+
+    public boolean onNoDataFound()
+    {
+        Log.d("UWUWU",getClass().getName() + ": no data found!");
         return true;
     }
 
@@ -112,6 +142,19 @@ public abstract class BaseActivity extends AppCompatActivity
         return theme;
     }
 
+    public void setClipboard(String label,String text,boolean showToast)
+    {
+        ClipboardManager manager = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+        manager.setPrimaryClip(ClipData.newPlainText(label,text));
+        if(showToast)
+            Toast.makeText(this,R.string.copied,Toast.LENGTH_SHORT).show();
+    }
+
+    public void setClipboard(String label,String text)
+    {
+        setClipboard(label,text,false);
+    }
+
     protected int getColorAccent()
     {
         TypedValue value = new TypedValue();
@@ -131,6 +174,31 @@ public abstract class BaseActivity extends AppCompatActivity
         TypedValue value = new TypedValue();
         getTheme().resolveAttribute(R.attr.colorPrimaryDark,value,true);
         return ContextCompat.getColor(this,value.resourceId);
+    }
+
+    @RequiresApi(21)
+    protected int getNavigationBarDefaultColor()
+    {
+        TypedValue value = new TypedValue();
+        getTheme().resolveAttribute(R.attr.navigationBarDefaultColor,value,true);
+        return ContextCompat.getColor(this,value.resourceId);
+    }
+
+    @RequiresApi(21)
+    protected int getNavigationBarPlayingColor()
+    {
+        TypedValue value = new TypedValue();
+        getTheme().resolveAttribute(R.attr.navigationBarPlayingColor,value,true);
+        return ContextCompat.getColor(this,value.resourceId);
+    }
+
+    @RequiresApi(21)
+    protected boolean getNavigationBarColored()
+    {
+        boolean result;
+        TypedArray a = getTheme().obtainStyledAttributes(new int[] {R.attr.navigationBarColored});
+        result = a.getBoolean(0,false);
+        return result;
     }
 
     @TargetApi(19)
@@ -154,8 +222,6 @@ public abstract class BaseActivity extends AppCompatActivity
             tintManager.setTintColor(color);
         }
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item)

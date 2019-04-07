@@ -2,7 +2,9 @@ package it.developing.ico2k2.luckyplayer.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+
+import androidx.annotation.StyleRes;
+import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import it.developing.ico2k2.luckyplayer.DataManager;
 import it.developing.ico2k2.luckyplayer.R;
@@ -47,9 +49,16 @@ public class InitializeActivity extends BaseActivity
         if(!dataManager.getBoolean(KEY_DATA_INITIALIZED,false))
         {
             dataManager.putBoolean(KEY_SYSTEM_MEDIA,false);
-            dataManager.putInt(KEY_THEME,R.style.Theme_Default);
+            dataManager.putInt(KEY_THEME,THEME_DEFAULT);
             dataManager.putInt(KEY_NOTIFICATION_TINT,getColorPrimary());
             dataManager.putBoolean(KEY_DATA_INITIALIZED,true);
         }
+    }
+
+    @Override
+    public boolean onNoDataFound()
+    {
+        super.onNoDataFound();
+        return false;
     }
 }

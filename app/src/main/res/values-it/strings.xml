@@ -30,6 +30,7 @@
     <string name="info_other_info_category" formatted="false">Altre informazioni</string>
     <string name="info_uri" formatted="false">URI file</string>
     <string name="copied" formatted="false">Copiato</string>
+    <string name="copy" formatted="false">Copia</string>
     <string name="info_mime" formatted="false">Tipo Mime</string>
     <string name="info_format" formatted="false">Formato file</string>
     <string name="yes" formatted="false">Sì</string>

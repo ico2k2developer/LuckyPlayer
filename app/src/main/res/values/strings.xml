@@ -38,6 +38,7 @@
     <string name="info_mime" formatted="false">Mime type</string>
     <string name="info_format" formatted="false">File format</string>
     <string name="copied" formatted="false">Copied</string>
+    <string name="copy" formatted="false">Copy</string>
     <string name="yes" formatted="false">Yes</string>
     <string name="no" formatted="false">No</string>
     <string name="settings" formatted="false">Settings</string>

@@ -1,15 +1,12 @@
 package it.developing.ico2k2.luckyplayer.adapters;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.AppCompatTextView;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.util.TypedValue;
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.appcompat.widget.AppCompatTextView;
+
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,8 +18,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import it.developing.ico2k2.luckyplayer.R;
+import it.developing.ico2k2.luckyplayer.adapters.base.BaseAdapter;
+import it.developing.ico2k2.luckyplayer.adapters.lib.ViewHandle;
 
-public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongHandle>
+public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
 {
     public static final String DESCRIPTION_FORMAT = "%s1, %s2";
 
@@ -35,9 +34,6 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongHandle>
     private ArrayList<Integer> indexes;
     private Ordering order = Ordering.NO_ORDER;
     private boolean showIndexes = false;
-    private OnSongClickListener listener;
-    private OnSongLongClickListener longListener;
-    private OnContextMenuListener contextListener;
 
     public SongsAdapter()
     {
@@ -49,21 +45,6 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongHandle>
     {
         songs = new ArrayList<>(size);
         indexes = new ArrayList<>(size);
-    }
-
-    public void setOnSongClickListener(OnSongClickListener songClickListener)
-    {
-        listener = songClickListener;
-    }
-
-    public void setOnSongLongClickListener(OnSongLongClickListener songLongClickListener)
-    {
-        longListener = songLongClickListener;
-    }
-
-    public void setOnContextMenuListener(OnContextMenuListener contextMenuListener)
-    {
-        contextListener = contextMenuListener;
     }
 
     public void addAll(Collection<? extends Song> collection)
@@ -162,7 +143,7 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongHandle>
     public SongHandle onCreateViewHolder(@NonNull ViewGroup parent,int viewType) {
         // create a new view
         ConstraintLayout v = (ConstraintLayout)LayoutInflater.from(
-                parent.getContext()).inflate(R.layout.list_song_item,
+                parent.getContext()).inflate(R.layout.list_item_song,
                 parent,
                 false);
         return new SongHandle(v);
@@ -171,9 +152,7 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongHandle>
     @Override
     public void onBindViewHolder(@NonNull SongHandle holder,int position)
     {
-        holder.setOnClickListener(listener,position);
-        holder.setOnLongClickListener(longListener,position);
-        holder.setOnContextMenuListener(contextListener,position);
+        super.onBindViewHolder(holder,position);
         Song song;
         if(order == Ordering.NO_ORDER)
             song = songs.get(position);
@@ -197,7 +176,7 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongHandle>
         return songs.size();
     }
 
-    public static class SongHandle extends RecyclerView.ViewHolder {
+    public static class SongHandle extends ViewHandle{
         // each data item is just a string in this case
         AppCompatTextView title,description,time,index;
         ImageView cover;
@@ -210,41 +189,6 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.SongHandle>
             time = layout.findViewById(R.id.itemDescription2);
             index = layout.findViewById(R.id.itemN);
             cover = layout.findViewById(R.id.itemIcon);
-        }
-
-        void setOnClickListener(final OnSongClickListener listener,final int position)
-        {
-            itemView.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View v){
-                    if(listener != null)
-                        listener.onSongClick(SongHandle.this,position);
-                }
-            });
-        }
-
-        void setOnLongClickListener(final OnSongLongClickListener listener,final int position)
-        {
-            itemView.setOnLongClickListener(new View.OnLongClickListener(){
-                @Override
-                public boolean onLongClick(View v){
-                    boolean result = false;
-                    if(listener != null)
-                        result = listener.onSongLongClick(SongHandle.this,position);
-                    return result;
-                }
-            });
-        }
-
-        void setOnContextMenuListener(final OnContextMenuListener listener,final int position)
-        {
-            itemView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener(){
-                @Override
-                public void onCreateContextMenu(ContextMenu menu,View v,ContextMenu.ContextMenuInfo menuInfo){
-                    if(listener != null)
-                        listener.onContextMenu(menu,v,menuInfo,position);
-                }
-            });
         }
     }
 

@@ -2,6 +2,7 @@
 <paths
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <cache-path name="export_list" path="lists/"/>
+    <cache-path
+        name="export_list" path="lists/"/>
 
 </paths>

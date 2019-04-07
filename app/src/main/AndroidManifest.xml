@@ -16,7 +16,18 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Default">
+        android:theme="@style/Theme.Dark.Red">
+
+        <!--<provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="it.developing.ico2k2.luckyplayer.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/files" />
+        </provider>-->
 
         <activity
             android:name=".activities.MainActivity"

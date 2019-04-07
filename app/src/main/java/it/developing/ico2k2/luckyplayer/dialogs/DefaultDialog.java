@@ -3,10 +3,10 @@ package it.developing.ico2k2.luckyplayer.dialogs;
 import android.os.Build;
 
 import android.content.Context;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.RequiresApi;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.preference.Preference;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
+import androidx.preference.Preference;
 import android.view.MenuItem;
 
 /**

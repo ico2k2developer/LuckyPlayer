@@ -4,9 +4,9 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import it.developing.ico2k2.luckyplayer.R;
 
-import android.support.annotation.LayoutRes;
-import android.support.annotation.StringRes;
-import android.support.annotation.StyleRes;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.StringRes;
+import androidx.annotation.StyleRes;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;

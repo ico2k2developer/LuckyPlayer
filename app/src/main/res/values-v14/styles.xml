@@ -13,7 +13,7 @@
         <item name="subtitleTextColor">?titleTextColor</item>
         <item name="toolbarBackgroundColor">?colorPrimary</item>
         <item name="playButton">@drawable/player_button_dark</item>
-        <item name="cardViewBackgroundColor">@color/card_view_background</item>
+        <item name="cardViewBackgroundColor">@color/medium_grey</item>
         <item name="toolbarShadow">@drawable/shadow_default</item>
         <item name="toolbarShadowLateral">@drawable/shadow_lateral</item>
 
@@ -28,6 +28,7 @@
         <item name="ic_equalizer">@drawable/ic_equalizer_material_dark</item>
         <item name="ic_error">@drawable/ic_error_material_dark</item>
         <item name="ic_exit">@drawable/ic_exit_material_dark</item>
+        <item name="ic_expand">@drawable/ic_expand_material_dark</item>
         <item name="ic_file">@drawable/ic_file_material_dark</item>
         <item name="ic_folder">@drawable/ic_folder_material_dark</item>
         <item name="ic_forward">@drawable/ic_forward_material_dark</item>
@@ -70,6 +71,7 @@
         <item name="ic_equalizer_actionbar">@drawable/ic_equalizer_material_dark</item>
         <item name="ic_error_actionbar">@drawable/ic_error_material_dark</item>
         <item name="ic_exit_actionbar">@drawable/ic_exit_material_dark</item>
+        <item name="ic_expand_actionbar">@drawable/ic_expand_material_dark</item>
         <item name="ic_file_actionbar">@drawable/ic_file_material_dark</item>
         <item name="ic_folder_actionbar">@drawable/ic_folder_material_dark</item>
         <item name="ic_forward_actionbar">@drawable/ic_forward_material_dark</item>
@@ -115,7 +117,7 @@
         <item name="subtitleTextColor">?titleTextColor</item>
         <item name="toolbarBackgroundColor">?colorPrimary</item>
         <item name="playButton">@drawable/player_button_light</item>
-        <item name="cardViewBackgroundColor">@color/card_view_light_background</item>
+        <item name="cardViewBackgroundColor">@color/light_white</item>
         <item name="toolbarShadow">@drawable/shadow_default_light</item>
         <item name="toolbarShadowLateral">@drawable/shadow_lateral_light</item>
 
@@ -130,6 +132,7 @@
         <item name="ic_equalizer">@drawable/ic_equalizer_material_light</item>
         <item name="ic_error">@drawable/ic_error_material_light</item>
         <item name="ic_exit">@drawable/ic_exit_material_light</item>
+        <item name="ic_expand">@drawable/ic_expand_material_light</item>
         <item name="ic_file">@drawable/ic_file_material_light</item>
         <item name="ic_folder">@drawable/ic_folder_material_light</item>
         <item name="ic_forward">@drawable/ic_forward_material_light</item>
@@ -172,6 +175,7 @@
         <item name="ic_equalizer_actionbar">@drawable/ic_equalizer_material_light</item>
         <item name="ic_error_actionbar">@drawable/ic_error_material_light</item>
         <item name="ic_exit_actionbar">@drawable/ic_exit_material_light</item>
+        <item name="ic_expand_actionbar">@drawable/ic_expand_material_light</item>
         <item name="ic_file_actionbar">@drawable/ic_file_material_light</item>
         <item name="ic_folder_actionbar">@drawable/ic_folder_material_light</item>
         <item name="ic_forward_actionbar">@drawable/ic_forward_material_light</item>
@@ -217,7 +221,7 @@
         <item name="subtitleTextColor">?titleTextColor</item>
         <item name="toolbarBackgroundColor">?colorPrimary</item>
         <item name="playButton">@drawable/player_button_light</item>
-        <item name="cardViewBackgroundColor">@color/card_view_light_background</item>
+        <item name="cardViewBackgroundColor">@color/light_white</item>
         <item name="toolbarShadow">@drawable/shadow_default</item>
         <item name="toolbarShadowLateral">@drawable/shadow_lateral</item>
 
@@ -232,6 +236,7 @@
         <item name="ic_equalizer">@drawable/ic_equalizer_material_light</item>
         <item name="ic_error">@drawable/ic_error_material_light</item>
         <item name="ic_exit">@drawable/ic_exit_material_light</item>
+        <item name="ic_expand">@drawable/ic_expand_material_light</item>
         <item name="ic_file">@drawable/ic_file_material_light</item>
         <item name="ic_folder">@drawable/ic_folder_material_light</item>
         <item name="ic_forward">@drawable/ic_forward_material_light</item>
@@ -273,6 +278,7 @@
         <item name="ic_equalizer_actionbar">@drawable/ic_equalizer_material_dark</item>
         <item name="ic_error_actionbar">@drawable/ic_error_material_dark</item>
         <item name="ic_exit_actionbar">@drawable/ic_exit_material_dark</item>
+        <item name="ic_expand_actionbar">@drawable/ic_expand_material_dark</item>
         <item name="ic_file_actionbar">@drawable/ic_file_material_dark</item>
         <item name="ic_folder_actionbar">@drawable/ic_folder_material_dark</item>
         <item name="ic_forward_actionbar">@drawable/ic_forward_material_dark</item>
@@ -305,14 +311,14 @@
 
     </style>
 
-    <style name="Theme.Standard.Dark.Red" parent="Theme.Standard.Dark">
+    <style name="Theme.Standard.Dark.Red" parent="Theme.Dark">
         <item name="colorAccent">@color/colorAccentRed</item>
         <item name="colorPrimary">@color/colorPrimaryRed</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkRed</item>
         <item name="playButton">@drawable/player_button_red</item>
     </style>
 
-    <style name="Theme.Standard.Light.Red" parent="Theme.Standard.Light">
+    <style name="Theme.Standard.Light.Red" parent="Theme.Light">
         <item name="colorAccent">@color/colorAccentRed</item>
         <item name="colorPrimary">@color/colorPrimaryRed</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkRed</item>
@@ -322,21 +328,21 @@
         <item name="toolbarBackgroundColor">@android:color/white</item>
     </style>
 
-    <style name="Theme.Standard.Light.DarkActionBar.Red" parent="Theme.Standard.Light.DarkActionBar">
+    <style name="Theme.Standard.Light.DarkActionBar.Red" parent="Theme.Light.DarkActionBar">
         <item name="colorAccent">@color/colorAccentRed</item>
         <item name="colorPrimary">@color/colorPrimaryRed</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkRed</item>
         <item name="playButton">@drawable/player_button_red</item>
     </style>
 
-    <style name="Theme.Standard.Dark.Blue" parent="Theme.Standard.Dark">
+    <style name="Theme.Standard.Dark.Blue" parent="Theme.Dark">
         <item name="colorAccent">@color/colorAccentBlue</item>
         <item name="colorPrimary">@color/colorPrimaryBlue</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkBlue</item>
         <item name="playButton">@drawable/player_button_blue</item>
     </style>
 
-    <style name="Theme.Standard.Light.Blue" parent="Theme.Standard.Light">
+    <style name="Theme.Standard.Light.Blue" parent="Theme.Light">
         <item name="colorAccent">@color/colorAccentBlue</item>
         <item name="colorPrimary">@color/colorPrimaryBlue</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkBlue</item>
@@ -346,21 +352,21 @@
         <item name="toolbarBackgroundColor">@android:color/white</item>
     </style>
 
-    <style name="Theme.Standard.Light.DarkActionBar.Blue" parent="Theme.Standard.Light.DarkActionBar">
+    <style name="Theme.Standard.Light.DarkActionBar.Blue" parent="Theme.Light.DarkActionBar">
         <item name="colorAccent">@color/colorAccentBlue</item>
         <item name="colorPrimary">@color/colorPrimaryBlue</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkBlue</item>
         <item name="playButton">@drawable/player_button_blue</item>
     </style>
 
-    <style name="Theme.Standard.Dark.Orange" parent="Theme.Standard.Dark">
+    <style name="Theme.Standard.Dark.Orange" parent="Theme.Dark">
         <item name="colorAccent">@color/colorAccentOrange</item>
         <item name="colorPrimary">@color/colorPrimaryOrange</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkOrange</item>
         <item name="playButton">@drawable/player_button_orange</item>
     </style>
 
-    <style name="Theme.Standard.Light.Orange" parent="Theme.Standard.Light">
+    <style name="Theme.Standard.Light.Orange" parent="Theme.Light">
         <item name="colorAccent">@color/colorAccentOrange</item>
         <item name="colorPrimary">@color/colorPrimaryOrange</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkOrange</item>
@@ -370,21 +376,21 @@
         <item name="toolbarBackgroundColor">@android:color/white</item>
     </style>
 
-    <style name="Theme.Standard.Light.DarkActionBar.Orange" parent="Theme.Standard.Light.DarkActionBar">
+    <style name="Theme.Standard.Light.DarkActionBar.Orange" parent="Theme.Light.DarkActionBar">
         <item name="colorAccent">@color/colorAccentOrange</item>
         <item name="colorPrimary">@color/colorPrimaryOrange</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkOrange</item>
         <item name="playButton">@drawable/player_button_orange</item>
     </style>
 
-    <style name="Theme.Standard.Dark.Green" parent="Theme.Standard.Dark">
+    <style name="Theme.Standard.Dark.Green" parent="Theme.Dark">
         <item name="colorAccent">@color/colorAccentGreen</item>
         <item name="colorPrimary">@color/colorPrimaryGreen</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkGreen</item>
         <item name="playButton">@drawable/player_button_green</item>
     </style>
 
-    <style name="Theme.Standard.Light.Green" parent="Theme.Standard.Light">
+    <style name="Theme.Standard.Light.Green" parent="Theme.Light">
         <item name="colorAccent">@color/colorAccentGreen</item>
         <item name="colorPrimary">@color/colorPrimaryGreen</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkGreen</item>
@@ -394,7 +400,7 @@
         <item name="toolbarBackgroundColor">@android:color/white</item>
     </style>
 
-    <style name="Theme.Standard.Light.DarkActionBar.Green" parent="Theme.Standard.Light.DarkActionBar">
+    <style name="Theme.Standard.Light.DarkActionBar.Green" parent="Theme.Light.DarkActionBar">
         <item name="colorAccent">@color/colorAccentGreen</item>
         <item name="colorPrimary">@color/colorPrimaryGreen</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkGreen</item>
@@ -461,7 +467,5 @@
     <style name="Theme.Button.Colored" parent="Widget.AppCompat.Button.Colored">
         <item name="android:textColor">@android:color/white</item>
     </style>
-
-    <style name="Theme.Default" parent="Theme.Dark.Red"/>
 
 </resources>

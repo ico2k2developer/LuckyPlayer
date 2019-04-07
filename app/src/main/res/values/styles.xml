@@ -10,6 +10,9 @@
     <attr name="toolbarBackgroundColor" format="color" />
     <attr name="toolbarShadow" format="reference" />
     <attr name="toolbarShadowLateral" format="reference" />
+    <attr name="navigationBarDefaultColor" format="color" />
+    <attr name="navigationBarPlayingColor" format="color" />
+    <attr name="navigationBarColored" format="boolean" />
 
     <attr name="ic_add" format="integer" />
     <attr name="ic_album" format="integer" />
@@ -22,6 +25,7 @@
     <attr name="ic_equalizer" format="integer" />
     <attr name="ic_error" format="integer" />
     <attr name="ic_exit" format="integer" />
+    <attr name="ic_expand" format="integer" />
     <attr name="ic_file" format="integer" />
     <attr name="ic_folder" format="integer" />
     <attr name="ic_forward" format="integer" />
@@ -64,6 +68,7 @@
     <attr name="ic_equalizer_actionbar" format="integer" />
     <attr name="ic_error_actionbar" format="integer" />
     <attr name="ic_exit_actionbar" format="integer" />
+    <attr name="ic_expand_actionbar" format="integer" />
     <attr name="ic_file_actionbar" format="integer" />
     <attr name="ic_folder_actionbar" format="integer" />
     <attr name="ic_forward_actionbar" format="integer" />

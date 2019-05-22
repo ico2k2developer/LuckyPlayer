@@ -1,5 +1,6 @@
 package it.developing.ico2k2.luckyplayer.adapters;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,7 +95,13 @@ public class DetailsAdapter extends BaseAdapter<DetailsAdapter.DetailHandle>
             holder.icon.setVisibility(View.GONE);
         }
         holder.title.setText(detail.getTitle());
-        holder.description.setText(detail.getDescription());
+        if(TextUtils.isEmpty(detail.getDescription()))
+            holder.description.setVisibility(View.GONE);
+        else
+        {
+            holder.description.setVisibility(View.VISIBLE);
+            holder.description.setText(detail.getDescription());
+        }
     }
 
     @Override

@@ -25,7 +25,7 @@ public class TabsActivity extends BasePlayingActivity
 
         public PagerAdapter(FragmentManager fm)
         {
-            super(fm);
+            super(fm,BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
             tabs = getResources().getStringArray(R.array.tabs);
         }
 

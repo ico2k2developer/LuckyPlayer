@@ -4,6 +4,7 @@
     <string name="exit" formatted="false">Exit</string>
     <string name="info_notavailable" formatted="false">Unavailable info</string>
     <string name="song_info" formatted="false">View details</string>
+    <string name="song_play" formatted="false">Play</string>
     <string name="activity_info_title" formatted="false" translatable="false">%s - %s</string>
     <string name="info_tag_category" formatted="false">Tag</string>
     <string name="info_quality_category" formatted="false">Quality</string>
@@ -61,11 +62,12 @@
     <string name="settings_theme_hint" formatted="false">Here you can choose which theme the app will use. It will be applied at the next app launch</string>
     <string name="app_about_version" formatted="false">Version name: %s\nVersion code: %s</string>
     <string name="info_notification_channel" formatted="false">Service notifications</string>
+    <string name="status_notification_channel" formatted="false">Status notification</string>
     <string name="main_notification_channel" formatted="false">Most important notifications</string>
-    <string name="info_notification_channel_id" formatted="false" translatable="false">info</string>
-    <string name="main_notification_channel_id" formatted="false" translatable="false">main</string>
     <string name="scan_notification_title" formatted="false">Searching&#8230;</string>
     <string name="scan_notification_text" formatted="false">Looking for audio files</string>
+    <string name="player_notification_title" formatted="false">%s is active</string>
+    <string name="player_notification_text" formatted="false">%s is running background</string>
     <string name="song_show_details" formatted="false">Show details</string>
     <string name="settings_mediafile" formatted="false">Media files</string>
     <string name="settings_mediafile_systemmedia_category" formatted="false">System media files</string>
@@ -117,6 +119,109 @@
     <string name="settings_category_debug" formatted="false">Debug</string>
     <string name="settings_compatibility_mode" formatted="false">Compatibility mode</string>
     <string name="settings_compatibility_mode_sub" formatted="false">Enable this in case of crashes or other type of issues</string>
+    <string name="info_details_tag" formatted="false">Tag</string>
+    <string name="info_details_file" formatted="false">File</string>
+    <string name="theme_current" formatted="false">Current theme</string>
+    <string name="color_primary" formatted="false">Primary color</string>
+    <string name="color_primary_dark" formatted="false">Primary dark color</string>
+    <string name="color_accent" formatted="false">Accent color</string>
+
+    <string-array name="info_details_tag_titles">
+        <item>Acoustic fingerprint</item>
+        <item>Acoustic id</item>
+        <item>Album</item>
+        <item>Album artist</item>
+        <item>Album artist sort</item>
+        <item>Album sort</item>
+        <item>Amazon id</item>
+        <item>Arranger</item>
+        <item>Artist</item>
+        <item>Artist sort</item>
+        <item>Artists</item>
+        <item>Barcode</item>
+        <item>BPM</item>
+        <item>Catalog number</item>
+        <item>Comment</item>
+        <item>Composer</item>
+        <item>Composer sort</item>
+        <item>Conductor</item>
+        <item>Country</item>
+        <item>Cover art</item>
+        <item>Custom 1</item>
+        <item>Custom 2</item>
+        <item>Custom 3</item>
+        <item>Custom 4</item>
+        <item>Custom 5</item>
+        <item>Disc number</item>
+        <item>Disc subtitle</item>
+        <item>Disc total</item>
+        <item>Mixer</item>
+        <item>Encoder</item>
+        <item>Engineer</item>
+        <item>FBPM</item>
+        <item>Genre</item>
+        <item>Grouping</item>
+        <item>ISRC</item>
+        <item>Part of a compilation</item>
+        <item>Key</item>
+        <item>Language</item>
+        <item>Lyricist</item>
+        <item>Lyrics</item>
+        <item>Media</item>
+        <item>Mixer</item>
+        <item>Mood</item>
+        <item>MusicBrainz artist id</item>
+        <item>MusicBrainz disc id</item>
+        <item>MusicBrainz original release id</item>
+        <item>MusicBrainz release artist id</item>
+        <item>MusicBrainz release id</item>
+        <item>MusicBrainz release country</item>
+        <item>MusicBrainz release group id</item>
+        <item>MusicBrainz release status</item>
+        <item>MusicBrainz release track id</item>
+        <item>MusicBrainz release type</item>
+        <item>MusicBrainz track id</item>
+        <item>MusicBrainz work id</item>
+        <item>MusicIP id</item>
+        <item>Occasion</item>
+        <item>Original album</item>
+        <item>Original artist</item>
+        <item>Original lyricist</item>
+        <item>Original year</item>
+        <item>Quality</item>
+        <item>Producer</item>
+        <item>Rating</item>
+        <item>Record label</item>
+        <item>Remixer</item>
+        <item>Script</item>
+        <item>Subtitle</item>
+        <item>Tags</item>
+        <item>Tempo</item>
+        <item>Title</item>
+        <item>Title sort</item>
+        <item>Track</item>
+        <item>Track total</item>
+        <item>Discogs artist site</item>
+        <item>Discogs release site</item>
+        <item>Discogs lyrics site</item>
+        <item>Official artist site</item>
+        <item>Official release site</item>
+        <item>Artist Wikipedia URL</item>
+        <item>Release Wikipedia URL</item>
+        <item>Year</item>
+    </string-array>
+
+    <string-array name="info_details_file_titles">
+        <item>Bitrate</item>
+        <item>Bits per sample</item>
+        <item>Channels</item>
+        <item>Encoding type</item>
+        <item>Format</item>
+        <item>Sample rate</item>
+        <item>Track length</item>
+        <item>Lossless</item>
+        <item>Variable bitrate</item>
+    </string-array>
 
     <string-array name="preference_headers">
         <item>@string/settings_mediafile</item>

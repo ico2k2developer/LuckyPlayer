@@ -1,9 +1,11 @@
 package it.developing.ico2k2.luckyplayer.activities;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.StyleRes;
 import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import it.developing.ico2k2.luckyplayer.DataManager;
@@ -41,10 +43,10 @@ public class InitializeActivity extends BaseActivity
     public void onStart()
     {
         super.onStart();
-        initializeValues();
+        setup();
     }
 
-    public void initializeValues()
+    public void setup()
     {
         if(!dataManager.getBoolean(KEY_DATA_INITIALIZED,false))
         {

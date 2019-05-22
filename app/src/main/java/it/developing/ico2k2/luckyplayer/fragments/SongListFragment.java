@@ -20,8 +20,9 @@ import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.InfoActivity;
 import it.developing.ico2k2.luckyplayer.adapters.SongsAdapter;
 import it.developing.ico2k2.luckyplayer.adapters.lib.ViewHandle;
+import it.developing.ico2k2.luckyplayer.fragments.base.BaseFragment;
 
-public class SongListFragment extends Fragment
+public class SongListFragment extends BaseFragment
 {
     public static final String KEY_INDEX = "index";
 
@@ -108,6 +109,7 @@ public class SongListFragment extends Fragment
     @Override
     public void onViewCreated(@NonNull View view,@Nullable Bundle savedInstanceState)
     {
+        super.onViewCreated(view,savedInstanceState);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         list.setLayoutManager(layoutManager);
         list.setHasFixedSize(false);

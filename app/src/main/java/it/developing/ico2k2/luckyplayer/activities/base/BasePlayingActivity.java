@@ -6,7 +6,9 @@ import com.google.android.material.appbar.AppBarLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -17,6 +19,7 @@ import android.widget.LinearLayout;
 import java.sql.BatchUpdateException;
 
 import it.developing.ico2k2.luckyplayer.fragments.SmallPlayerFragment;
+import it.developing.ico2k2.luckyplayer.services.PlayService;
 
 import static it.developing.ico2k2.luckyplayer.Keys.KEY_LOGS;
 
@@ -89,5 +92,12 @@ public abstract class BasePlayingActivity extends BaseActivity
             transaction.remove(fragment);
             transaction.commit();
         }
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstance)
+    {
+        super.onCreate(savedInstance);
+        startService(new Intent(this,PlayService.class));
     }
 }

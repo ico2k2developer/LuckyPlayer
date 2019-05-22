@@ -2,6 +2,7 @@
 
     <string name="exit" formatted="false">Esci</string>
     <string name="song_info" formatted="false">Visualizza dettagli</string>
+    <string name="song_play" formatted="false">Riproduci</string>
     <string name="info_tag_category" formatted="false">Tag</string>
     <string name="info_quality_category" formatted="false">Qualità</string>
     <string name="info_title" formatted="false">Titolo</string>
@@ -54,9 +55,12 @@
     <string name="dialog_confirm_message_default" formatted="false">Confermi?</string>
     <string name="settings_theme" formatted="false">Tema</string>
     <string name="info_notification_channel" formatted="false">Notifiche di servizio</string>
+    <string name="status_notification_channel" formatted="false">Notifica di stato</string>
     <string name="main_notification_channel" formatted="false">Notifiche più importanti</string>
     <string name="scan_notification_title" formatted="false">Ricerca in corso&#8230;</string>
     <string name="scan_notification_text" formatted="false">Ricerca file audio in corso</string>
+    <string name="player_notification_title" formatted="false">%s è attivo</string>
+    <string name="player_notification_text" formatted="false">%s è attivo in background</string>
     <string name="song_show_details" formatted="false">Mostra dettagli</string>
     <string name="settings_mediafile" formatted="false">File multimediali</string>
     <string name="settings_mediafile_systemmedia_category" formatted="false">File multimediali di sistema</string>
@@ -107,5 +111,108 @@
     <string name="logs_clear">Svuota log</string>
     <string name="theme_message">Il nuovo tema verrà applicato quando uscirai dalle impostazioni</string>
     <string name="theme_apply" formatted="false">Applica</string>
+    <string name="info_details_tag" formatted="false">Tag</string>
+    <string name="info_details_file" formatted="false">File</string>
+    <string name="theme_current" formatted="false">Tema attuale</string>
+    <string name="color_primary" formatted="false">Colore principale</string>
+    <string name="color_primary_dark" formatted="false">Colore principale scuro</string>
+    <string name="color_accent" formatted="false">Colore tono</string>
+
+    <string-array name="info_details_tag_titles">
+        <item>Impronta acustica</item>
+        <item>Id acustico</item>
+        <item>Album</item>
+        <item>Artista album</item>
+        <item>Ordinamento artista album</item>
+        <item>Ordinamento album</item>
+        <item>Id Amazon</item>
+        <item>Arrangiatore</item>
+        <item>Artista</item>
+        <item>Ordinamento artista</item>
+        <item>Artisti</item>
+        <item>Codice a barre</item>
+        <item>BPM</item>
+        <item>Numero catalogo</item>
+        <item>Commento</item>
+        <item>Compositore</item>
+        <item>Ordinamento compositore</item>
+        <item>Conduttore</item>
+        <item>Nazione</item>
+        <item>Copertina</item>
+        <item>Campo 1</item>
+        <item>Campo 2</item>
+        <item>Campo 3</item>
+        <item>Campo 4</item>
+        <item>Campo 5</item>
+        <item>Numero disco</item>
+        <item>Sottotitolo disco</item>
+        <item>Totale disco</item>
+        <item>Mixer</item>
+        <item>Codificatore</item>
+        <item>Ingeniere</item>
+        <item>FBPM</item>
+        <item>Genere</item>
+        <item>Raggruppamento</item>
+        <item>ISRC</item>
+        <item>Parte di una compilation</item>
+        <item>Chiave</item>
+        <item>Lingua</item>
+        <item>Scrittore</item>
+        <item>Testo</item>
+        <item>Media</item>
+        <item>Mixer</item>
+        <item>Umore</item>
+        <item>Id MusicBrainz dell\'artista</item>
+        <item>Id MusicBrainz del disco</item>
+        <item>Id MusicBrainz della release originale</item>
+        <item>Id MusicBrainz dell\'artista release</item>
+        <item>Id MusicBrainz della release</item>
+        <item>Id MusicBrainz della nazione release</item>
+        <item>Id MusicBrainz del gruppo release</item>
+        <item>Id MusicBrainz dello stato release</item>
+        <item>Id MusicBrainz della traccia release</item>
+        <item>Id MusicBrainz del tipo release</item>
+        <item>Id MusicBrainz della traccia</item>
+        <item>Id MusicBrainz dell\'opera</item>
+        <item>Id MusicIP</item>
+        <item>Occasione</item>
+        <item>Album originale</item>
+        <item>Artista originale</item>
+        <item>Scrittore originale</item>
+        <item>Anno originale</item>
+        <item>Qualità</item>
+        <item>Produttore</item>
+        <item>Valutazione</item>
+        <item>Etichetta discografica</item>
+        <item>Remixer</item>
+        <item>Script</item>
+        <item>Sottotitolo</item>
+        <item>Tag</item>
+        <item>Tempo</item>
+        <item>Titolo</item>
+        <item>Ordinamento titolo</item>
+        <item>Traccia</item>
+        <item>Totale traccia</item>
+        <item>Sito Discogs artista</item>
+        <item>Sito Discogs release</item>
+        <item>Sito Discogs testo</item>
+        <item>Sito ufficiale artista</item>
+        <item>Sito ufficiale release</item>
+        <item>URL Wikipedia artista</item>
+        <item>URL Wikipedia release</item>
+        <item>Anno</item>
+    </string-array>
+
+    <string-array name="info_details_file_titles">
+        <item>Bitrate</item>
+        <item>Bit per campionamento</item>
+        <item>Canali</item>
+        <item>Tipo codifica</item>
+        <item>Formato</item>
+        <item>Frequenza campionamento</item>
+        <item>Lunghezza traccia</item>
+        <item>Lossless</item>
+        <item>Bitrate variabile</item>
+    </string-array>
 
 </resources>

@@ -79,6 +79,7 @@
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.SEND" />
 
                 <category android:name="android.intent.category.DEFAULT" />
 
@@ -89,7 +90,27 @@
 
         </activity>
 
+        <activity
+            android:name=".activities.PlayActivity"
+            android:label="@string/song_play">
 
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:mimeType="audio/*" />
+            </intent-filter>
+
+        </activity>
+
+        <service
+            android:name=".services.PlayService"
+            android:exported="false"
+            android:process=":playProcess"/>
 
     </application>
 </manifest>

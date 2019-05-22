@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/player"
             class="it.developing.ico2k2.luckyplayer.fragments.SmallPlayerFragment"
-            tools:layout="@layout/player_small_layout"/>
+            tools:layout="@layout/fragment_player_small"/>
 
     </LinearLayout>
 

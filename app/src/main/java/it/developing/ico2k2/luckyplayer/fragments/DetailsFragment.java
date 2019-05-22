@@ -1,37 +1,24 @@
 package it.developing.ico2k2.luckyplayer.fragments;
 
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.annotation.StringRes;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.adapters.DetailsAdapter;
-import it.developing.ico2k2.luckyplayer.adapters.lib.ViewHandle;
+import it.developing.ico2k2.luckyplayer.adapters.layoutmanagers.BaseLayoutManager;
+import it.developing.ico2k2.luckyplayer.fragments.base.BaseFragment;
 
-public class DetailsFragment extends Fragment
+public class DetailsFragment extends BaseFragment
 {
-
     private RecyclerView list;
-    private DetailsAdapter adapter;
-    private int contextClickPosition;
-
-    /*public static DetailsFragment create(int index)
-    {
-        DetailsFragment fragment = new DetailsFragment();
-        Bundle bundle = new Bundle();
-        bundle.putInt(KEY_INDEX,index);
-        fragment.setArguments(bundle);
-        return fragment;
-    }*/
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -41,9 +28,7 @@ public class DetailsFragment extends Fragment
 
     public void setAdapter(DetailsAdapter detailsAdapter)
     {
-        if(list == null)
-            adapter = detailsAdapter;
-        else
+        if(list != null)
             list.setAdapter(detailsAdapter);
     }
 
@@ -70,11 +55,38 @@ public class DetailsFragment extends Fragment
     @Override
     public void onViewCreated(@NonNull View view,@Nullable Bundle savedInstanceState)
     {
+        super.onViewCreated(view,savedInstanceState);
         list = view.findViewById(android.R.id.list);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        RecyclerView.LayoutManager layoutManager = new BaseLayoutManager(getActivity());
+        ((BaseLayoutManager)layoutManager).setScrollEnabled(false);
         list.setLayoutManager(layoutManager);
         list.setHasFixedSize(true);
-        if(adapter != null)
-            list.setAdapter(adapter);
+    }
+
+    public void setTitle(CharSequence title)
+    {
+        AppCompatTextView label = getView().findViewById(android.R.id.title);
+        if(label != null)
+        {
+            label.setText(title);
+            label.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void setTitle(@StringRes int title)
+    {
+        AppCompatTextView label = getView().findViewById(android.R.id.title);
+        if(label != null)
+        {
+            label.setText(title);
+            label.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void setTitleVisibility(int visibility)
+    {
+        AppCompatTextView label = getView().findViewById(android.R.id.title);
+        if(label != null)
+            label.setVisibility(visibility);
     }
 }

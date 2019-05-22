@@ -1,13 +1,10 @@
 package it.developing.ico2k2.luckyplayer.activities;
 
 import android.app.ActivityManager;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,18 +13,20 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.AudioHeader;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 
 import java.io.File;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -40,16 +39,16 @@ import it.developing.ico2k2.luckyplayer.adapters.DetailsAdapter;
 import it.developing.ico2k2.luckyplayer.adapters.lib.ViewHandle;
 import it.developing.ico2k2.luckyplayer.dialogs.DefaultDialog;
 import it.developing.ico2k2.luckyplayer.fragments.DetailsFragment;
+import it.developing.ico2k2.luckyplayer.fragments.base.BaseFragment;
 import it.developing.ico2k2.luckyplayer.tasks.AlbumArtLoadTask;
 import it.developing.ico2k2.luckyplayer.tasks.AsyncThread;
-import it.developing.ico2k2.luckyplayer.views.DefaultLayout;
 
 import static it.developing.ico2k2.luckyplayer.Keys.EXTRA_URI;
 
 public class InfoActivity extends BaseActivity
 {
     private CollapsingToolbarLayout toolbarLayout;
-    private DetailsFragment fragment;
+    private DetailsFragment tagDetails,fileDetails;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -61,7 +60,20 @@ public class InfoActivity extends BaseActivity
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbarLayout = findViewById(R.id.info_appbar_collapsingLayout);
-        fragment = (DetailsFragment)getSupportFragmentManager().findFragmentById(R.id.info_details);
+        tagDetails = (DetailsFragment)getSupportFragmentManager().findFragmentById(R.id.info_details_tag);
+        tagDetails.setOnFragmentInitialized(new BaseFragment.OnFragmentInitialized(){
+            @Override
+            public void onInitialized(@NonNull View view){
+                tagDetails.setTitle(R.string.info_details_tag);
+            }
+        });
+        fileDetails = (DetailsFragment)getSupportFragmentManager().findFragmentById(R.id.info_details_file);
+        fileDetails.setOnFragmentInitialized(new BaseFragment.OnFragmentInitialized(){
+            @Override
+            public void onInitialized(@NonNull View view){
+                fileDetails.setTitle(R.string.info_details_file);
+            }
+        });
         toolbarLayout.setTitleEnabled(true);
 
         toolbar.setOnHierarchyChangeListener(new ViewGroup.OnHierarchyChangeListener(){
@@ -123,43 +135,61 @@ public class InfoActivity extends BaseActivity
             AudioFile audio = AudioFileIO.read(new File(path));
             Tag tag = audio.getTag();
             setTitle(tag.getFirst(FieldKey.TITLE));
-            final DetailsAdapter adapter = new DetailsAdapter();
+            String[] titles = getResources().getStringArray(R.array.info_details_tag_titles);
+            final DetailsAdapter tagAdapter = new DetailsAdapter(titles.length);
             String data;
             for(FieldKey field : FieldKey.values())
             {
                 data = tag.getFirst(field);
                 if(!TextUtils.isEmpty(data))
-                    adapter.add(new DetailsAdapter.Detail(field.name(),data));
+                {
+                    DetailsAdapter.Detail detail;
+                    if(data.contains("\n"))
+                    {
+                        detail = new DetailsAdapter.TextDetail(titles[field.ordinal()],null);
+                        ((DetailsAdapter.TextDetail)detail).setText(data);
+                    }
+                    else
+                        detail = new DetailsAdapter.Detail(titles[field.ordinal()],data);
+                    tagAdapter.add(detail);
+                }
             }
-            adapter.setOnItemClickListener(new ViewHandle.OnItemClickListener(){
+            tagAdapter.setOnItemClickListener(new ViewHandle.OnItemClickListener(){
                 @Override
                 public void onItemClick(ViewHandle handle,int position){
-                    final String label = adapter.get(position).getTitle();
-                    final String text = adapter.get(position).getDescription();
-                    DefaultDialog dialog = new DefaultDialog(InfoActivity.this);
-                    dialog.setTitle(label);
-                    dialog.setMessage(text);
-                    dialog.setCancelable(true);
-                    dialog.setNeutralButton(R.string.copy,new DialogInterface.OnClickListener(){
-                        @Override
-                        public void onClick(DialogInterface dialog,int which){
-                            setClipboard(label,text,true);
-                        }
-                    });
-                    dialog.setPositiveButton(android.R.string.ok);
-                    dialog.show();
+                    showDetailDialog(tagAdapter.get(position));
                 }
             });
-            adapter.setOnItemLongClickListener(new ViewHandle.OnItemLongClickListener(){
+            tagDetails.setOnFragmentInitialized(new BaseFragment.OnFragmentInitialized(){
                 @Override
-                public boolean onItemLongClick(ViewHandle handle,int position){
-                    String label = adapter.get(position).getTitle();
-                    String text = adapter.get(position).getDescription();
-                    setClipboard(label,text,true);
-                    return true;
+                public void onInitialized(@NonNull View view){
+                    tagDetails.setAdapter(tagAdapter);
                 }
             });
-            fragment.setAdapter(adapter);
+            AudioHeader header = audio.getAudioHeader();
+            titles = getResources().getStringArray(R.array.info_details_file_titles);
+            final DetailsAdapter fileAdapter = new DetailsAdapter(titles.length);
+            int a = 0;
+            fileAdapter.add(new DetailsAdapter.Detail(titles[a++],header.getBitRate()));
+            fileAdapter.add(new DetailsAdapter.Detail(titles[a++],Integer.toString(header.getBitsPerSample())));
+            fileAdapter.add(new DetailsAdapter.Detail(titles[a++],header.getChannels()));
+            fileAdapter.add(new DetailsAdapter.Detail(titles[a++],header.getEncodingType()));
+            fileAdapter.add(new DetailsAdapter.Detail(titles[a++],header.getFormat()));
+            fileAdapter.add(new DetailsAdapter.Detail(titles[a++],header.getSampleRate()));
+            fileAdapter.add(new DetailsAdapter.CheckedDetail(titles[a++],null,header.isLossless()));
+            fileAdapter.add(new DetailsAdapter.CheckedDetail(titles[a],null,header.isVariableBitRate()));
+            fileAdapter.setOnItemClickListener(new ViewHandle.OnItemClickListener(){
+                @Override
+                public void onItemClick(ViewHandle handle,int position){
+                    showDetailDialog(fileAdapter.get(position));
+            }
+            });
+            fileDetails.setOnFragmentInitialized(new BaseFragment.OnFragmentInitialized(){
+                @Override
+                public void onInitialized(@NonNull View view){
+                    fileDetails.setAdapter(fileAdapter);
+                }
+            });
         }
         catch(Exception e)
         {
@@ -213,6 +243,28 @@ public class InfoActivity extends BaseActivity
             }
         });
      */
+
+    public void showDetailDialog(DetailsAdapter.Detail detail)
+    {
+        if(!(detail instanceof DetailsAdapter.CheckedDetail))
+            showDetailDialog(detail.getTitle(),detail.getDescription());
+    }
+
+    public void showDetailDialog(final String label,final String text)
+    {
+        DefaultDialog dialog = new DefaultDialog(InfoActivity.this);
+        dialog.setTitle(label);
+        dialog.setMessage(text);
+        dialog.setCancelable(true);
+        dialog.setNeutralButton(R.string.copy,new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialog,int which){
+                setClipboard(label,text,true);
+            }
+        });
+        dialog.setPositiveButton(android.R.string.ok);
+        dialog.show();
+    }
 
 
     @Override

@@ -40,6 +40,7 @@ import it.developing.ico2k2.luckyplayer.activities.base.BaseActivity;
 import it.developing.ico2k2.luckyplayer.dialogs.ConfirmDialog;
 import it.developing.ico2k2.luckyplayer.dialogs.DefaultDialog;
 
+import static it.developing.ico2k2.luckyplayer.Keys.KEY_NOTIFICATION_TINT;
 import static it.developing.ico2k2.luckyplayer.Keys.KEY_THEME;
 import static it.developing.ico2k2.luckyplayer.lib.Utils.adapterMapsFromAdapterList;
 import static it.developing.ico2k2.luckyplayer.lib.Utils.getThemeFromName;
@@ -104,11 +105,13 @@ public class SettingsActivity extends BaseActivity
         });
         list.setAdapter(adapter);
         handleIntent(getIntent());
+        getDataManager().putInt(KEY_NOTIFICATION_TINT,getColorPrimary());
     }
 
     @Override
     public void onNewIntent(Intent intent)
     {
+        super.onNewIntent(intent);
         handleIntent(intent);
     }
 
@@ -125,7 +128,7 @@ public class SettingsActivity extends BaseActivity
                     index = extras.getInt(ARGUMENT_INDEX);
                 }
             }
-            Log.d("UWUWU","Settings: " + Integer.toString(index));
+            Log.d("UWUWU","Settings: " + index);
             View v = list.getChildAt(index);
             if(v == null)
             {
@@ -377,11 +380,13 @@ public class SettingsActivity extends BaseActivity
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             handleIntent(getIntent());
+            getDataManager().putInt(KEY_NOTIFICATION_TINT,getColorPrimary());
         }
 
         @Override
         public void onNewIntent(Intent intent)
         {
+            super.onNewIntent(intent);
             handleIntent(intent);
         }
 

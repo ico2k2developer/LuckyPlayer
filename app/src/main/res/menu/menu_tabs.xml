@@ -3,14 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!--<item
-        android:id="@+id/menuRefreshList"
+    <item
+        android:id="@+id/menuRefresh"
         android:title="@string/refresh_songlist"
         android:icon="?attr/ic_refresh_actionbar"
         android:orderInCategory="40"
-        app:showAsAction="never"/>
+        app:showAsAction="ifRoom"/>
 
-    <item
+    <!--<item
         android:id="@+id/menuStream"
         android:title="@string/stream"
         android:orderInCategory="70"

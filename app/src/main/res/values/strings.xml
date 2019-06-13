@@ -125,6 +125,9 @@
     <string name="color_primary" formatted="false">Primary color</string>
     <string name="color_primary_dark" formatted="false">Primary dark color</string>
     <string name="color_accent" formatted="false">Accent color</string>
+    <string name="description_album">%s1, %s2 songs</string>
+    <string name="description_artist">%s1 albums, %s2 songs</string>
+    <string name="description_year">%s1 artists, %s2 albums, %s3 songs</string>
 
     <string-array name="info_details_tag_titles">
         <item>Acoustic fingerprint</item>

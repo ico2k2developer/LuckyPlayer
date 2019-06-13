@@ -1,8 +1,11 @@
 package it.developing.ico2k2.luckyplayer.adapters;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.appcompat.widget.AppCompatTextView;
@@ -17,9 +20,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.adapters.base.BaseAdapter;
 import it.developing.ico2k2.luckyplayer.adapters.lib.ViewHandle;
+import it.developing.ico2k2.luckyplayer.services.PlayService;
+import it.developing.ico2k2.luckyplayer.services.PlayService.*;
 
 public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
 {
@@ -30,21 +38,161 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
     public static final String TIME_FORMAT_MIN = "%s1:%s2";
     public static final String TIME_FORMAT_HOUR = "%s1:%s2:%s3";
 
+    private Context context;
     private ArrayList<Song> songs;
     private ArrayList<Integer> indexes;
-    private Ordering order = Ordering.NO_ORDER;
+    private PlayService.OrderType order = PlayService.OrderType.NONE;
+    private ViewType view = ViewType.SONGS;
     private boolean showIndexes = false;
 
-    public SongsAdapter()
+    public enum ViewType
     {
+        SONGS,
+        ALBUMS,
+        ARTISTS,
+        YEARS,
+    }
+
+    public static void trimToAlbums(List<Song> songs,List<Integer> indexes)
+    {
+        ArrayList<String> albums = new ArrayList<>(songs.size());
+        String album;
+        int a = 0;
+        for(SongsAdapter.Song song : songs)
+        {
+            album = song.getAlbum();
+            if(!albums.contains(album))
+            {
+                albums.add(album);
+                indexes.add(a);
+            }
+            a++;
+        }
+        albums.clear();
+        albums.trimToSize();
+    }
+
+    public static void trimToArtists(List<Song> songs,List<Integer> indexes)
+    {
+        ArrayList<String> artists = new ArrayList<>(songs.size());
+        String artist;
+        int a = 0;
+        for(SongsAdapter.Song song : songs)
+        {
+            artist = song.getArtist();
+            if(!artists.contains(artist))
+            {
+                artists.add(artist);
+                indexes.add(a);
+            }
+            a++;
+        }
+        artists.clear();
+        artists.trimToSize();
+    }
+
+    public static void trimToYears(List<Song> songs,List<Integer> indexes)
+    {
+        ArrayList<Integer> years = new ArrayList<>(songs.size());
+        int year,a = 0;
+        for(SongsAdapter.Song song : songs)
+        {
+            year = song.getYear();
+            if(!years.contains(year))
+            {
+                years.add(year);
+                indexes.add(a);
+            }
+            a++;
+        }
+        years.clear();
+        years.trimToSize();
+    }
+
+    public static String getAlbumDescription(Context context,List<Song> songs,List<Integer> indexes,int position)
+    {
+        int songsCount = 0;
+        String album = songs.get(indexes.get(position)).getAlbum();
+        for(Song song : songs)
+        {
+            if(song.getAlbum().equals(album))
+                songsCount++;
+        }
+        return context.getString(R.string.description_album)
+                .replace("%s1",songs.get(indexes.get(position)).getArtist())
+                .replace("%s2",Integer.toString(songsCount));
+    }
+
+    public static String getArtistDescription(Context context,List<Song> songs,List<Integer> indexes,int position)
+    {
+        int songsCount = 0;
+        ArrayList<String> albums = new ArrayList<>(songs.size());
+        String result,artist = songs.get(indexes.get(position)).getArtist();
+        for(Song song : songs)
+        {
+            if(song.getArtist().equals(artist))
+            {
+                if(!albums.contains(song.getAlbum()))
+                    albums.add(song.getAlbum());
+                songsCount++;
+            }
+        }
+        result = context.getString(R.string.description_artist)
+                .replace("%s1",Integer.toString(albums.size()))
+                .replace("%s2",Integer.toString(songsCount));
+        albums.clear();
+        albums.trimToSize();
+        return result;
+    }
+
+    public static String getYearDescription(Context context,List<Song> songs,List<Integer> indexes,int position)
+    {
+        int songsCount = 0;
+        ArrayList<String> albums = new ArrayList<>(songs.size());
+        ArrayList<String> artists = new ArrayList<>(songs.size());
+        String result;
+        int year = songs.get(indexes.get(position)).getYear();
+        for(Song song : songs)
+        {
+            if(song.getYear() == year)
+            {
+                if(!albums.contains(song.getAlbum()))
+                    albums.add(song.getAlbum());
+                if(!artists.contains(song.getArtist()))
+                    artists.add(song.getArtist());
+                songsCount++;
+            }
+        }
+        result = context.getString(R.string.description_year)
+                .replace("%s1",Integer.toString(artists.size()))
+                .replace("%s2",Integer.toString(albums.size()))
+                .replace("%s3",Integer.toString(songsCount));
+        albums.clear();
+        albums.trimToSize();
+        artists.clear();
+        artists.trimToSize();
+        return result;
+    }
+
+    public SongsAdapter(Context context)
+    {
+        this.context = context;
         songs = new ArrayList<>();
         indexes = new ArrayList<>();
     }
 
-    public SongsAdapter(int size)
+    public SongsAdapter(Context context,int size)
     {
+        this.context = context;
         songs = new ArrayList<>(size);
         indexes = new ArrayList<>(size);
+    }
+
+    @CallSuper
+    public void ensureCapacity(int size)
+    {
+        songs.ensureCapacity(size);
+        indexes.ensureCapacity(size);
     }
 
     public void addAll(Collection<? extends Song> collection)
@@ -60,7 +208,7 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
     public Song get(int index)
     {
         Song result;
-        if(order == Ordering.NO_ORDER)
+        if(order == PlayService.OrderType.NONE && view == ViewType.SONGS)
             result = songs.get(index);
         else
             result = songs.get(indexes.get(index));
@@ -82,16 +230,29 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
         songs.remove(index);
     }
 
-    public void setOrder(Ordering newOrder)
+    public void setOrderType(PlayService.OrderType newOrder)
     {
         order = newOrder;
-        if(order == Ordering.NO_ORDER)
+        if(order == OrderType.NONE && view == ViewType.SONGS)
+        {
             indexes.clear();
+            indexes.trimToSize();
+        }
     }
 
-    public Ordering getOrder()
+    public void setViewType(ViewType newView)
+    {
+        view = newView;
+    }
+
+    public OrderType getOrderType()
     {
         return order;
+    }
+
+    public ViewType getViewType()
+    {
+        return view;
     }
 
     public void setShowIndexes(boolean show)
@@ -107,33 +268,83 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
     public void reorder()
     {
         indexes.clear();
-        if(order != Ordering.NO_ORDER)
+        switch(view)
         {
-            int a;
-            for(a = 0; a < songs.size(); a++)
-                indexes.add(a,a);
-            switch(order)
+            case SONGS:
             {
-                case ALPHABETICAL:
+
+                if(order != OrderType.NONE)
+                {
+                    int a;
+                    for(a = 0; a < songs.size(); a++)
+                        indexes.add(a,a);
+                    switch(order)
+                    {
+                        case ALPHABETICAL:
+                        {
+                            Collections.sort(indexes,new Comparator<Integer>(){
+                                @Override
+                                public int compare(Integer o1,Integer o2){
+                                    return songs.get(o1).getTitle().compareTo(songs.get(o2).getTitle());
+                                }
+                            });
+                            break;
+                        }
+                        case INDEX:
+                        {
+                            Collections.sort(indexes,new Comparator<Integer>(){
+                                @Override
+                                public int compare(Integer o1,Integer o2){
+                                    return songs.get(o1).getIndex() - songs.get(o2).getIndex();
+                                }
+                            });
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
+            case ALBUMS:
+            {
+                trimToAlbums(songs,indexes);
+                if(order == PlayService.OrderType.ALPHABETICAL)
                 {
                     Collections.sort(indexes,new Comparator<Integer>(){
                         @Override
                         public int compare(Integer o1,Integer o2){
-                            return songs.get(o1).title.compareTo(songs.get(o2).title);
+                            return songs.get(o1).getAlbum().compareTo(songs.get(o2).getAlbum());
                         }
                     });
-                    break;
                 }
-                case INDEXES:
+                break;
+            }
+            case ARTISTS:
+            {
+                trimToArtists(songs,indexes);
+                if(order == PlayService.OrderType.ALPHABETICAL)
                 {
                     Collections.sort(indexes,new Comparator<Integer>(){
                         @Override
                         public int compare(Integer o1,Integer o2){
-                            return songs.get(o1).index - songs.get(o2).index;
+                            return songs.get(o1).getArtist().compareTo(songs.get(o2).getArtist());
                         }
                     });
-                    break;
                 }
+                break;
+            }
+            case YEARS:
+            {
+                trimToYears(songs,indexes);
+                if(order == PlayService.OrderType.ALPHABETICAL)
+                {
+                    Collections.sort(indexes,new Comparator<Integer>(){
+                        @Override
+                        public int compare(Integer o1,Integer o2){
+                            return songs.get(o1).getYear() - songs.get(o2).getYear();
+                        }
+                    });
+                }
+                break;
             }
         }
     }
@@ -153,11 +364,7 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
     public void onBindViewHolder(@NonNull SongHandle holder,int position)
     {
         super.onBindViewHolder(holder,position);
-        Song song;
-        if(order == Ordering.NO_ORDER)
-            song = songs.get(position);
-        else
-            song = songs.get(indexes.get(position));
+        Song song = get(position);
         if(showIndexes)
         {
             holder.index.setVisibility(View.VISIBLE);
@@ -165,15 +372,49 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
         }
         else
             holder.index.setVisibility(View.GONE);
-        holder.title.setText(song.title);
-        holder.description.setText(song.getDescription());
-        holder.time.setText(song.getTimeDescription());
+        switch(view)
+        {
+            case ALBUMS:
+            {
+                holder.title.setText(song.getAlbum());
+                holder.description.setText(getAlbumDescription(context,songs,indexes,position));
+                holder.time.setVisibility(View.GONE);
+                break;
+            }
+            case ARTISTS:
+            {
+                holder.title.setText(song.getArtist());
+                holder.description.setText(getArtistDescription(context,songs,indexes,position));
+                holder.time.setVisibility(View.GONE);
+                break;
+            }
+            case YEARS:
+            {
+                holder.title.setText(Integer.toString(song.getYear()));
+                holder.description.setText(getYearDescription(context,songs,indexes,position));
+                holder.time.setVisibility(View.GONE);
+                break;
+            }
+            default:
+            {
+                holder.title.setText(song.getTitle());
+                holder.description.setText(song.getDescription());
+                holder.time.setText(song.getTimeDescription());
+                holder.time.setVisibility(View.VISIBLE);
+            }
+        }
 
     }
 
     @Override
-    public int getItemCount() {
-        return songs.size();
+    public int getItemCount()
+    {
+        int size;
+        if(view == ViewType.SONGS)
+            size = songs.size();
+        else
+            size = indexes.size();
+        return size;
     }
 
     public static class SongHandle extends ViewHandle{
@@ -201,14 +442,14 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
         //public static final String ALBUMARTIST_KEY = "albumArtist";
         public static final String ALBUM_KEY = "album";
         //public static final String ALBUMART_KEY = "albumart";
-        //public static final String YEAR_KEY = "year";
+        public static final String YEAR_KEY = "year";
         public static final String TIME_KEY = "ms";
 
         private String path,title,artist,album;
-        private int index;
+        private int index,year;
         private long time;
 
-        public final Parcelable.Creator<Song> CREATOR = new Parcelable.Creator<Song>(){
+        public static final Parcelable.Creator<Song> CREATOR = new Parcelable.Creator<Song>(){
             public Song createFromParcel(Parcel in){
                 return new Song(in,getClass().getClassLoader());
             }
@@ -233,7 +474,7 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
             //bundle.putString(ALBUMARTIST_KEY,albumartist);
             bundle.putString(ALBUM_KEY,album);
             bundle.putInt(INDEX_KEY,index);
-            //bundle.putInt(YEAR_KEY,year);
+            bundle.putInt(YEAR_KEY,year);
             bundle.putLong(TIME_KEY,time);
             //bundle.putInt(LISTINDEX_KEY,listIndex);
             dest.writeBundle(bundle);
@@ -247,6 +488,7 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
             artist = song.artist;
             index = song.index;
             time = song.time;
+            year = song.year;
         }
 
         public Song(Parcel parcel,ClassLoader classLoader)
@@ -260,7 +502,7 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
             //albumartist = bundle.getString(ALBUMARTIST_KEY);
             album = bundle.getString(ALBUM_KEY);
             index = bundle.getInt(INDEX_KEY);
-            //year = bundle.getInt(YEAR_KEY);
+            year = bundle.getInt(YEAR_KEY);
             time = bundle.getLong(TIME_KEY);
             //listIndex = bundle.getInt(LISTINDEX_KEY);
         }
@@ -325,6 +567,15 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
             return time;
         }
 
+        public Song setYear(int year){
+            this.year = year;
+            return this;
+        }
+
+        public int getYear(){
+            return year;
+        }
+
         public String getDescription()
         {
             return getSongDescription(album,artist);
@@ -345,13 +596,6 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
                 result = super.equals(song);
             return result;
         }
-    }
-
-    public enum Ordering
-    {
-        ALPHABETICAL,
-        INDEXES,
-        NO_ORDER,
     }
 
     public interface OnSongClickListener

@@ -26,7 +26,6 @@ import java.io.File;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -44,6 +43,7 @@ import it.developing.ico2k2.luckyplayer.tasks.AlbumArtLoadTask;
 import it.developing.ico2k2.luckyplayer.tasks.AsyncThread;
 
 import static it.developing.ico2k2.luckyplayer.Keys.EXTRA_URI;
+import static it.developing.ico2k2.luckyplayer.Keys.TAG_LOGS;
 
 public class InfoActivity extends BaseActivity
 {
@@ -101,7 +101,7 @@ public class InfoActivity extends BaseActivity
         if(contentPath != null)
         {
             result = contentPath.toString();
-            Log.d("UWUWU","Original path: " + result);
+            Log.d(TAG_LOGS,"Original path: " + result);
             result = contentPath.getPath();
             if(!new File(result).exists())
             {
@@ -120,7 +120,7 @@ public class InfoActivity extends BaseActivity
                 }
 
             }
-            Log.d("UWUWU","Real path: " + result);
+            Log.d(TAG_LOGS,"Real path: " + result);
         }
         return result;
     }
@@ -282,7 +282,7 @@ public class InfoActivity extends BaseActivity
     /*@Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
-        getMenuInflater().inflate(R.menu.menu_main,menu);
+        getMenuInflater().inflate(R.menu.menu_tabs,menu);
         return true;
     }
 

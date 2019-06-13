@@ -117,6 +117,9 @@
     <string name="color_primary" formatted="false">Colore principale</string>
     <string name="color_primary_dark" formatted="false">Colore principale scuro</string>
     <string name="color_accent" formatted="false">Colore tono</string>
+    <string name="description_album">%s1, %s2 canzoni</string>
+    <string name="description_artist">%s1 album, %s2 canzoni</string>
+    <string name="description_year">%s1 artisti, %s2 album, %s3 canzoni</string>
 
     <string-array name="info_details_tag_titles">
         <item>Impronta acustica</item>

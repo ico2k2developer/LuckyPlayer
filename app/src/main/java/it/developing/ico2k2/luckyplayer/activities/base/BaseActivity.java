@@ -10,7 +10,6 @@ import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.StyleRes;
 import androidx.core.app.ActivityCompat;
@@ -32,6 +31,7 @@ import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.MainActivity;
 
 import static it.developing.ico2k2.luckyplayer.Keys.KEY_INITIALIZED;
+import static it.developing.ico2k2.luckyplayer.Keys.TAG_LOGS;
 import static it.developing.ico2k2.luckyplayer.Keys.KEY_THEME;
 
 public abstract class BaseActivity extends AppCompatActivity
@@ -51,14 +51,35 @@ public abstract class BaseActivity extends AppCompatActivity
             if(getNavigationBarColored())
                 getWindow().setNavigationBarColor(getNavigationBarDefaultColor());
         }
-        Log.d("UWUWU",getClass().getName() + ": created");
+        Log.d(TAG_LOGS,getClass().getName() + ": created");
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        Log.d(TAG_LOGS,getClass().getName() + ": paused");
+    }
+
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        Log.d(TAG_LOGS,getClass().getName() + ": stopped");
+    }
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        Log.d(TAG_LOGS,getClass().getName() + ": started");
     }
 
     @Override
     public void onResume()
     {
         super.onResume();
-        Log.d("UWUWU",getClass().getName() + ": resumed");
+        Log.d(TAG_LOGS,getClass().getName() + ": resumed");
         if(getDataManager().getBoolean(KEY_INITIALIZED,false))
         {
             int theme = getDataManager().getInt(KEY_THEME);
@@ -66,7 +87,7 @@ public abstract class BaseActivity extends AppCompatActivity
             {
                 if(onThemeChanged(currentTheme,theme))
                 {
-                    Log.d("UWUWU","Restarting " + getClass().getName()+ " because of theme change");
+                    Log.d(TAG_LOGS,"Restarting " + getClass().getName()+ " because of theme change");
                     startActivity(getIntent());
                     finish();
                 }
@@ -92,13 +113,13 @@ public abstract class BaseActivity extends AppCompatActivity
 
     public boolean onThemeChanged(@StyleRes int oldTheme,@StyleRes int newTheme)
     {
-        Log.d("UWUWU",getClass().getName() + ": theme has changed! " + Integer.toString(oldTheme) + " to " + Integer.toString(newTheme));
+        Log.d(TAG_LOGS,getClass().getName() + ": theme has changed! " + oldTheme + " to " + newTheme);
         return true;
     }
 
     public boolean onNoDataFound()
     {
-        Log.d("UWUWU",getClass().getName() + ": no data found!");
+        Log.d(TAG_LOGS,getClass().getName() + ": no data found!");
         return true;
     }
 

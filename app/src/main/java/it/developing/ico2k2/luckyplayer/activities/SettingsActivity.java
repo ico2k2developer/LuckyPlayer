@@ -40,6 +40,7 @@ import it.developing.ico2k2.luckyplayer.activities.base.BaseActivity;
 import it.developing.ico2k2.luckyplayer.dialogs.ConfirmDialog;
 import it.developing.ico2k2.luckyplayer.dialogs.DefaultDialog;
 
+import static it.developing.ico2k2.luckyplayer.Keys.TAG_LOGS;
 import static it.developing.ico2k2.luckyplayer.Keys.KEY_NOTIFICATION_TINT;
 import static it.developing.ico2k2.luckyplayer.Keys.KEY_THEME;
 import static it.developing.ico2k2.luckyplayer.lib.Utils.adapterMapsFromAdapterList;
@@ -89,7 +90,7 @@ public class SettingsActivity extends BaseActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        setSupportActionBar((Toolbar)findViewById(R.id.settings_toolbar));
+        setSupportActionBar(findViewById(R.id.settings_toolbar));
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         list = findViewById(android.R.id.list);
@@ -128,7 +129,7 @@ public class SettingsActivity extends BaseActivity
                     index = extras.getInt(ARGUMENT_INDEX);
                 }
             }
-            Log.d("UWUWU","Settings: " + index);
+            Log.d(TAG_LOGS,"Settings: " + index);
             View v = list.getChildAt(index);
             if(v == null)
             {
@@ -376,7 +377,7 @@ public class SettingsActivity extends BaseActivity
         {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_settings_secondary);
-            setSupportActionBar((Toolbar)findViewById(R.id.settings_toolbar));
+            setSupportActionBar(findViewById(R.id.settings_toolbar));
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             handleIntent(getIntent());

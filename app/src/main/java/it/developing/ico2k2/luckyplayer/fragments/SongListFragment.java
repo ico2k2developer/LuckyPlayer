@@ -8,68 +8,72 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.Message;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import it.developing.ico2k2.luckyplayer.LuckyPlayer;
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.InfoActivity;
 import it.developing.ico2k2.luckyplayer.adapters.SongsAdapter;
 import it.developing.ico2k2.luckyplayer.adapters.lib.ViewHandle;
 import it.developing.ico2k2.luckyplayer.fragments.base.BaseFragment;
+import it.developing.ico2k2.luckyplayer.services.PlayService;
+
+import static it.developing.ico2k2.luckyplayer.Keys.KEY_INDEX;
+import static it.developing.ico2k2.luckyplayer.Keys.KEY_SIZE;
+import static it.developing.ico2k2.luckyplayer.Keys.KEY_SONGS;
+import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_PLAYER;
 
 public class SongListFragment extends BaseFragment
 {
-    public static final String KEY_INDEX = "index";
-
     private static final int ID_MENU_INFO = 0XAAAA;
 
     private RecyclerView list;
     private SongsAdapter adapter;
     private int contextClickPosition;
 
-    public static SongListFragment create(int index)
+    public static SongListFragment create(Bundle arguments)
     {
         SongListFragment fragment = new SongListFragment();
-        Bundle bundle = new Bundle();
-        bundle.putInt(KEY_INDEX,index);
-        fragment.setArguments(bundle);
+        fragment.setArguments(arguments);
         return fragment;
+    }
+
+    public static SongListFragment create(int index)
+    {
+        Bundle arguments = new Bundle();
+        arguments.putInt(KEY_INDEX,index);
+        return create(arguments);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        adapter = new SongsAdapter();
-        SongsAdapter.Song song = new SongsAdapter.Song("abcdef.mp3");
-        song.setTitle("Hey Hey!");
-        song.setArtist("Somebody in Caselette City");
-        song.setAlbum("Flaming mountain");
-        song.setTime(7 * 60 * 1000 + 12 * 1000);
-        song.setIndex(2002);
-        adapter.add(song);
-        adapter.add(new SongsAdapter.Song(song).setTitle("Hey Jude!"));
-        adapter.add(new SongsAdapter.Song(song).setTitle("Hey Bulldog!"));
-        adapter.add(new SongsAdapter.Song(song).setTitle("Hey Baby!"));
-        adapter.add(new SongsAdapter.Song(song).setTitle("Hey You!"));
-        adapter.setOrder(SongsAdapter.Ordering.ALPHABETICAL);
-        adapter.setShowIndexes(true);
-        adapter.reorder();
+        adapter = new SongsAdapter(getContext());
         adapter.setOnItemClickListener(new ViewHandle.OnItemClickListener(){
             @Override
             public void onItemClick(ViewHandle handle,int position){
-                Toast.makeText(getContext(),adapter.get(position).getTitle(),Toast.LENGTH_SHORT).show();
+                Message message = Message.obtain();
+                message.what = MESSAGE_PLAYER;
+                Bundle bundle = new Bundle();
+                bundle.putString(KEY_SONGS,adapter.get(position).getPath());
+                message.setData(bundle);
+                ((LuckyPlayer)getActivity().getApplication()).sendMessageToService(message,true);
             }
         });
         adapter.setOnItemContextMenuListener(new ViewHandle.OnItemContextMenuListener(){
             @Override
             public void onContextMenu(ContextMenu menu,View v,ContextMenu.ContextMenuInfo menuInfo,int position){
-                menu.setHeaderTitle(adapter.get(position).getTitle());
+                menu.setHeaderTitle(((TextView)v.findViewById(R.id.itemTitle)).getText());
                 menu.add(Menu.NONE,ID_MENU_INFO,70,R.string.song_info);
                 contextClickPosition = position;
             }
@@ -114,5 +118,10 @@ public class SongListFragment extends BaseFragment
         list.setLayoutManager(layoutManager);
         list.setHasFixedSize(false);
         list.setAdapter(adapter);
+    }
+
+    public SongsAdapter getAdapter()
+    {
+        return adapter;
     }
 }

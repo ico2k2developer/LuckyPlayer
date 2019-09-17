@@ -1,16 +1,13 @@
 package it.developing.ico2k2.luckyplayer.fragments;
 
-import android.os.Build;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
+
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.fragments.base.BaseFragment;
 

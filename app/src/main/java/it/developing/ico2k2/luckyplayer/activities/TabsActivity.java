@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -26,7 +25,16 @@ import it.developing.ico2k2.luckyplayer.adapters.SongsAdapter;
 import it.developing.ico2k2.luckyplayer.fragments.SongListFragment;
 import it.developing.ico2k2.luckyplayer.services.PlayService;
 
-import static it.developing.ico2k2.luckyplayer.Keys.*;
+import static it.developing.ico2k2.luckyplayer.Keys.KEY_REQUEST_CODE;
+import static it.developing.ico2k2.luckyplayer.Keys.KEY_SIZE;
+import static it.developing.ico2k2.luckyplayer.Keys.KEY_SONGS;
+import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_DESTROY;
+import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_SCAN_COMPLETED;
+import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_SCAN_REQUESTED;
+import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_SONG_END;
+import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_SONG_PACKET;
+import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_SONG_START;
+import static it.developing.ico2k2.luckyplayer.Keys.TAG_LOGS;
 
 public class TabsActivity extends BasePlayingActivity
 {
@@ -43,7 +51,7 @@ public class TabsActivity extends BasePlayingActivity
 
         public PagerAdapter(FragmentManager fm)
         {
-            super(fm,BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+            super(fm);
             tabs = getResources().getStringArray(R.array.tabs);
             tags = new ArrayList<>(getCount());
         }
@@ -139,7 +147,9 @@ public class TabsActivity extends BasePlayingActivity
                     if(packet != null)
                     {
                         if(packet.containsKey(KEY_SONGS))
+                        {
                             songs.addAll(packet.getParcelableArrayList(KEY_SONGS));
+                        }
                     }
                     break;
                 }

@@ -1,13 +1,14 @@
 package it.developing.ico2k2.luckyplayer.fragments;
 
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.widget.AppCompatTextView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatTextView;
+
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.fragments.base.BaseFragment;
 

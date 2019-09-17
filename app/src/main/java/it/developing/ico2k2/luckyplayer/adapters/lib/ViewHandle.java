@@ -4,7 +4,6 @@ import android.view.ContextMenu;
 import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
-import it.developing.ico2k2.luckyplayer.adapters.base.BaseAdapter;
 
 public class ViewHandle extends RecyclerView.ViewHolder
 {

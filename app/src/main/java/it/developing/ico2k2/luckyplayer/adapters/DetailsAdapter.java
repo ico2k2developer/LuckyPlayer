@@ -5,14 +5,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.adapters.base.BaseAdapter;
 import it.developing.ico2k2.luckyplayer.adapters.lib.ViewHandle;

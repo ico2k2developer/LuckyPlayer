@@ -1,13 +1,13 @@
 package it.developing.ico2k2.luckyplayer.dialogs;
 
-import android.os.Build;
-
 import android.content.Context;
+import android.os.Build;
+import android.view.MenuItem;
+
 import androidx.annotation.DrawableRes;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.preference.Preference;
-import android.view.MenuItem;
 
 /**
  * Created by Ico on 10/03/2018.

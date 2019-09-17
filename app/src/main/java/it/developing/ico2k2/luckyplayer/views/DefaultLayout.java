@@ -3,16 +3,19 @@ package it.developing.ico2k2.luckyplayer.views;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Build;
-import androidx.annotation.AttrRes;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.AttrRes;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
+import com.google.android.material.appbar.AppBarLayout;
+
 import it.developing.ico2k2.luckyplayer.R;
 
 public class DefaultLayout extends CoordinatorLayout

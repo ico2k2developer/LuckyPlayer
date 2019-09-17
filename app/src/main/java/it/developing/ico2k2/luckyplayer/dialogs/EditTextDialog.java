@@ -1,12 +1,15 @@
 package it.developing.ico2k2.luckyplayer.dialogs;
 
 import android.content.Context;
-import androidx.appcompat.widget.AppCompatEditText;
 import android.text.Editable;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import static android.text.InputType.*;
+import androidx.appcompat.widget.AppCompatEditText;
+
+import static android.text.InputType.TYPE_CLASS_TEXT;
+import static android.text.InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS;
+import static android.text.InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE;
 
 /**
  * Created by Ico on 10/03/2018.

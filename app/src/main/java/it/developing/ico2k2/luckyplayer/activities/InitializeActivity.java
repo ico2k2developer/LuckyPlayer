@@ -1,13 +1,9 @@
 package it.developing.ico2k2.luckyplayer.activities;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-
-import androidx.appcompat.widget.Toolbar;
 import android.view.View;
+
 import it.developing.ico2k2.luckyplayer.DataManager;
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.base.BaseActivity;
@@ -27,7 +23,7 @@ public class InitializeActivity extends BaseActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initialize);
-        setSupportActionBar((Toolbar)findViewById(R.id.initialize_toolbar));
+        setSupportActionBar(findViewById(R.id.initialize_toolbar));
         dataManager = getDataManager();
         findViewById(R.id.initialize_fab).setOnClickListener(new View.OnClickListener(){
             @Override

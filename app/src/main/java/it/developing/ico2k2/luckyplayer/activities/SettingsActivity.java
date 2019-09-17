@@ -7,17 +7,6 @@ import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.core.content.ContextCompat;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceFragmentCompat;
-import androidx.appcompat.widget.AppCompatSpinner;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -30,6 +19,17 @@ import android.widget.Button;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatSpinner;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -40,9 +40,9 @@ import it.developing.ico2k2.luckyplayer.activities.base.BaseActivity;
 import it.developing.ico2k2.luckyplayer.dialogs.ConfirmDialog;
 import it.developing.ico2k2.luckyplayer.dialogs.DefaultDialog;
 
-import static it.developing.ico2k2.luckyplayer.Keys.TAG_LOGS;
 import static it.developing.ico2k2.luckyplayer.Keys.KEY_NOTIFICATION_TINT;
 import static it.developing.ico2k2.luckyplayer.Keys.KEY_THEME;
+import static it.developing.ico2k2.luckyplayer.Keys.TAG_LOGS;
 import static it.developing.ico2k2.luckyplayer.lib.Utils.adapterMapsFromAdapterList;
 import static it.developing.ico2k2.luckyplayer.lib.Utils.getThemeFromName;
 

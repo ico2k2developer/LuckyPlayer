@@ -3,12 +3,6 @@ package it.developing.ico2k2.luckyplayer.fragments;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Message;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -17,7 +11,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import it.developing.ico2k2.luckyplayer.LuckyPlayer;
 import it.developing.ico2k2.luckyplayer.R;
@@ -25,10 +23,8 @@ import it.developing.ico2k2.luckyplayer.activities.InfoActivity;
 import it.developing.ico2k2.luckyplayer.adapters.SongsAdapter;
 import it.developing.ico2k2.luckyplayer.adapters.lib.ViewHandle;
 import it.developing.ico2k2.luckyplayer.fragments.base.BaseFragment;
-import it.developing.ico2k2.luckyplayer.services.PlayService;
 
 import static it.developing.ico2k2.luckyplayer.Keys.KEY_INDEX;
-import static it.developing.ico2k2.luckyplayer.Keys.KEY_SIZE;
 import static it.developing.ico2k2.luckyplayer.Keys.KEY_SONGS;
 import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_PLAYER;
 

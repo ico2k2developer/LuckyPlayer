@@ -4,7 +4,7 @@
     <shortcut
         android:shortcutId="playlist"
         android:enabled="true"
-        android:icon="@mipmap/ic_playlist_activity"
+        android:icon="@mipmap/ic_playlist"
         android:shortcutShortLabel="@string/playlist"
         android:shortcutLongLabel="@string/playlist">
 

@@ -1,11 +1,9 @@
 package it.developing.ico2k2.luckyplayer.adapters.base;
 
-import android.view.ContextMenu;
-import android.view.View;
-
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import it.developing.ico2k2.luckyplayer.adapters.lib.ViewHandle;
 
 public abstract class BaseAdapter<VH extends ViewHandle> extends RecyclerView.Adapter<VH>

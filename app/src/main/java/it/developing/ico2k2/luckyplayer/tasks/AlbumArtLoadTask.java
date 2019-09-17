@@ -4,8 +4,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
-import androidx.annotation.Nullable;
 import android.text.TextUtils;
+
+import androidx.annotation.Nullable;
 
 public class AlbumArtLoadTask extends AsyncTask<AlbumArtLoadTask.AlbumArtLoadConfig,Void,Bitmap>
 {

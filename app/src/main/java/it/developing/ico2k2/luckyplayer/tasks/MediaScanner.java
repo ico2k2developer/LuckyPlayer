@@ -2,7 +2,6 @@ package it.developing.ico2k2.luckyplayer.tasks;
 
 
 import android.content.ContentResolver;
-import android.content.Context;
 import android.database.Cursor;
 import android.provider.MediaStore;
 
@@ -87,8 +86,9 @@ public class MediaScanner
         }
         if(valid)
         {
-            SongsAdapter.Song song = new SongsAdapter.Song(cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA)));
-            song.setTitle(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)));
+            SongsAdapter.Song song = new SongsAdapter.Song(
+                    cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA)),
+                    cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)));
             song.setAlbum(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)));
             song.setArtist(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)));
             song.setIndex(cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.TRACK)));

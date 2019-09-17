@@ -1,13 +1,7 @@
 package it.developing.ico2k2.luckyplayer.activities.base;
 
-import androidx.annotation.CallSuper;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.fragment.app.FragmentTransaction;
-
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
@@ -16,6 +10,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+
+import androidx.annotation.CallSuper;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.google.android.material.appbar.AppBarLayout;
 
 import it.developing.ico2k2.luckyplayer.fragments.SmallPlayerFragment;
 import it.developing.ico2k2.luckyplayer.services.OnServiceBoundListener;
@@ -31,6 +36,7 @@ public abstract class BasePlayingActivity extends BaseActivity implements OnServ
 {
     private static final int ID_FRAME_LAYOUT = 0xFADE;
 
+    private Bundle bundle;
     private SmallPlayerFragment fragment;
 
     protected void requestPlayer()
@@ -98,6 +104,13 @@ public abstract class BasePlayingActivity extends BaseActivity implements OnServ
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        bundle = new Bundle();
+    }
+
+    @Override
     public void onStart()
     {
         super.onStart();
@@ -106,19 +119,61 @@ public abstract class BasePlayingActivity extends BaseActivity implements OnServ
         getLuckyPlayer().prepareService();
     }
 
-    public void requestSongs(String requestCode)
-    {
-        Message message = Message.obtain();
-        message.what = MESSAGE_SONG_REQUEST;
-        Bundle extra = new Bundle();
-        extra.putString(KEY_REQUEST_CODE,requestCode);
-        message.setData(extra);
-        sendMessageToService(message,true);
-    }
+    protected static final int REQUEST_SCAN = 0x10;
+    protected static final int REQUEST_SONGS = 0x11;
 
     public void requestScan()
     {
-        sendMessageToService(MESSAGE_SCAN_REQUESTED);
+        if(ActivityCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE) !=  PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUEST_SCAN);
+        else
+            sendMessageToService(MESSAGE_SCAN_REQUESTED);
+    }
+
+    public void requestSongs(String requestCode)
+    {
+        if(ActivityCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE) !=  PackageManager.PERMISSION_GRANTED)
+        {
+            bundle.putString(Integer.toString(REQUEST_SONGS),requestCode);
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUEST_SONGS);
+        }
+        else
+        {
+            Message message = Message.obtain();
+            message.what = MESSAGE_SONG_REQUEST;
+            Bundle extra = new Bundle();
+            extra.putString(KEY_REQUEST_CODE,requestCode);
+            message.setData(extra);
+            sendMessageToService(message,true);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,@NonNull String[] permissions,@NonNull int[] grantResults)
+    {
+        if(grantResults.length > 0)
+        {
+            switch(requestCode)
+            {
+                case REQUEST_SCAN:
+                {
+                    if(grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                        requestScan();
+                    break;
+                }
+                case REQUEST_SONGS:
+                {
+                    String key = Integer.toString(REQUEST_SONGS);
+                    if(grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                        requestSongs(bundle.getString(key));
+                    bundle.remove(key);
+                    break;
+                }
+
+                // other 'case' lines to check for other
+                // permissions this app might request.
+            }
+        }
     }
 
     @Override

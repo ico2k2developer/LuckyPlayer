@@ -14,8 +14,6 @@ import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
 
-import androidx.core.app.NotificationManagerCompat;
-
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
@@ -26,9 +24,9 @@ import it.developing.ico2k2.luckyplayer.services.PlayService;
 import static it.developing.ico2k2.luckyplayer.Keys.CHANNEL_ID_INFO;
 import static it.developing.ico2k2.luckyplayer.Keys.CHANNEL_ID_MAIN;
 import static it.developing.ico2k2.luckyplayer.Keys.CHANNEL_ID_STATUS;
-import static it.developing.ico2k2.luckyplayer.Keys.TAG_LOGS;
 import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_BIND;
 import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_DESTROY;
+import static it.developing.ico2k2.luckyplayer.Keys.TAG_LOGS;
 
 public class LuckyPlayer extends Application
 {
@@ -49,7 +47,7 @@ public class LuckyPlayer extends Application
         myMessenger = new Messenger(new PlayHandler(this));
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
         {
-            NotificationManagerCompat manager = NotificationManagerCompat.from(this);
+            NotificationManager manager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
             String name = getString(R.string.main_notification_channel);
             manager.createNotificationChannel(new NotificationChannel(CHANNEL_ID_MAIN,name,NotificationManager.IMPORTANCE_LOW));
             name = getString(R.string.info_notification_channel);

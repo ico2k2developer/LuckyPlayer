@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
+
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.adapters.DetailsAdapter;
 import it.developing.ico2k2.luckyplayer.adapters.layoutmanagers.BaseLayoutManager;

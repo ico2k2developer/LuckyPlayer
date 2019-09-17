@@ -9,12 +9,6 @@ import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.RequiresApi;
-import androidx.annotation.StyleRes;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MenuItem;
@@ -22,6 +16,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
+import androidx.annotation.StyleRes;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
@@ -31,8 +31,8 @@ import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.MainActivity;
 
 import static it.developing.ico2k2.luckyplayer.Keys.KEY_INITIALIZED;
-import static it.developing.ico2k2.luckyplayer.Keys.TAG_LOGS;
 import static it.developing.ico2k2.luckyplayer.Keys.KEY_THEME;
+import static it.developing.ico2k2.luckyplayer.Keys.TAG_LOGS;
 
 public abstract class BaseActivity extends AppCompatActivity
 {

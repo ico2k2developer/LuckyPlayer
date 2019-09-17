@@ -2,17 +2,18 @@ package it.developing.ico2k2.luckyplayer.dialogs;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import it.developing.ico2k2.luckyplayer.R;
-
-import androidx.annotation.LayoutRes;
-import androidx.annotation.StringRes;
-import androidx.annotation.StyleRes;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.annotation.LayoutRes;
+import androidx.annotation.StringRes;
+import androidx.annotation.StyleRes;
+
+import it.developing.ico2k2.luckyplayer.R;
 
 public class ProgressDialog extends DefaultDialog
 {

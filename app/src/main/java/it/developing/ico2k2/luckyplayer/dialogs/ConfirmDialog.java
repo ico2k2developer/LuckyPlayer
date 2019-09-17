@@ -3,7 +3,6 @@ package it.developing.ico2k2.luckyplayer.dialogs;
 import android.content.Context;
 
 import it.developing.ico2k2.luckyplayer.R;
-import it.developing.ico2k2.luckyplayer.dialogs.DefaultDialog;
 
 /**
  * Created by Ico on 02/03/2018.

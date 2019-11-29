@@ -3,10 +3,8 @@ package it.developing.ico2k2.luckyplayer.activities;
 import android.app.Activity;
 import android.content.Intent;
 
-import it.developing.ico2k2.luckyplayer.DataManager;
-import it.developing.ico2k2.luckyplayer.LuckyPlayer;
-
 import static it.developing.ico2k2.luckyplayer.Keys.KEY_INITIALIZED;
+import static it.developing.ico2k2.luckyplayer.Keys.PREFERENCE_MAIN;
 
 public class MainActivity extends Activity
 {
@@ -14,8 +12,7 @@ public class MainActivity extends Activity
     public void onResume()
     {
         super.onResume();
-        DataManager dataManager = ((LuckyPlayer)getApplication()).getDataManager();
-        if(dataManager.getBoolean(KEY_INITIALIZED,false))
+        if(getSharedPreferences(PREFERENCE_MAIN,MODE_PRIVATE).getBoolean(KEY_INITIALIZED,false))
         {
             startActivity(new Intent(this,TabsActivity.class));
         }

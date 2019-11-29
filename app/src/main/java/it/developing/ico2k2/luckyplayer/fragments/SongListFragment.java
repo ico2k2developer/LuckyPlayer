@@ -3,7 +3,9 @@ package it.developing.ico2k2.luckyplayer.fragments;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Message;
+import android.support.v4.media.MediaBrowserCompat;
+import android.support.v4.media.session.MediaControllerCompat;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -11,22 +13,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import it.developing.ico2k2.luckyplayer.LuckyPlayer;
+import java.util.List;
+
+import it.developing.ico2k2.luckyplayer.MediaBrowserDependent;
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.InfoActivity;
 import it.developing.ico2k2.luckyplayer.adapters.SongsAdapter;
 import it.developing.ico2k2.luckyplayer.adapters.lib.ViewHandle;
 import it.developing.ico2k2.luckyplayer.fragments.base.BaseFragment;
 
-import static it.developing.ico2k2.luckyplayer.Keys.KEY_INDEX;
-import static it.developing.ico2k2.luckyplayer.Keys.KEY_SONGS;
-import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_PLAYER;
+import static it.developing.ico2k2.luckyplayer.Keys.TAG_LOGS;
 
 public class SongListFragment extends BaseFragment
 {
@@ -35,19 +38,13 @@ public class SongListFragment extends BaseFragment
     private RecyclerView list;
     private SongsAdapter adapter;
     private int contextClickPosition;
+    private String root;
 
-    public static SongListFragment create(Bundle arguments)
+    public static SongListFragment create(String root)
     {
         SongListFragment fragment = new SongListFragment();
-        fragment.setArguments(arguments);
+        fragment.root = root;
         return fragment;
-    }
-
-    public static SongListFragment create(int index)
-    {
-        Bundle arguments = new Bundle();
-        arguments.putInt(KEY_INDEX,index);
-        return create(arguments);
     }
 
     @Override
@@ -58,12 +55,7 @@ public class SongListFragment extends BaseFragment
         adapter.setOnItemClickListener(new ViewHandle.OnItemClickListener(){
             @Override
             public void onItemClick(ViewHandle handle,int position){
-                Message message = Message.obtain();
-                message.what = MESSAGE_PLAYER;
-                Bundle bundle = new Bundle();
-                bundle.putString(KEY_SONGS,adapter.get(position).getPath());
-                message.setData(bundle);
-                ((LuckyPlayer)getActivity().getApplication()).sendMessageToService(message,true);
+                MediaControllerCompat.getMediaController(getActivity()).getTransportControls().playFromMediaId(adapter.get(position).getPath(),null);
             }
         });
         adapter.setOnItemContextMenuListener(new ViewHandle.OnItemContextMenuListener(){
@@ -100,9 +92,9 @@ public class SongListFragment extends BaseFragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,ViewGroup container,Bundle savedInstance)
     {
-        list = new RecyclerView(getActivity());
+        list = new RecyclerView(getContext());
         list.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
-        //container.addView(list);
+        container.addView(list);
         return list;
     }
 
@@ -114,10 +106,51 @@ public class SongListFragment extends BaseFragment
         list.setLayoutManager(layoutManager);
         list.setHasFixedSize(false);
         list.setAdapter(adapter);
+        requestItems();
     }
 
-    public SongsAdapter getAdapter()
+    protected void requestItems()
     {
-        return adapter;
+        Bundle options = new Bundle();
+        options.putInt(MediaBrowserCompat.EXTRA_PAGE,0);
+        options.putInt(MediaBrowserCompat.EXTRA_PAGE_SIZE,2);
+        MediaBrowserCompat mediaBrowser = ((MediaBrowserDependent)getActivity()).getMediaBrowser();
+        mediaBrowser.subscribe(root,options,new MediaBrowserCompat.SubscriptionCallback(){
+
+            @Override
+            public void onChildrenLoaded(@NonNull String parentId,@NonNull List<MediaBrowserCompat.MediaItem> children,@NonNull Bundle options){
+                Log.d(TAG_LOGS,"Loading children from fragment");
+                int page = options.getInt(MediaBrowserCompat.EXTRA_PAGE);
+                if(page == 0)
+                    adapter.clear();
+                if(children.isEmpty())
+                {
+                    Log.d(TAG_LOGS,"No children available");
+                    adapter.notifyDataSetChanged();
+                }
+                else
+                {
+                    for(MediaBrowserCompat.MediaItem child : children)
+                        adapter.add(new SongsAdapter.Song(child));
+                    options.putInt(MediaBrowserCompat.EXTRA_PAGE,page + 1);
+                    mediaBrowser.subscribe(parentId,options,this);
+                }
+            }
+
+            @Override
+            public void onError(@NonNull String parentId,@NonNull Bundle options){
+                Toast.makeText(getContext(),"Error occurred when trying to load children at id: " + parentId,Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onError(@NonNull String parentId){
+                onError(parentId,new Bundle());
+            }
+
+            @Override
+            public void onChildrenLoaded(@NonNull String parentId,@NonNull List<MediaBrowserCompat.MediaItem> children){
+                onChildrenLoaded(parentId,children,new Bundle());
+            }
+        });
     }
 }

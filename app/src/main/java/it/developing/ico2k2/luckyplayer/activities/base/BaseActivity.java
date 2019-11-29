@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.os.Build;
@@ -25,25 +26,26 @@ import androidx.core.content.ContextCompat;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
-import it.developing.ico2k2.luckyplayer.DataManager;
-import it.developing.ico2k2.luckyplayer.LuckyPlayer;
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.MainActivity;
 
 import static it.developing.ico2k2.luckyplayer.Keys.KEY_INITIALIZED;
 import static it.developing.ico2k2.luckyplayer.Keys.KEY_THEME;
+import static it.developing.ico2k2.luckyplayer.Keys.PREFERENCE_MAIN;
 import static it.developing.ico2k2.luckyplayer.Keys.TAG_LOGS;
 
 public abstract class BaseActivity extends AppCompatActivity
 {
     protected static final int THEME_DEFAULT = R.style.Theme_Dark_Red;
 
+    private SharedPreferences prefs;
     private int currentTheme;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-        currentTheme = setTheme(getDataManager().getInt(KEY_THEME),THEME_DEFAULT);
+        prefs = getSharedPreferences(PREFERENCE_MAIN,MODE_PRIVATE);
+        currentTheme = setTheme(prefs.getInt(KEY_THEME,0),THEME_DEFAULT);
         super.onCreate(savedInstanceState);
         setKitKatStatusBarColor(getColorPrimaryDark());
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH)
@@ -51,38 +53,37 @@ public abstract class BaseActivity extends AppCompatActivity
             if(getNavigationBarColored())
                 getWindow().setNavigationBarColor(getNavigationBarDefaultColor());
         }
-        Log.d(TAG_LOGS,getClass().getName() + ": created");
+        Log.d(TAG_LOGS,getClass().getSimpleName() + ": created");
     }
 
     @Override
     public void onPause()
     {
         super.onPause();
-        Log.d(TAG_LOGS,getClass().getName() + ": paused");
+        Log.d(TAG_LOGS,getClass().getSimpleName() + ": paused");
     }
 
     @Override
     public void onStop()
     {
         super.onStop();
-        Log.d(TAG_LOGS,getClass().getName() + ": stopped");
+        Log.d(TAG_LOGS,getClass().getSimpleName() + ": stopped");
     }
 
     @Override
     public void onStart()
     {
         super.onStart();
-        Log.d(TAG_LOGS,getClass().getName() + ": started");
+        Log.d(TAG_LOGS,getClass().getSimpleName() + ": started");
     }
 
     @Override
     public void onResume()
     {
         super.onResume();
-        Log.d(TAG_LOGS,getClass().getName() + ": resumed");
-        if(getDataManager().getBoolean(KEY_INITIALIZED,false))
+        if(prefs.getBoolean(KEY_INITIALIZED,false))
         {
-            int theme = getDataManager().getInt(KEY_THEME);
+            int theme = prefs.getInt(KEY_THEME,0);
             if(theme != currentTheme)
             {
                 if(onThemeChanged(currentTheme,theme))
@@ -108,22 +109,22 @@ public abstract class BaseActivity extends AppCompatActivity
                 finish();
             }
         }
-
+        Log.d(TAG_LOGS,getClass().getSimpleName() + ": resumed");
     }
 
     public boolean onThemeChanged(@StyleRes int oldTheme,@StyleRes int newTheme)
     {
-        Log.d(TAG_LOGS,getClass().getName() + ": theme has changed! " + oldTheme + " to " + newTheme);
+        Log.d(TAG_LOGS,getClass().getSimpleName() + ": theme has changed! " + oldTheme + " to " + newTheme);
         return true;
     }
 
     public boolean onNoDataFound()
     {
-        Log.d(TAG_LOGS,getClass().getName() + ": no data found!");
+        Log.d(TAG_LOGS,getClass().getSimpleName() + ": no data found!");
         return true;
     }
 
-    protected View getContentView()
+    public View getContentView()
     {
         View result = findViewById(android.R.id.content);
         if(result == null)
@@ -131,14 +132,9 @@ public abstract class BaseActivity extends AppCompatActivity
         return ((ViewGroup)result).getChildAt(0);
     }
 
-    protected LuckyPlayer getLuckyPlayer()
+    public SharedPreferences getMainSharedPreferences()
     {
-        return (LuckyPlayer)getApplication();
-    }
-
-    protected DataManager getDataManager()
-    {
-        return getLuckyPlayer().getDataManager();
+        return prefs;
     }
 
     protected int setTheme(@StyleRes int theme,@StyleRes int exceptionTheme)

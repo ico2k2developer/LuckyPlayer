@@ -1,15 +1,16 @@
 package it.developing.ico2k2.luckyplayer.activities;
 
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Bundle;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaControllerCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -21,46 +22,43 @@ import java.util.ArrayList;
 
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.base.BasePlayingActivity;
-import it.developing.ico2k2.luckyplayer.adapters.SongsAdapter;
 import it.developing.ico2k2.luckyplayer.fragments.SongListFragment;
 import it.developing.ico2k2.luckyplayer.services.PlayService;
 
-import static it.developing.ico2k2.luckyplayer.Keys.KEY_REQUEST_CODE;
-import static it.developing.ico2k2.luckyplayer.Keys.KEY_SIZE;
-import static it.developing.ico2k2.luckyplayer.Keys.KEY_SONGS;
 import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_DESTROY;
-import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_SCAN_COMPLETED;
 import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_SCAN_REQUESTED;
-import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_SONG_END;
-import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_SONG_PACKET;
-import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_SONG_START;
 import static it.developing.ico2k2.luckyplayer.Keys.TAG_LOGS;
 
 public class TabsActivity extends BasePlayingActivity
 {
-    private String requestCode;
-    private ArrayList<SongsAdapter.Song> songs;
     private ViewPager pager;
     private PagerAdapter adapter;
-    private long time = 0;
 
     public class PagerAdapter extends FragmentPagerAdapter
     {
         private String[] tabs;
+        private String[] ids =
+        {
+            PlayService.ID_SONGS,
+            PlayService.ID_ALBUMS,
+            PlayService.ID_ARTISTS,
+            PlayService.ID_YEARS,
+        };
         private ArrayList<String> tags;
 
         public PagerAdapter(FragmentManager fm)
         {
-            super(fm);
+            super(fm,BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
             tabs = getResources().getStringArray(R.array.tabs);
             tags = new ArrayList<>(getCount());
         }
 
         @Override
         @NonNull
-        public Fragment getItem( final int i)
+        public Fragment getItem(int i)
         {
-            return SongListFragment.create(i);
+            Log.d(TAG_LOGS,"Loading fragment " + i);
+            return SongListFragment.create(ids[i]);
         }
 
         @Override
@@ -72,33 +70,6 @@ public class TabsActivity extends BasePlayingActivity
         public CharSequence getPageTitle(int position) {
             return tabs[position];
         }
-
-        @Override
-        public Object instantiateItem(ViewGroup container,int position) {
-            Object object = super.instantiateItem(container, position);
-            if(object instanceof Fragment)
-            {
-                Fragment fragment = (Fragment) object;
-                String tag = fragment.getTag();
-                if(position < tags.size())
-                    tags.remove(position);
-                tags.add(position,tag);
-            }
-            return object;
-        }
-
-        public Fragment getFragment(int position)
-        {
-            Fragment result = null;
-            if(position < tags.size())
-                result = getSupportFragmentManager().findFragmentByTag(tags.get(position));
-            return result;
-        }
-
-        /*@Override
-        public void destroyItem(ViewGroup container,int position,Object object) {
-            Toast.makeText(MainActivity.this,"Ignored destroy request",Toast.LENGTH_SHORT).show();
-        }*/
     }
 
     @Override
@@ -114,112 +85,90 @@ public class TabsActivity extends BasePlayingActivity
         pager.setAdapter(adapter);
         pager.setOffscreenPageLimit(3);
         tabLayout.setupWithViewPager(pager);
-
         adapter.notifyDataSetChanged();
-        //requestPlayer();
+    }
+
+    void buildTransportControls()
+    {
+        Log.d(TAG_LOGS,"Building controls");
+        requestPlayer();
+        // Grab the view for the play/pause button
+        /*playPause = (ImageView) findViewById(R.id.play_pause);
+
+        // Attach a listener to the button
+        playPause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Since this is a play/pause button, you'll need to test the current state
+                // and choose the action accordingly
+
+                int pbState = MediaControllerCompat.getMediaController(MediaPlayerActivity.this).getPlaybackState().getState();
+                if (pbState == PlaybackStateCompat.STATE_PLAYING) {
+                    MediaControllerCompat.getMediaController(MediaPlayerActivity.this).getTransportControls().pause();
+                } else {
+                    MediaControllerCompat.getMediaController(MediaPlayerActivity.this).getTransportControls().play();
+                }
+            });*/
+
+            MediaControllerCompat mediaController = MediaControllerCompat.getMediaController(this);
+
+            // Display the initial state
+            MediaMetadataCompat metadata = mediaController.getMetadata();
+            PlaybackStateCompat pbState = mediaController.getPlaybackState();
+
+            // Register a Callback to stay in sync
+            mediaController.registerCallback(controllerCallback);
+    }
+
+    MediaControllerCompat.Callback controllerCallback =
+            new MediaControllerCompat.Callback() {
+                @Override
+                public void onMetadataChanged(MediaMetadataCompat metadata)
+                {
+                    Log.d(TAG_LOGS,"MediaController metadata changed");
+                }
+
+                @Override
+                public void onPlaybackStateChanged(PlaybackStateCompat state)
+                {
+                    Log.d(TAG_LOGS,"MediaController playback state changed");
+                }
+            };
+
+    public void onBackPressed()
+    {
+        int pbState = MediaControllerCompat.getMediaController(this).getPlaybackState().getState();
+        if (pbState == PlaybackStateCompat.STATE_PLAYING) {
+            Log.d(TAG_LOGS,"Pausing");
+            MediaControllerCompat.getMediaController(this).getTransportControls().pause();
+        } else {
+            Log.d(TAG_LOGS,"Playing");
+            MediaControllerCompat.getMediaController(this).getTransportControls().play();
+        }
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        //browser.connect();
     }
 
     @Override
-    public void onServiceBound()
-    {
-        super.onServiceBound();
-        requestCode = getClass().getName();
-        requestSongs(requestCode);
+    public void onResume() {
+        super.onResume();
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
     @Override
-    public void onMessageReceived(int key,@Nullable Bundle packet)
-    {
-        Log.d(TAG_LOGS,"Received message in activity " + Integer.toHexString(key));
-        boolean processed = true;
-        String code = null;
-        if(packet != null)
-        {
-            packet.setClassLoader(getClassLoader());
-            code = packet.getString(KEY_REQUEST_CODE);
+    public void onStop() {
+        super.onStop();
+        // (see "stay in sync with the MediaSession")
+        if (MediaControllerCompat.getMediaController(this) != null) {
+            MediaControllerCompat.getMediaController(this).unregisterCallback(controllerCallback);
         }
-        if(code == null || code.equals(requestCode))
-        {
-            switch(key)
-            {
-                case MESSAGE_SONG_PACKET:
-                {
-                    if(packet != null)
-                    {
-                        if(packet.containsKey(KEY_SONGS))
-                        {
-                            songs.addAll(packet.getParcelableArrayList(KEY_SONGS));
-                        }
-                    }
-                    break;
-                }
-                case MESSAGE_SONG_START:
-                {
-                    if(packet != null)
-                    {
-                        if(packet.containsKey(KEY_SIZE))
-                        {
-                            int size = packet.getInt(KEY_SIZE);
-                            if(songs == null)
-                                songs = new ArrayList<>(size);
-                            else
-                                songs.ensureCapacity(size);
-                        }
+        //browser.disconnect();
 
-
-                    }
-                    break;
-                }
-                case MESSAGE_SONG_END:
-                {
-                    Toast.makeText(this,songs.size() + " songs",Toast.LENGTH_SHORT).show();
-                    SongListFragment fragment;
-                    SongsAdapter songsAdapter;
-                    int a;
-                    for(a = 0; a < adapter.getCount(); a++)
-                    {
-                        Log.d(TAG_LOGS,"Working on fragment " + a);
-                        fragment = (SongListFragment)adapter.getFragment(a);
-                        if(fragment != null)
-                        {
-                            Log.d(TAG_LOGS,"Non null fragment: " + a);
-                            songsAdapter = fragment.getAdapter();
-                            songsAdapter.clear();
-                            songsAdapter.ensureCapacity(songs.size());
-                            songsAdapter.setOrderType(PlayService.OrderType.ALPHABETICAL);
-                            songsAdapter.setViewType(SongsAdapter.ViewType.values()[a]);
-                            songsAdapter.setShowIndexes(false);
-                            songsAdapter.addAll(songs);
-                            songsAdapter.reorder();
-                            songsAdapter.notifyDataSetChanged();
-                            Log.d(TAG_LOGS,"Adapter updated in fragment " + a);
-                        }
-                        else
-                            Log.d(TAG_LOGS,"Null fragment: " + a);
-                    }
-                    songs.clear();
-                    songs.trimToSize();
-                    break;
-                }
-                default:
-                {
-                    processed = false;
-                }
-            }
-        }
-        else
-            processed = false;
-        if(!processed)
-        {
-            switch(key)
-            {
-                case MESSAGE_SCAN_COMPLETED:
-                {
-                    requestSongs(requestCode);
-                    break;
-                }
-            }
-        }
     }
 
     @Override

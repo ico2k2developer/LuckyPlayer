@@ -2,6 +2,7 @@ package it.developing.ico2k2.luckyplayer.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
@@ -33,8 +34,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import it.developing.ico2k2.luckyplayer.DataManager;
-import it.developing.ico2k2.luckyplayer.LuckyPlayer;
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.base.BaseActivity;
 import it.developing.ico2k2.luckyplayer.dialogs.ConfirmDialog;
@@ -106,7 +105,7 @@ public class SettingsActivity extends BaseActivity
         });
         list.setAdapter(adapter);
         handleIntent(getIntent());
-        getDataManager().putInt(KEY_NOTIFICATION_TINT,getColorPrimary());
+        getMainSharedPreferences().edit().putInt(KEY_NOTIFICATION_TINT,getColorPrimary()).apply();
     }
 
     @Override
@@ -137,7 +136,7 @@ public class SettingsActivity extends BaseActivity
                 list.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
                     @Override
                     public void onGlobalLayout(){
-                        list.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                        list.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         list.getChildAt(i).performClick();
                     }
                 });
@@ -381,7 +380,7 @@ public class SettingsActivity extends BaseActivity
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             handleIntent(getIntent());
-            getDataManager().putInt(KEY_NOTIFICATION_TINT,getColorPrimary());
+            getMainSharedPreferences().edit().putInt(KEY_NOTIFICATION_TINT,getColorPrimary()).apply();
         }
 
         @Override
@@ -483,7 +482,7 @@ public class SettingsActivity extends BaseActivity
             {
                 case R.string.settings_theme:
                 {
-                    final DataManager dataManager = ((LuckyPlayer)getActivity().getApplication()).getDataManager();
+                    final SharedPreferences prefs = ((BaseActivity)getActivity()).getMainSharedPreferences();
                     final AppCompatSpinner themeSpinner = view.findViewById(R.id.theme_spinner);
                     final ArrayList<String> items = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.themes)));
                     final ArrayList<Integer> themes = new ArrayList<>(items.size());
@@ -503,11 +502,11 @@ public class SettingsActivity extends BaseActivity
                     }
                     SimpleAdapter adapter = new SimpleAdapter(getActivity(),adapterMapsFromAdapterList(items,LIST_TITLE),android.R.layout.simple_list_item_1,new String[]{LIST_TITLE},new int[]{android.R.id.text1});
                     themeSpinner.setAdapter(adapter);
-                    themeSpinner.setSelection(themes.indexOf(dataManager.getInt(KEY_THEME)));
+                    themeSpinner.setSelection(themes.indexOf(prefs.getInt(KEY_THEME,0)));
                     themeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
                         @Override
                         public void onItemSelected(AdapterView<?> parent,View v,int position,long id){
-                            int currentTheme = dataManager.getInt(KEY_THEME);
+                            int currentTheme = prefs.getInt(KEY_THEME,0);
                             if(currentTheme == themes.get(position))
                                 view.findViewById(R.id.theme_apply).setVisibility(View.GONE);
                             else
@@ -524,7 +523,7 @@ public class SettingsActivity extends BaseActivity
                     view.findViewById(R.id.theme_apply).setOnClickListener(new View.OnClickListener(){
                         @Override
                         public void onClick(View v){
-                            dataManager.putInt(KEY_THEME,themes.get(themeSpinner.getSelectedItemPosition()));
+                            prefs.edit().putInt(KEY_THEME,themes.get(themeSpinner.getSelectedItemPosition())).apply();
                             Intent intent = new Intent(getActivity(),getActivity().getClass());
                             intent.putExtra(ARGUMENT_PREFERENCE,preference);
                             intent.putExtra(ARGUMENT_INDEX,preferenceIndex);
@@ -641,7 +640,7 @@ public class SettingsActivity extends BaseActivity
                             dialog.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    ((LuckyPlayer)getActivity().getApplication()).getDataManager().clearAll();
+                                    ((BaseActivity)getActivity()).getMainSharedPreferences().edit().clear().apply();
                                     getActivity().onBackPressed();
                                 }
                             });

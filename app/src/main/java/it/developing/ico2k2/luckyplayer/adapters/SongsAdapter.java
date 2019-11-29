@@ -6,7 +6,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,8 +34,8 @@ import static android.provider.MediaStore.Audio.AudioColumns.ARTIST_KEY;
 import static android.provider.MediaStore.Audio.AudioColumns.DURATION;
 import static android.provider.MediaStore.Audio.AudioColumns.TRACK;
 import static android.provider.MediaStore.Audio.AudioColumns.YEAR;
+import static android.support.v4.media.MediaBrowserCompat.MediaItem.FLAG_BROWSABLE;
 import static android.support.v4.media.MediaBrowserCompat.MediaItem.FLAG_PLAYABLE;
-import static it.developing.ico2k2.luckyplayer.Keys.TAG_LOGS;
 
 public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
 {
@@ -216,7 +215,6 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
 
     public Song get(int index)
     {
-        Log.d(TAG_LOGS,"Galla's class: " + ((Object)songs.get(index)).getClass().getName());
         Song result;
         if(order == PlayService.OrderType.NONE && view == ViewType.SONGS)
             result = songs.get(index);
@@ -647,6 +645,27 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
             item = new MediaBrowserCompat.MediaItem(song.getDescription(),song.getFlags());
         }
 
+        public Song(MediaBrowserCompat.MediaItem item)
+        {
+            if(item.getDescription().getExtras() == null)
+            {
+                MediaDescriptionCompat desc = item.getDescription();
+                item = new MediaBrowserCompat.MediaItem(
+                        new MediaDescriptionCompat.Builder()
+                                .setDescription(desc.getDescription())
+                                .setExtras(new Bundle())
+                                .setIconBitmap(desc.getIconBitmap())
+                                .setIconUri(desc.getIconUri())
+                                .setMediaId(desc.getMediaId())
+                                .setMediaUri(desc.getMediaUri())
+                                .setSubtitle(desc.getSubtitle())
+                                .setTitle(desc.getTitle()).build(),
+                            item.isBrowsable() ? FLAG_BROWSABLE : FLAG_PLAYABLE
+                );
+            }
+            this.item = item;
+        }
+
         public Song(String path,CharSequence title,int flags)
         {
             item = new MediaBrowserCompat.MediaItem(
@@ -677,7 +696,7 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
         }
 
         public String getArtist(){
-            return item.getDescription().getExtras().getString(ARTIST_KEY);
+            return item.getDescription().getExtras().getString(ARTIST_KEY,"");
         }
 
         public Song setAlbum(String album){
@@ -686,7 +705,7 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
         }
 
         public String getAlbum(){
-            return item.getDescription().getExtras().getString(ALBUM_KEY);
+            return item.getDescription().getExtras().getString(ALBUM_KEY,"");
         }
 
         public Song setIndex(int index){

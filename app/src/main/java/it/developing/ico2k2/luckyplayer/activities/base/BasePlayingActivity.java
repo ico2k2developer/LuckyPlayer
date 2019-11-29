@@ -1,17 +1,21 @@
 package it.developing.ico2k2.luckyplayer.activities.base;
 
 import android.Manifest;
+import android.content.ComponentName;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Message;
-import android.util.TypedValue;
+import android.support.v4.media.MediaBrowserCompat;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaControllerCompat;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -22,101 +26,184 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.appbar.AppBarLayout;
 
+import it.developing.ico2k2.luckyplayer.MediaBrowserDependent;
 import it.developing.ico2k2.luckyplayer.fragments.SmallPlayerFragment;
-import it.developing.ico2k2.luckyplayer.services.OnServiceBoundListener;
-import it.developing.ico2k2.luckyplayer.services.OnServiceMessageListener;
+import it.developing.ico2k2.luckyplayer.services.PlayService;
 
-import static it.developing.ico2k2.luckyplayer.Keys.KEY_REQUEST_CODE;
-import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_OFFLINE;
-import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_ONLINE;
 import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_SCAN_REQUESTED;
-import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_SONG_REQUEST;
+import static it.developing.ico2k2.luckyplayer.Keys.TAG_LOGS;
 
-public abstract class BasePlayingActivity extends BaseActivity implements OnServiceBoundListener,OnServiceMessageListener
+public abstract class BasePlayingActivity extends BaseActivity implements MediaBrowserDependent
 {
     private static final int ID_FRAME_LAYOUT = 0xFADE;
 
-    private Bundle bundle;
-    private SmallPlayerFragment fragment;
+    private SmallPlayerFragment playerFragment;
+    private MediaBrowserCompat browser;
+    private MediaControllerCompat.Callback controllerCallback;
+    private static boolean playerShowing = false;
+
+    public MediaBrowserCompat getMediaBrowser()
+    {
+        return browser;
+    }
 
     protected void requestPlayer()
     {
-        if(fragment == null)
+        if(!isPlayerShowing())
         {
-            FrameLayout frameLayout = new FrameLayout(this);
-            frameLayout.setId(ID_FRAME_LAYOUT);
-            if(frameLayout.getParent() != null)
-                ((ViewGroup)frameLayout.getParent()).removeView(frameLayout);
-            ViewGroup parent = (ViewGroup)getContentView();
+            if(playerFragment == null)
+            {
+                FrameLayout frameLayout = new FrameLayout(this);
+                frameLayout.setId(ID_FRAME_LAYOUT);
+                if(frameLayout.getParent() != null)
+                    ((ViewGroup)frameLayout.getParent()).removeView(frameLayout);
+                ViewGroup parent = (ViewGroup)getContentView();
 
-            TypedValue value = new TypedValue();
-            /*getTheme().resolveAttribute(R.attr.toolbarShadow,value,true);
+                /*TypedValue value = new TypedValue();
+            getTheme().resolveAttribute(R.attr.toolbarShadow,value,true);
             View shadow = new View(this);
             shadow.setBackgroundResource(value.resourceId);*/
-            //parent = (ViewGroup)parent.getChildAt(parent.getChildCount() - 1);
-            if(parent instanceof ConstraintLayout)
-            {
-                parent.addView(frameLayout);
-                ConstraintSet set = new ConstraintSet();
-                set.clone((ConstraintLayout)parent);
-                set.connect(ID_FRAME_LAYOUT,ConstraintSet.START,ConstraintSet.PARENT_ID,ConstraintSet.START);
-                set.connect(ID_FRAME_LAYOUT,ConstraintSet.END,ConstraintSet.PARENT_ID,ConstraintSet.END);
-                set.connect(ID_FRAME_LAYOUT,ConstraintSet.BOTTOM,ConstraintSet.PARENT_ID,ConstraintSet.BOTTOM);
-                set.applyTo((ConstraintLayout)parent);
-            }
-            else if(parent instanceof CoordinatorLayout)
-            {
-                LinearLayout linearLayout = new LinearLayout(this);
-                CoordinatorLayout.LayoutParams params = new CoordinatorLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
-                params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
-                linearLayout.setOrientation(LinearLayout.VERTICAL);
-                linearLayout.setLayoutParams(params);
-                int index = parent.getChildCount() - 1;
-                View view = parent.getChildAt(index);
-                parent.removeViewAt(index);
-                LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0);
-                params2.weight = 1;
-                view.setLayoutParams(params2);
-                linearLayout.addView(view);
-                linearLayout.addView(frameLayout);
-                parent.addView(linearLayout);
+                //parent = (ViewGroup)parent.getChildAt(parent.getChildCount() - 1);
+                if(parent instanceof ConstraintLayout)
+                {
+                    parent.addView(frameLayout);
+                    ConstraintSet set = new ConstraintSet();
+                    set.clone((ConstraintLayout)parent);
+                    set.connect(ID_FRAME_LAYOUT,ConstraintSet.START,ConstraintSet.PARENT_ID,ConstraintSet.START);
+                    set.connect(ID_FRAME_LAYOUT,ConstraintSet.END,ConstraintSet.PARENT_ID,ConstraintSet.END);
+                    set.connect(ID_FRAME_LAYOUT,ConstraintSet.BOTTOM,ConstraintSet.PARENT_ID,ConstraintSet.BOTTOM);
+                    set.applyTo((ConstraintLayout)parent);
+                }
+                else if(parent instanceof CoordinatorLayout)
+                {
+                    LinearLayout linearLayout = new LinearLayout(this);
+                    CoordinatorLayout.LayoutParams params = new CoordinatorLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
+                    params.setBehavior(new AppBarLayout.ScrollingViewBehavior());
+                    linearLayout.setOrientation(LinearLayout.VERTICAL);
+                    linearLayout.setLayoutParams(params);
+                    int index = parent.getChildCount() - 1;
+                    View view = parent.getChildAt(index);
+                    parent.removeViewAt(index);
+                    LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0);
+                    params2.weight = 1;
+                    view.setLayoutParams(params2);
+                    linearLayout.addView(view);
+                    linearLayout.addView(frameLayout);
+                    parent.addView(linearLayout);
 
+                }
+                playerFragment = new SmallPlayerFragment();
             }
-            fragment = new SmallPlayerFragment();
-        }
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.add(ID_FRAME_LAYOUT,fragment);
-        transaction.commit();
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH)
-        {
-            if(getNavigationBarColored())
-                getWindow().setNavigationBarColor(getNavigationBarPlayingColor());
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.add(ID_FRAME_LAYOUT,playerFragment);
+            transaction.commit();
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH)
+            {
+                if(getNavigationBarColored())
+                    getWindow().setNavigationBarColor(getNavigationBarPlayingColor());
+            }
+            playerShowing = true;
         }
     }
 
     protected void removePlayer()
     {
-        if(fragment != null){
+        if(isPlayerShowing() && playerFragment != null)
+        {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.remove(fragment);
+            transaction.remove(playerFragment);
             transaction.commit();
+            playerShowing = false;
         }
+    }
+
+    protected boolean isPlayerShowing()
+    {
+        return playerShowing;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        bundle = new Bundle();
-    }
+        browser = new MediaBrowserCompat(this,new ComponentName(this,PlayService.class),new MediaBrowserCompat.ConnectionCallback()
+        {
+            @Override
+            public void onConnected()
+            {
+                Log.d(TAG_LOGS,"MediaBrowser connected");
+                try
+                {
+                    MediaSessionCompat.Token token = browser.getSessionToken();
+                    MediaControllerCompat mediaController = new MediaControllerCompat(BasePlayingActivity.this,token);
+                    MediaControllerCompat.setMediaController(BasePlayingActivity.this, mediaController);
+                    Log.d(TAG_LOGS,"MediaController created");
 
-    @Override
-    public void onStart()
-    {
-        super.onStart();
-        getLuckyPlayer().addOnServiceBoundListener(this);
-        getLuckyPlayer().addOnServiceMessageListener(this);
-        getLuckyPlayer().prepareService();
+                    mediaController.registerCallback(controllerCallback = new MediaControllerCompat.Callback()
+                    {
+                        @Override
+                        public void onPlaybackStateChanged(PlaybackStateCompat playbackState)
+                        {
+                            int state = playbackState.getState();
+                            switch(state)
+                            {
+                                case PlaybackStateCompat.STATE_BUFFERING:
+                                case PlaybackStateCompat.STATE_FAST_FORWARDING:
+                                case PlaybackStateCompat.STATE_PAUSED:
+                                case PlaybackStateCompat.STATE_PLAYING:
+                                case PlaybackStateCompat.STATE_REWINDING:
+                                case PlaybackStateCompat.STATE_SKIPPING_TO_NEXT:
+                                case PlaybackStateCompat.STATE_SKIPPING_TO_PREVIOUS:
+                                case PlaybackStateCompat.STATE_SKIPPING_TO_QUEUE_ITEM:
+                                case PlaybackStateCompat.STATE_STOPPED:
+                                {
+                                    requestPlayer();
+                                    playerFragment.setPlaying(state == PlaybackStateCompat.STATE_PLAYING);
+                                    playerFragment.setTimeProgress((int)playbackState.getPosition());
+                                    break;
+                                }
+                                default:
+                                {
+                                    removePlayer();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onMetadataChanged(MediaMetadataCompat metadata)
+                        {
+                            if(isPlayerShowing())
+                            {
+                                playerFragment.setTimeTotal((int)metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION));
+                            }
+                        }
+                    });
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                }
+                //requestSongs(TabsActivity.class.getName());
+
+
+
+                // Save the controller
+
+                // Finish building the UI
+            }
+
+            @Override
+            public void onConnectionSuspended()
+            {
+                Log.d(TAG_LOGS,"MediaBrowser connection suspended");
+            }
+
+            @Override
+            public void onConnectionFailed()
+            {
+                Log.d(TAG_LOGS,"MediaBrowser connection failed");
+            }
+        },null);
     }
 
     protected static final int REQUEST_SCAN = 0x10;
@@ -127,10 +214,10 @@ public abstract class BasePlayingActivity extends BaseActivity implements OnServ
         if(ActivityCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE) !=  PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUEST_SCAN);
         else
-            sendMessageToService(MESSAGE_SCAN_REQUESTED);
+            MediaControllerCompat.getMediaController(this).getTransportControls().sendCustomAction(MESSAGE_SCAN_REQUESTED,null);
     }
 
-    public void requestSongs(String requestCode)
+    /*public void requestSongs(String requestCode)
     {
         if(ActivityCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE) !=  PackageManager.PERMISSION_GRANTED)
         {
@@ -139,14 +226,14 @@ public abstract class BasePlayingActivity extends BaseActivity implements OnServ
         }
         else
         {
-            Message message = Message.obtain();
-            message.what = MESSAGE_SONG_REQUEST;
+            LuckyPlayer.LocalMail mail = new LuckyPlayer.LocalMail();
+            mail.setTag(MESSAGE_SONG_REQUEST);
             Bundle extra = new Bundle();
             extra.putString(KEY_REQUEST_CODE,requestCode);
-            message.setData(extra);
-            sendMessageToService(message,true);
+            mail.attach(extra);
+            sendMessageToService(mail);
         }
-    }
+    }*/
 
     @Override
     public void onRequestPermissionsResult(int requestCode,@NonNull String[] permissions,@NonNull int[] grantResults)
@@ -161,14 +248,14 @@ public abstract class BasePlayingActivity extends BaseActivity implements OnServ
                         requestScan();
                     break;
                 }
-                case REQUEST_SONGS:
+                /*case REQUEST_SONGS:
                 {
                     String key = Integer.toString(REQUEST_SONGS);
                     if(grantResults[0] == PackageManager.PERMISSION_GRANTED)
                         requestSongs(bundle.getString(key));
                     bundle.remove(key);
                     break;
-                }
+                }*/
 
                 // other 'case' lines to check for other
                 // permissions this app might request.
@@ -177,52 +264,44 @@ public abstract class BasePlayingActivity extends BaseActivity implements OnServ
     }
 
     @Override
-    public void onMessageReceived(int key,@Nullable Bundle packet)
+    public void onStart()
     {
-
-    }
-
-    @Override
-    @CallSuper
-    public void onServiceBound(){
-        getLuckyPlayer().sendMessageToService(MESSAGE_ONLINE);
-    }
-
-    @Override
-    @CallSuper
-    public void onServiceNotBound(){
-        finish();
-    }
-
-    public void sendMessageToService(int what)
-    {
-        getLuckyPlayer().sendMessageToService(what);
-    }
-
-    public void sendMessageToService(Message message,boolean recycle)
-    {
-        getLuckyPlayer().sendMessageToService(message,recycle);
+        super.onStart();
+        if(!browser.isConnected())
+            browser.connect();
     }
 
     @Override
     public void onResume()
     {
         super.onResume();
-        getLuckyPlayer().sendMessageToService(MESSAGE_ONLINE);
     }
 
     @Override
     public void onPause()
     {
         super.onPause();
-        getLuckyPlayer().sendMessageToService(MESSAGE_OFFLINE);
     }
 
     @Override
     public void onStop()
     {
         super.onStop();
-        getLuckyPlayer().removeOnServiceBoundListener(this);
-        getLuckyPlayer().removeOnServiceMessageListener(this);
+        if (MediaControllerCompat.getMediaController(BasePlayingActivity.this) != null)
+        {
+            MediaControllerCompat.getMediaController(BasePlayingActivity.this).unregisterCallback(controllerCallback);
+        }
+        if(browser.isConnected())
+            browser.disconnect();
+    }
+
+    protected void sendMessageToService(String message,@Nullable Bundle extras)
+    {
+        MediaControllerCompat.getMediaController(this).getTransportControls().sendCustomAction(message,extras);
+    }
+
+    protected void sendMessageToService(String message)
+    {
+        sendMessageToService(message,null);
     }
 }

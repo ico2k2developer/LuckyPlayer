@@ -1,34 +1,32 @@
 package it.developing.ico2k2.luckyplayer.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
-import it.developing.ico2k2.luckyplayer.DataManager;
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.base.BaseActivity;
 
 import static it.developing.ico2k2.luckyplayer.Keys.KEY_DATA_INITIALIZED;
 import static it.developing.ico2k2.luckyplayer.Keys.KEY_INITIALIZED;
 import static it.developing.ico2k2.luckyplayer.Keys.KEY_NOTIFICATION_TINT;
+import static it.developing.ico2k2.luckyplayer.Keys.KEY_SONGLIST_PACKET_SIZE;
 import static it.developing.ico2k2.luckyplayer.Keys.KEY_SYSTEM_MEDIA;
 import static it.developing.ico2k2.luckyplayer.Keys.KEY_THEME;
 
 public class InitializeActivity extends BaseActivity
 {
-    private DataManager dataManager;
-
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initialize);
         setSupportActionBar(findViewById(R.id.initialize_toolbar));
-        dataManager = getDataManager();
         findViewById(R.id.initialize_fab).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                dataManager.putBoolean(KEY_INITIALIZED,true);
+                getMainSharedPreferences().edit().putBoolean(KEY_INITIALIZED,true).apply();
                 startActivity(new Intent(InitializeActivity.this,MainActivity.class));
                 finish();
             }
@@ -44,12 +42,14 @@ public class InitializeActivity extends BaseActivity
 
     public void setup()
     {
-        if(!dataManager.getBoolean(KEY_DATA_INITIALIZED,false))
+        SharedPreferences prefs = getMainSharedPreferences();
+        if(!prefs.getBoolean(KEY_DATA_INITIALIZED,false))
         {
-            dataManager.putBoolean(KEY_SYSTEM_MEDIA,false);
-            dataManager.putInt(KEY_THEME,THEME_DEFAULT);
-            dataManager.putInt(KEY_NOTIFICATION_TINT,getColorPrimary());
-            dataManager.putBoolean(KEY_DATA_INITIALIZED,true);
+            prefs.edit().putBoolean(KEY_SYSTEM_MEDIA,false).apply();
+            prefs.edit().putInt(KEY_THEME,THEME_DEFAULT).apply();
+            prefs.edit().putInt(KEY_NOTIFICATION_TINT,getColorPrimary()).apply();
+            prefs.edit().putBoolean(KEY_DATA_INITIALIZED,true).apply();
+            prefs.edit().putInt(KEY_SONGLIST_PACKET_SIZE,150).apply();
         }
     }
 

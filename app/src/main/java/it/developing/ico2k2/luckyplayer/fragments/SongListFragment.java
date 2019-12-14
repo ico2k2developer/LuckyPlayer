@@ -42,6 +42,7 @@ public class SongListFragment extends BaseFragment
 
     public static SongListFragment create(String root)
     {
+        Log.d(TAG_LOGS,"Creating new fragment, root: " + root);
         SongListFragment fragment = new SongListFragment();
         fragment.root = root;
         return fragment;
@@ -66,6 +67,7 @@ public class SongListFragment extends BaseFragment
                 contextClickPosition = position;
             }
         });
+        Log.d(TAG_LOGS,"Fragment created, root: " + root);
     }
 
     @Override
@@ -95,6 +97,7 @@ public class SongListFragment extends BaseFragment
         list = new RecyclerView(getContext());
         list.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
         container.addView(list);
+        Log.d(TAG_LOGS,"Creating fragment\'s views, root: " + root);
         return list;
     }
 
@@ -107,13 +110,14 @@ public class SongListFragment extends BaseFragment
         list.setHasFixedSize(false);
         list.setAdapter(adapter);
         requestItems();
+        Log.d(TAG_LOGS,"Fragment\' views created, root: " + root);
     }
 
     protected void requestItems()
     {
         Bundle options = new Bundle();
         options.putInt(MediaBrowserCompat.EXTRA_PAGE,0);
-        options.putInt(MediaBrowserCompat.EXTRA_PAGE_SIZE,2);
+        options.putInt(MediaBrowserCompat.EXTRA_PAGE_SIZE,100);
         MediaBrowserCompat mediaBrowser = ((MediaBrowserDependent)getActivity()).getMediaBrowser();
         mediaBrowser.subscribe(root,options,new MediaBrowserCompat.SubscriptionCallback(){
 

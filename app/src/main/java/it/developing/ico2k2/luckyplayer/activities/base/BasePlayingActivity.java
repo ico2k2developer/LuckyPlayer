@@ -40,7 +40,7 @@ public abstract class BasePlayingActivity extends BaseActivity implements MediaB
     private SmallPlayerFragment playerFragment;
     private MediaBrowserCompat browser;
     private MediaControllerCompat.Callback controllerCallback;
-    private static boolean playerShowing = false;
+    private boolean playerShowing = false;
 
     public MediaBrowserCompat getMediaBrowser()
     {
@@ -49,6 +49,7 @@ public abstract class BasePlayingActivity extends BaseActivity implements MediaB
 
     protected void requestPlayer()
     {
+        Log.d(TAG_LOGS,"Player requested, showing? " + isPlayerShowing());
         if(!isPlayerShowing())
         {
             if(playerFragment == null)

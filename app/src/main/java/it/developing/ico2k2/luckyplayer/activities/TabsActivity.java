@@ -9,6 +9,7 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -63,7 +64,7 @@ public class TabsActivity extends BasePlayingActivity
 
         @Override
         public int getCount() {
-            return tabs.length;
+            return 1;
         }
 
         @Override
@@ -86,6 +87,17 @@ public class TabsActivity extends BasePlayingActivity
         pager.setOffscreenPageLimit(3);
         tabLayout.setupWithViewPager(pager);
         adapter.notifyDataSetChanged();
+
+        findViewById(R.id.tabs_fab).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                MediaControllerCompat controller = MediaControllerCompat.getMediaController(TabsActivity.this);
+                if(controller.getPlaybackState().getState() == PlaybackStateCompat.STATE_PLAYING)
+                    controller.getTransportControls().pause();
+                else
+                    controller.getTransportControls().play();
+            }
+        });
     }
 
     void buildTransportControls()
@@ -135,18 +147,6 @@ public class TabsActivity extends BasePlayingActivity
                 }
             };
 
-    public void onBackPressed()
-    {
-        int pbState = MediaControllerCompat.getMediaController(this).getPlaybackState().getState();
-        if (pbState == PlaybackStateCompat.STATE_PLAYING) {
-            Log.d(TAG_LOGS,"Pausing");
-            MediaControllerCompat.getMediaController(this).getTransportControls().pause();
-        } else {
-            Log.d(TAG_LOGS,"Playing");
-            MediaControllerCompat.getMediaController(this).getTransportControls().play();
-        }
-    }
-
 
     @Override
     public void onStart() {
@@ -164,9 +164,9 @@ public class TabsActivity extends BasePlayingActivity
     public void onStop() {
         super.onStop();
         // (see "stay in sync with the MediaSession")
-        if (MediaControllerCompat.getMediaController(this) != null) {
+        /*if (MediaControllerCompat.getMediaController(this) != null) {
             MediaControllerCompat.getMediaController(this).unregisterCallback(controllerCallback);
-        }
+        }*/
         //browser.disconnect();
 
     }

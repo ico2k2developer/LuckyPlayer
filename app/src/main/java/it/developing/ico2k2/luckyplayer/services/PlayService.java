@@ -312,6 +312,7 @@ public class PlayService extends MediaBrowserServiceCompat
                     public void onPrepared(MediaPlayer mp){
                         mp.start();
                         playNotif.setContentTitle(mediaId);
+                        manager.notify();
                         startForeground(NOTIFICATION_STATUS,playNotif.build());
                     }
                 });

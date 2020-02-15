@@ -6,6 +6,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,13 +30,8 @@ import it.developing.ico2k2.luckyplayer.adapters.lib.ViewHandle;
 import it.developing.ico2k2.luckyplayer.services.PlayService;
 import it.developing.ico2k2.luckyplayer.services.PlayService.OrderType;
 
-import static android.provider.MediaStore.Audio.AudioColumns.ALBUM_KEY;
-import static android.provider.MediaStore.Audio.AudioColumns.ARTIST_KEY;
-import static android.provider.MediaStore.Audio.AudioColumns.DURATION;
-import static android.provider.MediaStore.Audio.AudioColumns.TRACK;
-import static android.provider.MediaStore.Audio.AudioColumns.YEAR;
-import static android.support.v4.media.MediaBrowserCompat.MediaItem.FLAG_BROWSABLE;
 import static android.support.v4.media.MediaBrowserCompat.MediaItem.FLAG_PLAYABLE;
+import static it.developing.ico2k2.luckyplayer.Keys.TAG_LOGS;
 
 public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
 {
@@ -303,7 +299,7 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
                             Collections.sort(indexes,new Comparator<Integer>(){
                                 @Override
                                 public int compare(Integer o1,Integer o2){
-                                    return songs.get(o1).getIndex() - songs.get(o2).getIndex();
+                                    return songs.get(o1).getTrackN() - songs.get(o2).getTrackN();
                                 }
                             });
                             break;
@@ -376,7 +372,7 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
         if(showIndexes)
         {
             holder.index.setVisibility(View.VISIBLE);
-            holder.index.setText(Integer.toString(song.getIndex()));
+            holder.index.setText(Integer.toString(song.getTrackN()));
         }
         else
             holder.index.setVisibility(View.GONE);
@@ -407,7 +403,7 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
             {
                 holder.title.setText(song.getTitle());
                 holder.description.setText(song.getSongDescription());
-                holder.time.setText(song.getSongTimeDescription());
+                holder.time.setText(song.getSongDurationDescription());
                 holder.time.setVisibility(View.VISIBLE);
             }
         }
@@ -425,7 +421,7 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
         return size;
     }
 
-    public static class SongHandle extends ViewHandle{
+    public class SongHandle extends ViewHandle{
         // each data item is just a string in this case
         AppCompatTextView title,description,time,index;
         ImageView cover;
@@ -441,175 +437,15 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
         }
     }
 
-    /*
     public static class Song implements Parcelable
     {
-        public static final String PATH_KEY = "path";
-        public static final String INDEX_KEY = "track number";
-        public static final String TITLE_KEY = "title";
-        public static final String ARTIST_KEY = "artist";
-        //public static final String ALBUMARTIST_KEY = "albumArtist";
-        public static final String ALBUM_KEY = "album";
-        //public static final String ALBUMART_KEY = "albumart";
-        public static final String YEAR_KEY = "year";
-        public static final String TIME_KEY = "ms";
+        private static final String KEY_ARTIST = "artist";
+        private static final String KEY_ALBUM = "album";
+        private static final String KEY_TRACKN = "trackN";
+        private static final String KEY_DURATION = "duration";
+        private static final String KEY_YEAR = "year";
+        private static final String KEY_ID = "id";
 
-        private String path,title,artist,album;
-        private int index,year;
-        private long time;
-
-        public static final Parcelable.Creator<Song> CREATOR = new Parcelable.Creator<Song>(){
-            public Song createFromParcel(Parcel in){
-                return new Song(in,getClass().getClassLoader());
-            }
-
-            public Song[] newArray(int size)
-            {
-                return new Song[size];
-            }
-        };
-
-        public int describeContents()
-        {
-            return 0;
-        }
-
-        public void writeToParcel(Parcel dest,int flags)
-        {
-            Bundle bundle = new Bundle();
-            bundle.putString(PATH_KEY,path);
-            bundle.putString(TITLE_KEY,title);
-            bundle.putString(ARTIST_KEY,artist);
-            //bundle.putString(ALBUMARTIST_KEY,albumartist);
-            bundle.putString(ALBUM_KEY,album);
-            bundle.putInt(INDEX_KEY,index);
-            bundle.putInt(YEAR_KEY,year);
-            bundle.putLong(TIME_KEY,time);
-            //bundle.putInt(LISTINDEX_KEY,listIndex);
-            dest.writeBundle(bundle);
-        }
-
-        public Song(Song song)
-        {
-            path = song.path;
-            title = song.title;
-            album = song.album;
-            artist = song.artist;
-            index = song.index;
-            time = song.time;
-            year = song.year;
-        }
-
-        public Song(Parcel parcel,ClassLoader classLoader)
-        {
-            this();
-            Bundle bundle = parcel.readBundle(classLoader);
-            bundle.setClassLoader(classLoader);
-            path = bundle.getString(PATH_KEY);
-            title = bundle.getString(TITLE_KEY);
-            artist = bundle.getString(ARTIST_KEY);
-            //albumartist = bundle.getString(ALBUMARTIST_KEY);
-            album = bundle.getString(ALBUM_KEY);
-            index = bundle.getInt(INDEX_KEY);
-            year = bundle.getInt(YEAR_KEY);
-            time = bundle.getLong(TIME_KEY);
-            //listIndex = bundle.getInt(LISTINDEX_KEY);
-        }
-
-        public Song(String path)
-        {
-            this.path = path;
-        }
-
-        private Song()
-        {
-
-        }
-
-        public String getPath()
-        {
-            return path;
-        }
-
-        public Song setTitle(String title){
-            this.title = title;
-            return this;
-        }
-
-        public String getTitle(){
-            return title;
-        }
-
-        public Song setArtist(String artist){
-            this.artist = artist;
-            return this;
-        }
-
-        public String getArtist(){
-            return artist;
-        }
-
-        public Song setAlbum(String album){
-            this.album = album;
-            return this;
-        }
-
-        public String getAlbum(){
-            return album;
-        }
-
-        public Song setIndex(int index){
-            this.index = index;
-            return this;
-        }
-
-        public int getIndex(){
-            return index;
-        }
-
-        public Song setTime(long time){
-            this.time = time;
-            return this;
-        }
-
-        public long getTime(){
-            return time;
-        }
-
-        public Song setYear(int year){
-            this.year = year;
-            return this;
-        }
-
-        public int getYear(){
-            return year;
-        }
-
-        public String getDescription()
-        {
-            return getSongDescription(album,artist);
-        }
-
-        public String getTimeDescription()
-        {
-            return getSongTimeDescription(time);
-        }
-
-        @Override
-        public boolean equals(Object song)
-        {
-            boolean result;
-            if(song instanceof Song)
-                result = path.equals(((Song)song).getPath());
-            else
-                result = super.equals(song);
-            return result;
-        }
-    }
-    */
-
-    public static class Song implements Parcelable
-    {
         private MediaBrowserCompat.MediaItem item;
 
         public static final Parcelable.Creator<Song> CREATOR = new Parcelable.Creator<Song>()
@@ -645,25 +481,38 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
             item = new MediaBrowserCompat.MediaItem(song.getDescription(),song.getFlags());
         }
 
-        public Song(MediaBrowserCompat.MediaItem item)
+        public Song(MediaDescriptionCompat description,int flags)
         {
-            if(item.getDescription().getExtras() == null)
-            {
-                MediaDescriptionCompat desc = item.getDescription();
-                item = new MediaBrowserCompat.MediaItem(
-                        new MediaDescriptionCompat.Builder()
-                                .setDescription(desc.getDescription())
-                                .setExtras(new Bundle())
-                                .setIconBitmap(desc.getIconBitmap())
-                                .setIconUri(desc.getIconUri())
-                                .setMediaId(desc.getMediaId())
-                                .setMediaUri(desc.getMediaUri())
-                                .setSubtitle(desc.getSubtitle())
-                                .setTitle(desc.getTitle()).build(),
-                            item.isBrowsable() ? FLAG_BROWSABLE : FLAG_PLAYABLE
-                );
-            }
-            this.item = item;
+            item = createFromDescription(description,flags);
+        }
+
+
+        public Song(MediaDescriptionCompat description)
+        {
+            item = createFromDescription(description,FLAG_PLAYABLE);
+        }
+
+        private static MediaBrowserCompat.MediaItem createFromDescription(MediaDescriptionCompat description,int flags)
+        {
+            Log.d(TAG_LOGS,"Media id: " + description.getMediaId());
+            return new MediaBrowserCompat.MediaItem(
+                    new MediaDescriptionCompat.Builder()
+                            .setDescription(description.getDescription())
+                            .setExtras(description.getExtras())
+                            .setIconBitmap(description.getIconBitmap())
+                            .setIconUri(description.getIconUri())
+                            .setMediaId(description.getMediaId())
+                            .setMediaUri(description.getMediaUri())
+                            .setSubtitle(description.getSubtitle())
+                            .setTitle(description.getTitle()).build(),flags);
+        }
+
+        public Song(MediaBrowserCompat.MediaItem newItem)
+        {
+            if(newItem.getDescription().getExtras() == null)
+                this.item = createFromDescription(newItem.getDescription(),newItem.getFlags());
+            else
+                this.item = newItem;
         }
 
         public Song(String path,CharSequence title,int flags)
@@ -681,7 +530,7 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
             this(path,title,FLAG_PLAYABLE);
         }
 
-        public String getPath()
+        public String getMediaId()
         {
             return item.getDescription().getMediaId();
         }
@@ -690,49 +539,62 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
             return item.getDescription().getTitle();
         }
 
+        public String getPath(){
+            return item.getMediaId();
+        }
+
+        public Song setId(int id){
+            item.getDescription().getExtras().putInt(KEY_ID,id);
+            return this;
+        }
+
+        public int getId(){
+            return item.getDescription().getExtras().getInt(KEY_ID,-1);
+        }
+
         public Song setArtist(String artist){
-            item.getDescription().getExtras().putString(ARTIST_KEY,artist);
+            item.getDescription().getExtras().putString(KEY_ARTIST,artist);
             return this;
         }
 
         public String getArtist(){
-            return item.getDescription().getExtras().getString(ARTIST_KEY,"");
+            return item.getDescription().getExtras().getString(KEY_ARTIST,"");
         }
 
         public Song setAlbum(String album){
-            item.getDescription().getExtras().putString(ALBUM_KEY,album);
+            item.getDescription().getExtras().putString(KEY_ALBUM,album);
             return this;
         }
 
         public String getAlbum(){
-            return item.getDescription().getExtras().getString(ALBUM_KEY,"");
+            return item.getDescription().getExtras().getString(KEY_ALBUM,"");
         }
 
-        public Song setIndex(int index){
-            item.getDescription().getExtras().putInt(TRACK,index);
+        public Song setTrackN(int trackN){
+            item.getDescription().getExtras().putInt(KEY_TRACKN,trackN);
             return this;
         }
 
-        public int getIndex(){
-            return item.getDescription().getExtras().getInt(TRACK);
+        public int getTrackN(){
+            return item.getDescription().getExtras().getInt(KEY_TRACKN);
         }
 
-        public Song setTime(long time){
-            item.getDescription().getExtras().putLong(DURATION,time);
+        public Song setDuration(long time){
+            item.getDescription().getExtras().putLong(KEY_DURATION,time);
             return this;
         }
 
-        public long getTime(){
-            return item.getDescription().getExtras().getLong(DURATION);
+        public long getDuration(){
+            return item.getDescription().getExtras().getLong(KEY_DURATION);
         }
 
         public Song setYear(int year){
-            item.getDescription().getExtras().putInt(YEAR,year);
+            item.getDescription().getExtras().putInt(KEY_YEAR,year);
             return this;
         }
 
         public int getYear(){
-            return item.getDescription().getExtras().getInt(YEAR);
+            return item.getDescription().getExtras().getInt(KEY_YEAR);
         }
 
         public String getSongDescription()
@@ -740,9 +602,9 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
             return SongsAdapter.getSongDescription(getAlbum(),getArtist());
         }
 
-        public String getSongTimeDescription()
+        public String getSongDurationDescription()
         {
-            return SongsAdapter.getSongTimeDescription(getTime());
+            return SongsAdapter.getSongTimeDescription(getDuration());
         }
 
         public MediaDescriptionCompat getDescription()
@@ -765,7 +627,7 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
         {
             boolean result;
             if(song instanceof Song)
-                result = getPath().equals(((Song)song).getPath());
+                result = getMediaId().equals(((Song)song).getMediaId());
             else
                 result = super.equals(song);
             return result;

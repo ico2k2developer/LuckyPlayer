@@ -28,7 +28,8 @@
     <string name="info_bitrate_sub" formatted="false" translatable="false">%d1 kbps</string>
     <string name="share" formatted="false">Share</string>
     <string name="saved" formatted="false">Saved</string>
-    <string name="info_save_cover" formatted="false">Save cover to Download</string>
+    <string name="save_cover" formatted="false">Save cover to Download</string>
+    <string name="send_cover" formatted="false">Share cover</string>
     <string name="duration_format" formatted="false" translatable="false">%d2:%d1</string>
     <string name="duration_format_hour" formatted="false" translatable="false">%d3:%d2:%d1</string>
     <string name="duration_format_ms" formatted="false" translatable="false">%d1 ms</string>
@@ -56,8 +57,9 @@
     <string name="settings_theme" formatted="false">Theme</string>
     <string name="settings_category_data" formatted="false">Data</string>
     <string name="settings_delete_all" formatted="false">Delete all data</string>
-    <string name="actionmode_selected" formatted="false">%d1 selected</string>
     <string name="settings_delete_all_sub" formatted="false">Delete all application\'s own data</string>
+    <string name="settings_prefs_data" formatted="false">Settings registry</string>
+    <string name="settings_prefs_data_sub" formatted="false">View all the settings values</string>
     <string name="dialog_confirm_message_default" formatted="false">Do you confirm?</string>
     <string name="settings_theme_hint" formatted="false">Here you can choose which theme the app will use. It will be applied at the next app launch</string>
     <string name="app_about_version" formatted="false">Version name: %s\nVersion code: %s</string>
@@ -215,6 +217,7 @@
     </string-array>
 
     <string-array name="info_details_file_titles">
+        <item>Path</item>
         <item>Bitrate</item>
         <item>Bits per sample</item>
         <item>Channels</item>

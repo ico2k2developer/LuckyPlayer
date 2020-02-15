@@ -14,8 +14,6 @@ public final class Utils
         return R.style.class.getField(name).getInt(R.style.class);
     }
 
-
-
     public static ArrayList<Map<String,String>> adapterMapsFromAdapterList(ArrayList<String> formats,String listTitle)
     {
         ArrayList<Map<String,String>> result = new ArrayList<>(formats.size());

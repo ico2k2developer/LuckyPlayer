@@ -7,6 +7,19 @@
         android:id="@+id/info_share"
         android:title="@string/share"
         app:showAsAction="ifRoom"
+        android:orderInCategory="75"
         app:actionProviderClass="androidx.appcompat.widget.ShareActionProvider"/>
+
+    <item
+        android:id="@+id/info_send_cover"
+        android:title="@string/send_cover"
+        app:showAsAction="never"
+        android:orderInCategory="80"/>
+
+    <item
+        android:id="@+id/info_save_cover"
+        android:title="@string/save_cover"
+        app:showAsAction="never"
+        android:orderInCategory="90"/>
 
 </menu>

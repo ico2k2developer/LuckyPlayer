@@ -24,7 +24,8 @@
     <string name="info_genre" formatted="false">Genere</string>
     <string name="info_writer" formatted="false">Scrittore</string>
     <string name="saved" formatted="false">Salvato</string>
-    <string name="info_save_cover" formatted="false">Salva copertina in Download</string>
+    <string name="save_cover" formatted="false">Salva copertina in Download</string>
+    <string name="send_cover" formatted="false">Condividi copertina</string>
     <string name="duration_format_long" formatted="false">%d2:%d1 (%d0 millisecondi)</string>
     <string name="beta_pick" formatted="false">Scegli file</string>
     <string name="error" formatted="false">Si è verificato un errore</string>
@@ -50,8 +51,9 @@
     <string name="restore_formats" formatted="false">Ripristina formati standard</string>
     <string name="settings_category_data" formatted="false">Dati</string>
     <string name="settings_delete_all" formatted="false">Cancella tutti i dati</string>
-    <string name="actionmode_selected" formatted="false">%d1 selezionati</string>
     <string name="settings_delete_all_sub" formatted="false">Cancella tutti i dati dell\'app</string>
+    <string name="settings_prefs_data" formatted="false">Registro impostazioni</string>
+    <string name="settings_prefs_data_sub" formatted="false">Mostra tutti i valori delle impostazioni</string>
     <string name="dialog_confirm_message_default" formatted="false">Confermi?</string>
     <string name="settings_theme" formatted="false">Tema</string>
     <string name="info_notification_channel" formatted="false">Notifiche di servizio</string>
@@ -207,6 +209,7 @@
     </string-array>
 
     <string-array name="info_details_file_titles">
+        <item>Percorso file</item>
         <item>Bitrate</item>
         <item>Bit per campionamento</item>
         <item>Canali</item>

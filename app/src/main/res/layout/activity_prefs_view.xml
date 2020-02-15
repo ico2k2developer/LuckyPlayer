@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:fitsSystemWindows="true"
-    tools:context=".activities.InitializeActivity">
+    tools:context=".activities.PrefsViewActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -26,23 +26,11 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <fragment
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:id="@+id/initialize_about_fragment"
-        class="it.developing.ico2k2.luckyplayer.fragments.AboutFragment"
+        android:id="@+id/list"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/appbar"/>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/initialize_fab"
-        app:srcCompat="@drawable/ic_forward_material_dark"
-        android:layout_marginRight="@dimen/default_small_margin"
-        android:layout_marginEnd="@dimen/default_small_margin"
-        app:useCompatPadding="true"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

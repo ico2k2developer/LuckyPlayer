@@ -21,7 +21,6 @@
             android:name="com.google.android.gms.car.application"
             android:resource="@xml/automotive_app_desc" />
 
-        <!--
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="it.developing.ico2k2.luckyplayer.fileprovider"
@@ -32,7 +31,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/files" />
         </provider>
-        -->
+
         <activity
             android:name=".activities.MainActivity"
             android:launchMode="singleTop">
@@ -65,6 +64,10 @@
             android:label="@string/app_name"
             android:launchMode="singleTop" />
         <activity
+            android:name=".activities.PrefsViewActivity"
+            android:label="@string/settings_prefs_data"
+            android:launchMode="singleTop" />
+        <activity
             android:name=".activities.SettingsActivity"
             android:label="@string/settings"
             android:launchMode="singleTop" />
@@ -84,7 +87,7 @@
 
                 <data android:scheme="file" />
                 <data android:scheme="content" />
-                <data android:mimeType="audio/*" />
+                <data android:mimeType="*/*" />
             </intent-filter>
         </activity>
         <activity
@@ -117,7 +120,7 @@
             </intent-filter>
         </service>
 
-        <receiver android:name="android.support.v4.media.session.MediaButtonReceiver" >
+        <receiver android:name="androidx.media.session.MediaButtonReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>

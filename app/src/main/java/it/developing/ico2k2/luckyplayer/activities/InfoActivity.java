@@ -8,11 +8,15 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,7 +24,10 @@ import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.appcompat.widget.ShareActionProvider;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.FileProvider;
+import androidx.core.view.MenuItemCompat;
 import androidx.palette.graphics.Palette;
 
 import com.google.android.material.appbar.CollapsingToolbarLayout;
@@ -32,6 +39,8 @@ import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.base.BaseActivity;
@@ -44,19 +53,21 @@ import it.developing.ico2k2.luckyplayer.tasks.AlbumArtLoadTask;
 import it.developing.ico2k2.luckyplayer.tasks.AsyncThread;
 
 import static it.developing.ico2k2.luckyplayer.Keys.EXTRA_URI;
+import static it.developing.ico2k2.luckyplayer.Keys.FILE_PROVIDER_AUTHORITY;
 import static it.developing.ico2k2.luckyplayer.Keys.TAG_LOGS;
 
 public class InfoActivity extends BaseActivity
 {
     private CollapsingToolbarLayout toolbarLayout;
     private DetailsFragment tagDetails,fileDetails;
+    private String path;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info);
-        final Toolbar toolbar = findViewById(R.id.info_toolbar);
+        final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -94,7 +105,8 @@ public class InfoActivity extends BaseActivity
             }
         });
 
-        handleIntent(getIntent());
+        if(path == null)
+            handleIntent(getIntent());
     }
 
     public String getRealPath(Uri contentPath){
@@ -121,16 +133,15 @@ public class InfoActivity extends BaseActivity
                 }
 
             }
-            Log.d(TAG_LOGS,"Real path: " + result);
         }
+        Log.d(TAG_LOGS,"Real path: " + result);
         return result;
     }
 
     void handleIntent(Intent intent)
     {
-        String path = intent.getStringExtra(EXTRA_URI);
         if(path == null)
-            path = getRealPath(intent.getData());
+            resolvePath(intent);
         try
         {
             AudioFile audio = AudioFileIO.read(new File(path));
@@ -147,8 +158,7 @@ public class InfoActivity extends BaseActivity
                     DetailsAdapter.Detail detail;
                     if(data.contains("\n"))
                     {
-                        detail = new DetailsAdapter.TextDetail(titles[field.ordinal()],null);
-                        ((DetailsAdapter.TextDetail)detail).setText(data);
+                        detail = new DetailsAdapter.TextDetail(titles[field.ordinal()],null,data);
                     }
                     else
                         detail = new DetailsAdapter.Detail(titles[field.ordinal()],data);
@@ -171,12 +181,14 @@ public class InfoActivity extends BaseActivity
             titles = getResources().getStringArray(R.array.info_details_file_titles);
             final DetailsAdapter fileAdapter = new DetailsAdapter(titles.length);
             int a = 0;
+            fileAdapter.add(new DetailsAdapter.TextDetail(titles[a++],null,path));
             fileAdapter.add(new DetailsAdapter.Detail(titles[a++],header.getBitRate()));
             fileAdapter.add(new DetailsAdapter.Detail(titles[a++],Integer.toString(header.getBitsPerSample())));
             fileAdapter.add(new DetailsAdapter.Detail(titles[a++],header.getChannels()));
             fileAdapter.add(new DetailsAdapter.Detail(titles[a++],header.getEncodingType()));
             fileAdapter.add(new DetailsAdapter.Detail(titles[a++],header.getFormat()));
             fileAdapter.add(new DetailsAdapter.Detail(titles[a++],header.getSampleRate()));
+            fileAdapter.add(new DetailsAdapter.Detail(titles[a++],Integer.toString(header.getTrackLength())));
             fileAdapter.add(new DetailsAdapter.CheckedDetail(titles[a++],null,header.isLossless()));
             fileAdapter.add(new DetailsAdapter.CheckedDetail(titles[a],null,header.isVariableBitRate()));
             fileAdapter.setOnItemClickListener(new ViewHandle.OnItemClickListener(){
@@ -191,47 +203,46 @@ public class InfoActivity extends BaseActivity
                     fileDetails.setAdapter(fileAdapter);
                 }
             });
+            final AppCompatImageView imageView = findViewById(R.id.info_album_art);
+            AlbumArtLoadTask task = new AlbumArtLoadTask(new AsyncThread.AsyncThreadBaseCallbacks()
+            {
+                @Override
+                public void onPreExecute(){
+                }
+
+                @Override
+                public void onProgressUpdate(Object... progress){
+
+                }
+
+                @Override
+                public void onPostExecute(@Nullable Object result){
+                    if(result instanceof Bitmap)
+                    {
+                        Bitmap albumArt = (Bitmap)result;
+                        Palette.from(albumArt).generate(new Palette.PaletteAsyncListener(){
+                            @Override
+                            public void onGenerated(@Nullable Palette palette){
+                                if(palette != null)
+                                {
+                                    int mutedColor = palette.getMutedColor(R.attr.colorPrimary);
+                                    toolbarLayout.setContentScrimColor(mutedColor);
+                                }
+                            }
+                        });
+                        imageView.setImageBitmap(albumArt);
+                    }
+                }
+            });
+            AlbumArtLoadTask.AlbumArtLoadConfig config = new AlbumArtLoadTask.AlbumArtLoadConfig(path);
+            task.execute(config);
         }
         catch(Exception e)
         {
             e.printStackTrace();
-            setTitle(path);
+            Toast.makeText(this,R.string.error,Toast.LENGTH_LONG).show();
+            finish();
         }
-        final AppCompatImageView imageView = findViewById(R.id.info_album_art);
-        AlbumArtLoadTask task = new AlbumArtLoadTask(new AsyncThread.AsyncThreadBaseCallbacks()
-        {
-            @Override
-            public void onPreExecute(){
-            }
-
-            @Override
-            public void onProgressUpdate(Object... progress){
-
-            }
-
-            @Override
-            public void onPostExecute(@Nullable Object result){
-                if(result instanceof Bitmap)
-                {
-                    Bitmap albumArt = (Bitmap)result;
-                    Palette.from(albumArt).generate(new Palette.PaletteAsyncListener(){
-                        @Override
-                        public void onGenerated(@Nullable Palette palette){
-                            if(palette != null)
-                            {
-                                int mutedColor = palette.getMutedColor(R.attr.colorPrimary);
-                                toolbarLayout.setContentScrimColor(mutedColor);
-                            }
-                        }
-                    });
-                    imageView.setImageBitmap(albumArt);
-                }
-            }
-        });
-        AlbumArtLoadTask.AlbumArtLoadConfig config = new AlbumArtLoadTask.AlbumArtLoadConfig(
-                path
-        );
-        task.execute(config);
     }
 
     /*
@@ -247,7 +258,9 @@ public class InfoActivity extends BaseActivity
 
     public void showDetailDialog(DetailsAdapter.Detail detail)
     {
-        if(!(detail instanceof DetailsAdapter.CheckedDetail))
+        if(detail instanceof DetailsAdapter.TextDetail)
+            showDetailDialog(detail.getTitle(),((DetailsAdapter.TextDetail)detail).getText());
+        else if(!(detail instanceof DetailsAdapter.CheckedDetail))
             showDetailDialog(detail.getTitle(),detail.getDescription());
     }
 
@@ -280,12 +293,34 @@ public class InfoActivity extends BaseActivity
         }
     }
 
-    /*@Override
+    protected void resolvePath(Intent intent)
+    {
+        path = intent.getStringExtra(EXTRA_URI);
+        if(path == null)
+            path = getRealPath(intent.getParcelableExtra(Intent.EXTRA_STREAM));
+        if(path == null)
+            path = getRealPath(intent.getData());
+        Log.d(TAG_LOGS,"Path is: " + path);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
-        getMenuInflater().inflate(R.menu.menu_tabs,menu);
+        getMenuInflater().inflate(R.menu.menu_info,menu);
+        ShareActionProvider sap = (ShareActionProvider)MenuItemCompat.getActionProvider(menu.findItem(R.id.info_share));
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("audio/*");
+        if(path == null)
+            resolvePath(getIntent());
+        Uri uri = FileProvider.getUriForFile(this,FILE_PROVIDER_AUTHORITY,new File(path));
+        Log.d(TAG_LOGS,"Path: " + uri);
+        intent.putExtra(Intent.EXTRA_STREAM,uri);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        sap.setShareIntent(intent);
         return true;
     }
+
+    private static final String FILENAME_COVER = "album cover.png";
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item)
@@ -298,11 +333,74 @@ public class InfoActivity extends BaseActivity
 
         switch(id)
         {
+            case R.id.info_save_cover:
+            case R.id.info_send_cover:
+            {
+                AlbumArtLoadTask task = new AlbumArtLoadTask(new AsyncThread.AsyncThreadBaseCallbacks()
+                {
+                    @Override
+                    public void onPreExecute(){
+                    }
+
+                    @Override
+                    public void onProgressUpdate(Object... progress){
+
+                    }
+
+                    @Override
+                    public void onPostExecute(@Nullable Object result){
+                        if(result instanceof Bitmap)
+                        {
+                            Bitmap albumArt = (Bitmap)result;
+                            File dir;
+                            String name;
+                            if(id == R.id.info_send_cover)
+                            {
+                                dir = new File(getExternalCacheDir(),"covers");
+                                dir.mkdir();
+                                name = FILENAME_COVER;
+                            }
+                            else
+                            {
+                                dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                                name = getSupportActionBar().getTitle() + FILENAME_COVER.substring(FILENAME_COVER.lastIndexOf("."));
+                            }
+                            Log.d(TAG_LOGS,"Cache dir: " + dir.getAbsolutePath());
+                            if(dir.isDirectory()){
+                                try
+                                {
+                                    OutputStream os;
+                                    File file = new File(dir,name);
+                                    os = new FileOutputStream(file);
+                                    albumArt.compress(Bitmap.CompressFormat.PNG,100,os);
+                                    os.flush();
+                                    os.close();
+                                    if(id == R.id.info_send_cover)
+                                    {
+                                        Intent intent = new Intent(Intent.ACTION_SEND);
+                                        intent.setType("image/png");
+                                        intent.putExtra(Intent.EXTRA_STREAM,FileProvider.getUriForFile(InfoActivity.this,FILE_PROVIDER_AUTHORITY,file));
+                                        startActivity(intent);
+                                    }
+                                }
+                                catch(Exception e)
+                                {
+                                    e.printStackTrace();
+                                    Toast.makeText(InfoActivity.this,R.string.error,Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
+                    }
+                });
+                AlbumArtLoadTask.AlbumArtLoadConfig config = new AlbumArtLoadTask.AlbumArtLoadConfig(path);
+                task.execute(config);
+                break;
+            }
             default:
             {
                 result = super.onOptionsItemSelected(item);
             }
         }
         return result;
-    }*/
+    }
 }

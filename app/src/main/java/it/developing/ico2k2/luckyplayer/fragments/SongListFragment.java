@@ -35,6 +35,8 @@ public class SongListFragment extends BaseFragment
 {
     private static final int ID_MENU_INFO = 0XAAAA;
 
+    private static final String ARG_ROOT = "root";
+
     private RecyclerView list;
     private SongsAdapter adapter;
     private int contextClickPosition;
@@ -44,7 +46,9 @@ public class SongListFragment extends BaseFragment
     {
         Log.d(TAG_LOGS,"Creating new fragment, root: " + root);
         SongListFragment fragment = new SongListFragment();
-        fragment.root = root;
+        Bundle args = new Bundle();
+        args.putString(ARG_ROOT,root);
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -52,11 +56,14 @@ public class SongListFragment extends BaseFragment
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+        if(getArguments() != null)
+            root = getArguments().getString(ARG_ROOT);
         adapter = new SongsAdapter(getContext());
         adapter.setOnItemClickListener(new ViewHandle.OnItemClickListener(){
             @Override
             public void onItemClick(ViewHandle handle,int position){
-                MediaControllerCompat.getMediaController(getActivity()).getTransportControls().playFromMediaId(adapter.get(position).getPath(),null);
+                MediaControllerCompat.getMediaController(getActivity()).getTransportControls().playFromMediaId(adapter.get(position).getMediaId(),null);
             }
         });
         adapter.setOnItemContextMenuListener(new ViewHandle.OnItemContextMenuListener(){
@@ -79,7 +86,7 @@ public class SongListFragment extends BaseFragment
             case ID_MENU_INFO:
             {
                 Intent intent = new Intent(getActivity(),InfoActivity.class);
-                intent.setData(Uri.parse(adapter.get(contextClickPosition).getPath()));
+                intent.setData(Uri.parse(adapter.get(contextClickPosition).getMediaId()));
                 startActivity(intent);
                 break;
             }
@@ -96,8 +103,12 @@ public class SongListFragment extends BaseFragment
     {
         list = new RecyclerView(getContext());
         list.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
-        container.addView(list);
-        Log.d(TAG_LOGS,"Creating fragment\'s views, root: " + root);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        list.setLayoutManager(layoutManager);
+        list.setHasFixedSize(false);
+        list.setAdapter(adapter);
+        //container.addView(list);
+        Log.d(TAG_LOGS,"Creating fragment\'s views, root: " + root + ", is list null? " + (list == null));
         return list;
     }
 
@@ -105,10 +116,6 @@ public class SongListFragment extends BaseFragment
     public void onViewCreated(@NonNull View view,@Nullable Bundle savedInstanceState)
     {
         super.onViewCreated(view,savedInstanceState);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        list.setLayoutManager(layoutManager);
-        list.setHasFixedSize(false);
-        list.setAdapter(adapter);
         requestItems();
         Log.d(TAG_LOGS,"Fragment\' views created, root: " + root);
     }
@@ -123,8 +130,8 @@ public class SongListFragment extends BaseFragment
 
             @Override
             public void onChildrenLoaded(@NonNull String parentId,@NonNull List<MediaBrowserCompat.MediaItem> children,@NonNull Bundle options){
-                Log.d(TAG_LOGS,"Loading children from fragment");
                 int page = options.getInt(MediaBrowserCompat.EXTRA_PAGE);
+                Log.d(TAG_LOGS,"Loading children from fragment, page: " + page);
                 if(page == 0)
                     adapter.clear();
                 if(children.isEmpty())
@@ -135,7 +142,9 @@ public class SongListFragment extends BaseFragment
                 else
                 {
                     for(MediaBrowserCompat.MediaItem child : children)
+                    {
                         adapter.add(new SongsAdapter.Song(child));
+                    }
                     options.putInt(MediaBrowserCompat.EXTRA_PAGE,page + 1);
                     mediaBrowser.subscribe(parentId,options,this);
                 }

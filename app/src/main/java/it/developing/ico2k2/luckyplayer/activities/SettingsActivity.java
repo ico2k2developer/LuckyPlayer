@@ -89,7 +89,7 @@ public class SettingsActivity extends BaseActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        setSupportActionBar(findViewById(R.id.settings_toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar));
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         list = findViewById(android.R.id.list);
@@ -376,7 +376,7 @@ public class SettingsActivity extends BaseActivity
         {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_settings_secondary);
-            setSupportActionBar(findViewById(R.id.settings_toolbar));
+            setSupportActionBar(findViewById(R.id.toolbar));
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             handleIntent(getIntent());
@@ -627,8 +627,8 @@ public class SettingsActivity extends BaseActivity
             {
                 case R.string.settings_advanced:
                 {
-                    Preference deleteData = getPreferenceScreen().findPreference(getString(R.string.settings_delete_all));
-                    deleteData.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
+                    getPreferenceScreen().findPreference(getString(R.string.settings_delete_all))
+                            .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
                     {
                         @Override
                         public boolean onPreferenceClick(Preference preference)
@@ -645,6 +645,16 @@ public class SettingsActivity extends BaseActivity
                                 }
                             });
                             dialog.show();
+                            return true;
+                        }
+                    });
+                    getPreferenceScreen().findPreference(getString(R.string.settings_prefs_data))
+                            .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
+                    {
+                        @Override
+                        public boolean onPreferenceClick(Preference preference)
+                        {
+                            startActivity(new Intent(getActivity(),PrefsViewActivity.class));
                             return true;
                         }
                     });

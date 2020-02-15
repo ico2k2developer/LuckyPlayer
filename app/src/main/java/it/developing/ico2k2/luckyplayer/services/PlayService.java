@@ -8,6 +8,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
+import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
@@ -33,6 +34,7 @@ import static it.developing.ico2k2.luckyplayer.Keys.CHANNEL_ID_STATUS;
 import static it.developing.ico2k2.luckyplayer.Keys.KEY_NOTIFICATION_TINT;
 import static it.developing.ico2k2.luckyplayer.Keys.KEY_REQUEST;
 import static it.developing.ico2k2.luckyplayer.Keys.KEY_SONGLIST_LAST_SIZE;
+import static it.developing.ico2k2.luckyplayer.Keys.KEY_SYSTEM_MEDIA;
 import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_DESTROY;
 import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_SCAN_REQUESTED;
 import static it.developing.ico2k2.luckyplayer.Keys.PREFERENCE_MAIN;
@@ -137,19 +139,24 @@ public class PlayService extends MediaBrowserServiceCompat
                 {
                     if(parentId.charAt(parentId.length() - 1) == ':')
                     {
+                        Log.d(TAG_LOGS,"Songs mode 1");
                         char first = parentId.charAt(parentId.length() - 2);
                         for(Song song : songs)
                         {
                             if(song.getTitle().toString().toUpperCase().charAt(0) == first)
-                                items.add(new MediaBrowserCompat.MediaItem(
+                                items.add(song.toMediaItem());
+                                /*items.add(new MediaBrowserCompat.MediaItem(
                                         new MediaDescriptionCompat.Builder()
-                                                .setMediaId(song.getPath())
+                                                .setMediaId(song.getMediaId())
                                                 .setTitle(song.getTitle())
-                                                .build(),MediaBrowserCompat.MediaItem.FLAG_PLAYABLE));
+                                                .build(),MediaBrowserCompat.MediaItem.FLAG_PLAYABLE));*/
                         }
                     }
                     else
                     {
+                        Log.d(TAG_LOGS,"Songs mode 1");
+
+
                         ArrayList<Character> tmp = new ArrayList<>();
                         char last;
                         for(Song song : songs)
@@ -157,11 +164,7 @@ public class PlayService extends MediaBrowserServiceCompat
                             if(!tmp.contains(last = song.getTitle().toString().toUpperCase().charAt(0)))
                             {
                                 tmp.add(last);
-                                items.add(new MediaBrowserCompat.MediaItem(
-                                        new MediaDescriptionCompat.Builder()
-                                                .setMediaId(parentId + last + ":")
-                                                .setTitle(String.valueOf(last))
-                                                .build(),MediaBrowserCompat.MediaItem.FLAG_BROWSABLE));
+                                items.add(song.toMediaItem());
                             }
                         }
                         tmp.clear();
@@ -177,6 +180,7 @@ public class PlayService extends MediaBrowserServiceCompat
                 }
                 else
                 {
+                    Log.d(TAG_LOGS,"Songs mode 3");
                     int start,end;
                     if(pageSize != 0)
                     {
@@ -193,11 +197,7 @@ public class PlayService extends MediaBrowserServiceCompat
                     if(start < end)
                     {
                         for(Song song : songs.subList(start,end))
-                            items.add(new MediaBrowserCompat.MediaItem(
-                                    new MediaDescriptionCompat.Builder()
-                                            .setMediaId(song.getPath())
-                                            .setTitle(song.getTitle())
-                                            .build(),MediaBrowserCompat.MediaItem.FLAG_PLAYABLE));
+                            items.add(song.toMediaItem());
                     }
                     pageSize = 0;
                     Log.d(TAG_LOGS,"Packet (songs), from " + start + " to " + end);
@@ -267,6 +267,24 @@ public class PlayService extends MediaBrowserServiceCompat
     private final class MediaSessionCallback extends MediaSessionCompat.Callback{
 
         MediaPlayer player;
+        Thread thread;
+
+        private void updateState()
+        {
+            mediaSession.setPlaybackState(new PlaybackStateCompat.Builder()
+                    .setState(player.isPlaying() ? PlaybackStateCompat.STATE_PLAYING : PlaybackStateCompat.STATE_PAUSED,
+                            player.getCurrentPosition(),1)
+                    .build());
+        }
+
+        private void updateMetadata(Song song)
+        {
+            mediaSession.setMetadata(new MediaMetadataCompat.Builder()
+                    .putLong(MediaMetadataCompat.METADATA_KEY_DURATION,(long)player.getDuration())
+                    .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE,song.getTitle().toString())
+                    .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE,song.getSongDescription())
+                    .build());
+        }
 
         @Override
         public void onPlay()
@@ -274,6 +292,28 @@ public class PlayService extends MediaBrowserServiceCompat
             try
             {
                 player.start();
+                playNotif.setSmallIcon(R.drawable.ic_play_notification);
+                startForeground(NOTIFICATION_STATUS,playNotif.build());
+                if(thread != null)
+                    thread.interrupt();
+                thread = new Thread(new Runnable(){
+                    @Override
+                    public void run(){
+                        while(player.isPlaying())
+                        {
+                            try
+                            {
+                                Thread.sleep(250);
+                                updateState();
+                            }
+                            catch(Exception e)
+                            {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+                thread.start();
             }
             catch(Exception e)
             {
@@ -299,10 +339,14 @@ public class PlayService extends MediaBrowserServiceCompat
         }
 
         @Override
-        public void onPlayFromMediaId(String mediaId,Bundle extras)
+        public void onPlayFromMediaId(String id,Bundle extras)
         {
+            int mediaId = Integer.parseInt(id);
             if(player != null)
+            {
+                player.stop();
                 player.release();
+            }
             player = new MediaPlayer();
             try
             {
@@ -310,13 +354,18 @@ public class PlayService extends MediaBrowserServiceCompat
                 player.setOnPreparedListener(new MediaPlayer.OnPreparedListener(){
                     @Override
                     public void onPrepared(MediaPlayer mp){
-                        mp.start();
                         playNotif.setContentTitle(mediaId);
-                        manager.notify();
-                        startForeground(NOTIFICATION_STATUS,playNotif.build());
+                        onPlay();
+                        updateMetadata();
                     }
                 });
-                player.prepareAsync();
+                player.setOnCompletionListener(new MediaPlayer.OnCompletionListener(){
+                    @Override
+                    public void onCompletion(MediaPlayer mp){
+                        onPause();
+                    }
+                });
+                player.prepare();
             }
             catch(Exception e)
             {
@@ -331,6 +380,10 @@ public class PlayService extends MediaBrowserServiceCompat
             try
             {
                 player.pause();
+                playNotif.setSmallIcon(R.drawable.ic_pause_notification);
+                startForeground(NOTIFICATION_STATUS,playNotif.build());
+                thread.interrupt();
+                updateState();
             }
             catch(Exception e)
             {
@@ -467,12 +520,18 @@ public class PlayService extends MediaBrowserServiceCompat
 
             @Override
             public void onScanStop(){
-
+                Collections.sort(songs,new Comparator<Song>(){
+                    @Override
+                    public int compare(Song o1,Song o2){
+                        return o1.getTitle().toString().compareTo(o2.getTitle().toString());
+                    }
+                });
                 manager.cancel(NOTIFICATION_SCAN);
-                //sendMessageToApplication(MESSAGE_SCAN_COMPLETED);
+                prefs.edit().putInt(KEY_SONGLIST_LAST_SIZE,songs.size()).apply();
                 Log.d(TAG_LOGS,"Scan finished, items: " + songs.size());
             }
         });
+        scanner.setIncludeMediaFiles(prefs.getBoolean(KEY_SYSTEM_MEDIA,false));
         scanner.startScan();
     }
 

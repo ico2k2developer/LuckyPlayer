@@ -40,7 +40,7 @@ public abstract class BasePlayingActivity extends BaseActivity implements MediaB
     private SmallPlayerFragment playerFragment;
     private MediaBrowserCompat browser;
     private MediaControllerCompat.Callback controllerCallback;
-    private boolean playerShowing = false;
+    private boolean playerShowing = false,connected = false;
 
     public MediaBrowserCompat getMediaBrowser()
     {
@@ -133,6 +133,7 @@ public abstract class BasePlayingActivity extends BaseActivity implements MediaB
             public void onConnected()
             {
                 Log.d(TAG_LOGS,"MediaBrowser connected");
+                connected = true;
                 try
                 {
                     MediaSessionCompat.Token token = browser.getSessionToken();
@@ -146,6 +147,7 @@ public abstract class BasePlayingActivity extends BaseActivity implements MediaB
                         public void onPlaybackStateChanged(PlaybackStateCompat playbackState)
                         {
                             int state = playbackState.getState();
+                            Log.d(TAG_LOGS,"Playback state changed: " + state);
                             switch(state)
                             {
                                 case PlaybackStateCompat.STATE_BUFFERING:
@@ -173,10 +175,11 @@ public abstract class BasePlayingActivity extends BaseActivity implements MediaB
                         @Override
                         public void onMetadataChanged(MediaMetadataCompat metadata)
                         {
-                            if(isPlayerShowing())
-                            {
-                                playerFragment.setTimeTotal((int)metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION));
-                            }
+                            Log.d(TAG_LOGS,"Metadata changed");
+                            requestPlayer();
+                            playerFragment.setTimeTotal((int)metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION));
+                            playerFragment.setTitle(metadata.getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE));
+                            playerFragment.setSubtitle(metadata.getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE));
                         }
                     });
                 }
@@ -197,12 +200,14 @@ public abstract class BasePlayingActivity extends BaseActivity implements MediaB
             public void onConnectionSuspended()
             {
                 Log.d(TAG_LOGS,"MediaBrowser connection suspended");
+                connected = false;
             }
 
             @Override
             public void onConnectionFailed()
             {
                 Log.d(TAG_LOGS,"MediaBrowser connection failed");
+                connected = false;
             }
         },null);
     }
@@ -268,7 +273,7 @@ public abstract class BasePlayingActivity extends BaseActivity implements MediaB
     public void onStart()
     {
         super.onStart();
-        if(!browser.isConnected())
+        if(!browser.isConnected() && !connected)
             browser.connect();
     }
 
@@ -288,9 +293,10 @@ public abstract class BasePlayingActivity extends BaseActivity implements MediaB
     public void onStop()
     {
         super.onStop();
-        if (MediaControllerCompat.getMediaController(BasePlayingActivity.this) != null)
+        MediaControllerCompat controller = MediaControllerCompat.getMediaController(BasePlayingActivity.this);
+        if (controller != null)
         {
-            MediaControllerCompat.getMediaController(BasePlayingActivity.this).unregisterCallback(controllerCallback);
+            controller.unregisterCallback(controllerCallback);
         }
         if(browser.isConnected())
             browser.disconnect();

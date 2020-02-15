@@ -14,6 +14,7 @@ public class MediaScanner
     protected ContentResolver resolver;
     protected boolean mediaFiles = false,scanning = false;
     protected OnMediaScannerResult callbacks;
+    int index = 0;
 
     public interface OnMediaScannerResult
     {
@@ -80,20 +81,21 @@ public class MediaScanner
     protected void processFile(Cursor cursor)
     {
         boolean valid = true;
+        String path = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA));
         if(!mediaFiles)
         {
-            valid = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.IS_MUSIC)) != 0;
+            valid = !path.startsWith("/system");
         }
         if(valid)
         {
-            SongsAdapter.Song song = new SongsAdapter.Song(
-                    cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA)),
+            SongsAdapter.Song song = new SongsAdapter.Song(path,
                     cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)));
             song.setAlbum(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)));
             song.setArtist(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)));
-            song.setIndex(cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.TRACK)));
-            song.setTime(cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION)));
+            song.setTrackN(cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.TRACK)));
+            song.setDuration(cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION)));
             callbacks.onScanResult(song);
+            index++;
         }
     }
 }

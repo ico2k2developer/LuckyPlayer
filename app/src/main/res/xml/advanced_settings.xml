@@ -5,12 +5,18 @@
     <PreferenceCategory
         android:title="@string/settings_category_debug">
 
-        <CheckBoxPreference
-            android:key="@string/compatibilityModeKey"
+        <!--<SwitchPreferenceCompat
+            android:key="@string/settings_compatibility_mode"
             android:icon="?ic_debug"
             android:title="@string/settings_compatibility_mode"
             android:summary="@string/settings_compatibility_mode_sub"
-            android:enabled="false"/>
+            android:enabled="false"/>-->
+
+        <Preference
+            android:key="@string/settings_prefs_data"
+            android:icon="?attr/ic_file"
+            android:title="@string/settings_prefs_data"
+            android:summary="@string/settings_prefs_data_sub"/>
 
     </PreferenceCategory>
 
@@ -18,7 +24,7 @@
         android:title="@string/settings_category_data">
 
         <Preference
-            android:key="@string/deleteDataKey"
+            android:key="@string/settings_delete_all"
             android:icon="?attr/ic_delete_all"
             android:title="@string/settings_delete_all"
             android:summary="@string/settings_delete_all_sub" />

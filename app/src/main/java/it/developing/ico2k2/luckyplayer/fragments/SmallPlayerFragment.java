@@ -6,6 +6,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,6 +34,21 @@ public class SmallPlayerFragment extends PlayerFragment implements Player
             TypedValue value = new TypedValue();
             getContext().getTheme().resolveAttribute(R.attr.cardViewBackgroundColor,value,true);
             cardView.setBackgroundColor(ContextCompat.getColor(getContext(),value.resourceId));
+        }
+    }
+
+    @Override
+    protected void updatePlayState()
+    {
+        ImageButton play = getPlayButton();
+        if(play != null)
+        {
+            TypedValue typedValue = new TypedValue();
+            if(isPlaying())
+                getActivity().getTheme().resolveAttribute(R.attr.ic_pause,typedValue,true);
+            else
+                getActivity().getTheme().resolveAttribute(R.attr.ic_play,typedValue,true);
+            play.setImageResource(typedValue.resourceId);
         }
     }
 }

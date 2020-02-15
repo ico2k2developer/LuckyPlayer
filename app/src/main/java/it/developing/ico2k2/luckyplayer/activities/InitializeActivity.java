@@ -22,7 +22,7 @@ public class InitializeActivity extends BaseActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initialize);
-        setSupportActionBar(findViewById(R.id.initialize_toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar));
         findViewById(R.id.initialize_fab).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){

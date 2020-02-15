@@ -14,7 +14,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
@@ -35,7 +35,7 @@ public class TabsActivity extends BasePlayingActivity
     private ViewPager pager;
     private PagerAdapter adapter;
 
-    public class PagerAdapter extends FragmentPagerAdapter
+    public class PagerAdapter extends FragmentStatePagerAdapter
     {
         private String[] tabs;
         private String[] ids =
@@ -64,7 +64,7 @@ public class TabsActivity extends BasePlayingActivity
 
         @Override
         public int getCount() {
-            return 1;
+            return tabs.length;
         }
 
         @Override
@@ -78,7 +78,7 @@ public class TabsActivity extends BasePlayingActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabs);
-        setSupportActionBar(findViewById(R.id.tabs_toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar));
 
         TabLayout tabLayout = findViewById(R.id.tabs_tab_layout);
         pager = findViewById(R.id.tabs_pager);

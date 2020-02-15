@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
 
-    <cache-path
-        name="export_list" path="lists/"/>
+    <external-cache-path
+        name="albums covers"
+        path="covers"/>
+
+    <root-path
+        name="root"
+        path="/"/>
 
 </paths>

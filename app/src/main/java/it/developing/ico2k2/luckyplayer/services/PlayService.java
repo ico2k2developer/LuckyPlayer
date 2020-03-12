@@ -280,7 +280,7 @@ public class PlayService extends MediaBrowserServiceCompat
         private void updateMetadata(Song song)
         {
             mediaSession.setMetadata(new MediaMetadataCompat.Builder()
-                    .putLong(MediaMetadataCompat.METADATA_KEY_DURATION,(long)player.getDuration())
+                    .putLong(MediaMetadataCompat.METADATA_KEY_DURATION,player.getDuration())
                     .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE,song.getTitle().toString())
                     .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE,song.getSongDescription())
                     .build());
@@ -341,7 +341,8 @@ public class PlayService extends MediaBrowserServiceCompat
         @Override
         public void onPlayFromMediaId(String id,Bundle extras)
         {
-            int mediaId = Integer.parseInt(id);
+            String path = Song.getPathFromMediaId(id);
+            Log.d(TAG_LOGS,"Trying to play " + path);
             if(player != null)
             {
                 player.stop();
@@ -350,13 +351,13 @@ public class PlayService extends MediaBrowserServiceCompat
             player = new MediaPlayer();
             try
             {
-                player.setDataSource(mediaId);
+                player.setDataSource(path);
                 player.setOnPreparedListener(new MediaPlayer.OnPreparedListener(){
                     @Override
                     public void onPrepared(MediaPlayer mp){
-                        playNotif.setContentTitle(mediaId);
+                        playNotif.setContentTitle(path);
                         onPlay();
-                        updateMetadata();
+                        updateMetadata(songs.get(Song.getIdFromMediaId(id)));
                     }
                 });
                 player.setOnCompletionListener(new MediaPlayer.OnCompletionListener(){
@@ -520,12 +521,12 @@ public class PlayService extends MediaBrowserServiceCompat
 
             @Override
             public void onScanStop(){
-                Collections.sort(songs,new Comparator<Song>(){
+                /*Collections.sort(songs,new Comparator<Song>(){
                     @Override
                     public int compare(Song o1,Song o2){
                         return o1.getTitle().toString().compareTo(o2.getTitle().toString());
                     }
-                });
+                });*/
                 manager.cancel(NOTIFICATION_SCAN);
                 prefs.edit().putInt(KEY_SONGLIST_LAST_SIZE,songs.size()).apply();
                 Log.d(TAG_LOGS,"Scan finished, items: " + songs.size());

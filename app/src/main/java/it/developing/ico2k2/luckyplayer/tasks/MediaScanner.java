@@ -70,6 +70,7 @@ public class MediaScanner
                 }
             }
         });
+        index = 0;
         thread.run();
     }
 
@@ -88,7 +89,7 @@ public class MediaScanner
         }
         if(valid)
         {
-            SongsAdapter.Song song = new SongsAdapter.Song(path,
+            SongsAdapter.Song song = new SongsAdapter.Song(path,index,
                     cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)));
             song.setAlbum(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)));
             song.setArtist(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)));

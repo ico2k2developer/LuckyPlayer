@@ -444,7 +444,6 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
         private static final String KEY_TRACKN = "trackN";
         private static final String KEY_DURATION = "duration";
         private static final String KEY_YEAR = "year";
-        private static final String KEY_ID = "id";
 
         private MediaBrowserCompat.MediaItem item;
 
@@ -498,7 +497,7 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
             return new MediaBrowserCompat.MediaItem(
                     new MediaDescriptionCompat.Builder()
                             .setDescription(description.getDescription())
-                            .setExtras(description.getExtras())
+                            .setExtras(description.getExtras() == null ? new Bundle() : description.getExtras())
                             .setIconBitmap(description.getIconBitmap())
                             .setIconUri(description.getIconUri())
                             .setMediaId(description.getMediaId())
@@ -515,14 +514,24 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
                 this.item = newItem;
         }
 
-        public Song(String path,CharSequence title,int flags)
+        public Song(String path,int id,CharSequence title,int flags)
         {
             item = new MediaBrowserCompat.MediaItem(
                     new MediaDescriptionCompat.Builder()
-                    .setMediaId(path)
+                    .setMediaId(path + ":" + id)
                     .setTitle(title)
                     .setExtras(new Bundle())
                     .build(),flags);
+        }
+
+        public Song(String path,int id,CharSequence title)
+        {
+            this(path,id,title,FLAG_PLAYABLE);
+        }
+
+        public Song(String path,CharSequence title,int flags)
+        {
+            this(path,-1,title,FLAG_PLAYABLE);
         }
 
         public Song(String path,CharSequence title)
@@ -539,17 +548,23 @@ public class SongsAdapter extends BaseAdapter<SongsAdapter.SongHandle>
             return item.getDescription().getTitle();
         }
 
-        public String getPath(){
-            return item.getMediaId();
+        public static String getPathFromMediaId(String mediaId)
+        {
+            return mediaId.substring(0,mediaId.indexOf(':'));
         }
 
-        public Song setId(int id){
-            item.getDescription().getExtras().putInt(KEY_ID,id);
-            return this;
+        public static int getIdFromMediaId(String mediaId)
+        {
+            return Integer.parseInt(mediaId.substring(mediaId.indexOf(':') + 1));
+        }
+
+        public String getPath()
+        {
+            return getPathFromMediaId(getMediaId());
         }
 
         public int getId(){
-            return item.getDescription().getExtras().getInt(KEY_ID,-1);
+            return getIdFromMediaId(getMediaId());
         }
 
         public Song setArtist(String artist){

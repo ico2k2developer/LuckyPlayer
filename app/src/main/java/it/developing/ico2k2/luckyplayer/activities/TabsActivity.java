@@ -9,7 +9,6 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -87,17 +86,6 @@ public class TabsActivity extends BasePlayingActivity
         pager.setOffscreenPageLimit(3);
         tabLayout.setupWithViewPager(pager);
         adapter.notifyDataSetChanged();
-
-        findViewById(R.id.tabs_fab).setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                MediaControllerCompat controller = MediaControllerCompat.getMediaController(TabsActivity.this);
-                if(controller.getPlaybackState().getState() == PlaybackStateCompat.STATE_PLAYING)
-                    controller.getTransportControls().pause();
-                else
-                    controller.getTransportControls().play();
-            }
-        });
     }
 
     void buildTransportControls()

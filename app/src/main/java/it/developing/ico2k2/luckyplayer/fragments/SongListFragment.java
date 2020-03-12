@@ -63,7 +63,21 @@ public class SongListFragment extends BaseFragment
         adapter.setOnItemClickListener(new ViewHandle.OnItemClickListener(){
             @Override
             public void onItemClick(ViewHandle handle,int position){
-                MediaControllerCompat.getMediaController(getActivity()).getTransportControls().playFromMediaId(adapter.get(position).getMediaId(),null);
+                SongsAdapter.Song song = adapter.get(position);
+                switch(song.getFlags())
+                {
+                    case MediaBrowserCompat.MediaItem.FLAG_PLAYABLE:
+                    {
+                        MediaControllerCompat.getMediaController(getActivity()).getTransportControls().playFromMediaId(song.getMediaId(),null);
+                        break;
+                    }
+                    case MediaBrowserCompat.MediaItem.FLAG_BROWSABLE:
+                    {
+
+                        break;
+                    }
+                }
+                Toast.makeText(getContext(),song.getMediaId() + ", playable? " + (song.getFlags() == MediaBrowserCompat.MediaItem.FLAG_PLAYABLE),Toast.LENGTH_LONG).show();
             }
         });
         adapter.setOnItemContextMenuListener(new ViewHandle.OnItemContextMenuListener(){
@@ -86,7 +100,7 @@ public class SongListFragment extends BaseFragment
             case ID_MENU_INFO:
             {
                 Intent intent = new Intent(getActivity(),InfoActivity.class);
-                intent.setData(Uri.parse(adapter.get(contextClickPosition).getMediaId()));
+                intent.setData(Uri.parse(SongsAdapter.Song.getPathFromMediaId(adapter.get(contextClickPosition).getMediaId())));
                 startActivity(intent);
                 break;
             }

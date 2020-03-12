@@ -147,7 +147,6 @@ public abstract class BasePlayingActivity extends BaseActivity implements MediaB
                         public void onPlaybackStateChanged(PlaybackStateCompat playbackState)
                         {
                             int state = playbackState.getState();
-                            Log.d(TAG_LOGS,"Playback state changed: " + state);
                             switch(state)
                             {
                                 case PlaybackStateCompat.STATE_BUFFERING:
@@ -160,7 +159,8 @@ public abstract class BasePlayingActivity extends BaseActivity implements MediaB
                                 case PlaybackStateCompat.STATE_SKIPPING_TO_QUEUE_ITEM:
                                 case PlaybackStateCompat.STATE_STOPPED:
                                 {
-                                    requestPlayer();
+                                    if(!isPlayerShowing())
+                                        requestPlayer();
                                     playerFragment.setPlaying(state == PlaybackStateCompat.STATE_PLAYING);
                                     playerFragment.setTimeProgress((int)playbackState.getPosition());
                                     break;

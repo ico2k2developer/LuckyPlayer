@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
@@ -362,7 +361,8 @@ public class InfoActivity extends BaseActivity
                             }
                             else
                             {
-                                dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                                dir = getExternalFilesDir(null);
+                                dir = new File(dir,"Download");
                                 name = getSupportActionBar().getTitle() + FILENAME_COVER.substring(FILENAME_COVER.lastIndexOf("."));
                             }
                             Log.d(TAG_LOGS,"Cache dir: " + dir.getAbsolutePath());

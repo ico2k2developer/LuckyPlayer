@@ -30,8 +30,8 @@ import it.developing.ico2k2.luckyplayer.MediaBrowserDependent;
 import it.developing.ico2k2.luckyplayer.fragments.SmallPlayerFragment;
 import it.developing.ico2k2.luckyplayer.services.PlayService;
 
-import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_SCAN_REQUESTED;
-import static it.developing.ico2k2.luckyplayer.Keys.TAG_LOGS;
+import static it.developing.ico2k2.luckyplayer.Utils.MESSAGE_SCAN_REQUESTED;
+import static it.developing.ico2k2.luckyplayer.Utils.TAG_LOGS;
 
 public abstract class BasePlayingActivity extends BaseActivity implements MediaBrowserDependent
 {
@@ -177,7 +177,7 @@ public abstract class BasePlayingActivity extends BaseActivity implements MediaB
                         {
                             Log.d(TAG_LOGS,"Metadata changed");
                             requestPlayer();
-                            playerFragment.setTimeTotal((int)metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION));
+                            playerFragment.setTimeTotal(metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION));
                             playerFragment.setTitle(metadata.getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE));
                             playerFragment.setSubtitle(metadata.getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE));
                         }

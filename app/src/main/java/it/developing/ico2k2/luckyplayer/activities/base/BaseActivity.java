@@ -29,10 +29,10 @@ import com.readystatesoftware.systembartint.SystemBarTintManager;
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.MainActivity;
 
-import static it.developing.ico2k2.luckyplayer.Keys.KEY_INITIALIZED;
-import static it.developing.ico2k2.luckyplayer.Keys.KEY_THEME;
-import static it.developing.ico2k2.luckyplayer.Keys.PREFERENCE_MAIN;
-import static it.developing.ico2k2.luckyplayer.Keys.TAG_LOGS;
+import static it.developing.ico2k2.luckyplayer.Utils.KEY_INITIALIZED;
+import static it.developing.ico2k2.luckyplayer.Utils.KEY_THEME;
+import static it.developing.ico2k2.luckyplayer.Utils.PREFERENCE_MAIN;
+import static it.developing.ico2k2.luckyplayer.Utils.TAG_LOGS;
 
 public abstract class BaseActivity extends AppCompatActivity
 {
@@ -233,7 +233,6 @@ public abstract class BaseActivity extends AppCompatActivity
         if(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT || Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT_WATCH)
         {
             setTranslucentStatusBar(true);
-            //layout.setPaddingRelative(0,context.getResources().getDimensionPixelSize(context.getResources().getIdentifier("status_bar_height","dimen","android")),0,0);
             SystemBarTintManager tintManager = new SystemBarTintManager(this);
             tintManager.setStatusBarTintEnabled(true);
             tintManager.setTintColor(color);

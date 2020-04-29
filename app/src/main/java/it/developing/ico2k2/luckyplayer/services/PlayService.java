@@ -5,7 +5,10 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
+import android.provider.MediaStore;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
@@ -20,29 +23,22 @@ import androidx.media.MediaBrowserServiceCompat;
 import androidx.media.session.MediaButtonReceiver;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.Arrays;
 import java.util.List;
 
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.MainActivity;
-import it.developing.ico2k2.luckyplayer.adapters.SongsAdapter;
+import it.developing.ico2k2.luckyplayer.adapters.Song;
 import it.developing.ico2k2.luckyplayer.tasks.MediaScanner;
 
-import static it.developing.ico2k2.luckyplayer.Keys.CHANNEL_ID_INFO;
-import static it.developing.ico2k2.luckyplayer.Keys.CHANNEL_ID_STATUS;
-import static it.developing.ico2k2.luckyplayer.Keys.KEY_NOTIFICATION_TINT;
-import static it.developing.ico2k2.luckyplayer.Keys.KEY_REQUEST;
-import static it.developing.ico2k2.luckyplayer.Keys.KEY_SONGLIST_LAST_SIZE;
-import static it.developing.ico2k2.luckyplayer.Keys.KEY_SYSTEM_MEDIA;
-import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_DESTROY;
-import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_SCAN_REQUESTED;
-import static it.developing.ico2k2.luckyplayer.Keys.PREFERENCE_MAIN;
-import static it.developing.ico2k2.luckyplayer.Keys.TAG_LOGS;
-import static it.developing.ico2k2.luckyplayer.adapters.SongsAdapter.Song;
-import static it.developing.ico2k2.luckyplayer.adapters.SongsAdapter.trimToAlbums;
-import static it.developing.ico2k2.luckyplayer.adapters.SongsAdapter.trimToArtists;
-import static it.developing.ico2k2.luckyplayer.adapters.SongsAdapter.trimToYears;
+import static it.developing.ico2k2.luckyplayer.Utils.CHANNEL_ID_INFO;
+import static it.developing.ico2k2.luckyplayer.Utils.CHANNEL_ID_STATUS;
+import static it.developing.ico2k2.luckyplayer.Utils.KEY_NOTIFICATION_TINT;
+import static it.developing.ico2k2.luckyplayer.Utils.KEY_REQUEST;
+import static it.developing.ico2k2.luckyplayer.Utils.MESSAGE_DESTROY;
+import static it.developing.ico2k2.luckyplayer.Utils.MESSAGE_SCAN_REQUESTED;
+import static it.developing.ico2k2.luckyplayer.Utils.PREFERENCE_MAIN;
+import static it.developing.ico2k2.luckyplayer.Utils.TAG_LOGS;
 
 public class PlayService extends MediaBrowserServiceCompat
 {
@@ -50,7 +46,6 @@ public class PlayService extends MediaBrowserServiceCompat
     public static final int NOTIFICATION_STATUS = 0x11;
 
     private SharedPreferences prefs;
-    private ArrayList<SongsAdapter.Song> songs;
     private NotificationManagerCompat manager;
     private NotificationCompat.Builder playNotif;
     private Notification notification;
@@ -59,6 +54,13 @@ public class PlayService extends MediaBrowserServiceCompat
 
     public static final String PACKAGE_AUTO = "com.google.android.projection.gearhead";
 
+    public static final String EXTRA_COLUMNS = "columns";
+    public static final String EXTRA_TYPES = "types";
+
+    public static final int TYPE_INT =  0xA;
+    public static final int TYPE_LONG =  0xB;
+    public static final int TYPE_STRING =  0xC;
+
     public static final String ARG_AUTO = "auto";
 
     public static final String ID_ROOT = "$root&";
@@ -66,14 +68,30 @@ public class PlayService extends MediaBrowserServiceCompat
     public static final String ID_SONGS = "$songs&";
     public static final String ID_ALBUMS = "$albums&";
     public static final String ID_ARTISTS = "$artists&";
-    public static final String ID_YEARS = "$years&";
+    public static final String ID_GENRES = "$genres&";
 
     public static final String[] ID_TABS =
     {
         ID_SONGS,
         ID_ALBUMS,
         ID_ARTISTS,
-        ID_YEARS,
+        ID_GENRES,
+    };
+
+
+    public static final Uri[] SONGS_URI = new Uri[]{
+            MediaStore.Audio.Media.INTERNAL_CONTENT_URI,
+            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+    };
+
+    public static final Uri[] ALBUMS_URI = new Uri[]{
+            MediaStore.Audio.Albums.INTERNAL_CONTENT_URI,
+            MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+    };
+
+    public static final Uri[] ARTISTS_URI = new Uri[]{
+            MediaStore.Audio.Artists.INTERNAL_CONTENT_URI,
+            MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
     };
 
     @Override
@@ -101,24 +119,29 @@ public class PlayService extends MediaBrowserServiceCompat
     @Override
     public void onLoadChildren(@NonNull String parentId,@NonNull Result<List<MediaBrowserCompat.MediaItem>> result,@NonNull Bundle options)
     {
-        Log.d(TAG_LOGS,"Children request from " + parentId + ", songs size: " + songs.size());
+        Log.d(TAG_LOGS,"Children request from " + parentId);
         result.detach();
         ArrayList<MediaBrowserCompat.MediaItem> items;
-        int page = 0,pageSize = 0;
+        int pageFrom = 0,pageTo = 0;
         if(options.containsKey(MediaBrowserCompat.EXTRA_PAGE) && options.containsKey(MediaBrowserCompat.EXTRA_PAGE_SIZE))
         {
-            page = options.getInt(MediaBrowserCompat.EXTRA_PAGE);
-            pageSize = options.getInt(MediaBrowserCompat.EXTRA_PAGE_SIZE);
-            items = new ArrayList<>(pageSize);
-            Log.d(TAG_LOGS,"Using paging mode, page number: " + page + ", page size: " + pageSize);
+            pageFrom = options.getInt(MediaBrowserCompat.EXTRA_PAGE);
+            pageTo = options.getInt(MediaBrowserCompat.EXTRA_PAGE_SIZE);
+            Log.d(TAG_LOGS,"Using paging mode, page: " + pageFrom + ", size: " + pageTo);
+            pageFrom *= pageTo;
+            pageTo += pageFrom;
+            items = new ArrayList<>(pageTo - pageFrom);
         }
         else
             items = new ArrayList<>();
+        MediaScanner scanner = new MediaScanner(getContentResolver());
+        Log.d(TAG_LOGS,"MediaScanner created");
         switch(parentId.substring(parentId.indexOf("$"),parentId.indexOf("&") + 1))
         {
             case ID_ROOT:
             {
                 String[] tabs = getResources().getStringArray(R.array.tabs);
+
                 items.ensureCapacity(tabs.length);
                 int a = 0;
                 String arg = parentId.substring(0,parentId.indexOf("$"));
@@ -135,133 +158,153 @@ public class PlayService extends MediaBrowserServiceCompat
             }
             case ID_SONGS:
             {
-                if(parentId.substring(0,parentId.indexOf("$")).contains(ARG_AUTO))
+                Log.d(TAG_LOGS,"Processing songs case");
+                List<String> columns = new ArrayList<>(Arrays.asList(
+                        MediaStore.MediaColumns._ID,
+                        MediaStore.MediaColumns.TITLE,
+                        MediaStore.Audio.AlbumColumns.ALBUM,
+                        MediaStore.Audio.AlbumColumns.ARTIST));
+                String[] requestedColumns = new String[0];
+                int[] requestedTypes = new int[0];
+                if(options.containsKey(EXTRA_COLUMNS))
                 {
-                    if(parentId.charAt(parentId.length() - 1) == ':')
+                    columns.addAll(Arrays.asList(requestedColumns = options.getStringArray(EXTRA_COLUMNS)));
+                    requestedTypes = options.getIntArray(EXTRA_TYPES);
+                }
+                Log.d(TAG_LOGS,"Added " + requestedColumns.length + " columns");
+                MediaScanner.MediaScanResult results = scanner.subscan(SONGS_URI,
+                        pageFrom,pageTo,columns,null,null);
+                Log.d(TAG_LOGS,"Scan ended");
+                for(String[] row : results.getAll())
+                {
+                    Bundle extras = new Bundle();
+                    if(options.containsKey(EXTRA_COLUMNS))
                     {
-                        Log.d(TAG_LOGS,"Songs mode 1");
-                        char first = parentId.charAt(parentId.length() - 2);
-                        for(Song song : songs)
+                        int a = requestedTypes.length == requestedColumns.length ? 0 : -1,b;
+                        String c;
+                        for(String column : requestedColumns)
                         {
-                            if(song.getTitle().toString().toUpperCase().charAt(0) == first)
-                                items.add(song.toMediaItem());
-                                /*items.add(new MediaBrowserCompat.MediaItem(
-                                        new MediaDescriptionCompat.Builder()
-                                                .setMediaId(song.getMediaId())
-                                                .setTitle(song.getTitle())
-                                                .build(),MediaBrowserCompat.MediaItem.FLAG_PLAYABLE));*/
-                        }
-                    }
-                    else
-                    {
-                        Log.d(TAG_LOGS,"Songs mode 1");
-
-
-                        ArrayList<Character> tmp = new ArrayList<>();
-                        char last;
-                        for(Song song : songs)
-                        {
-                            if(!tmp.contains(last = song.getTitle().toString().toUpperCase().charAt(0)))
+                            c = row[results.getIndexFromColumnName(column)];
+                            if(a > -1)
                             {
-                                tmp.add(last);
-                                items.add(song.toMediaItem());
+                                b = requestedTypes[a];
+                            }
+                            else
+                                b = TYPE_STRING;
+                            switch(b)
+                            {
+                                case TYPE_INT:
+                                {
+                                    extras.putInt(column,Integer.parseInt(c));
+                                    break;
+                                }
+                                case TYPE_LONG:
+                                {
+                                    extras.putLong(column,Long.parseLong(c));
+                                    break;
+                                }
+                                default:
+                                {
+                                    extras.putString(column,c);
+                                    break;
+                                }
                             }
                         }
-                        tmp.clear();
-                        tmp.trimToSize();
                     }
-                    Collections.sort(items,new Comparator<MediaBrowserCompat.MediaItem>()
-                    {
-                        @Override
-                        public int compare(MediaBrowserCompat.MediaItem o1,MediaBrowserCompat.MediaItem o2){
-                            return o1.getDescription().getTitle().charAt(0) - o2.getDescription().getTitle().charAt(0);
-                        }
-                    });
+                    items.add(new MediaBrowserCompat.MediaItem(new MediaDescriptionCompat.Builder()
+                            .setMediaId(row[results.getIndexFromColumnName(MediaStore.MediaColumns._ID)])
+                            .setTitle(row[results.getIndexFromColumnName(MediaStore.MediaColumns.TITLE)])
+                            .setSubtitle(Song.getSongDescription(
+                                    row[results.getIndexFromColumnName(MediaStore.Audio.AlbumColumns.ALBUM)],
+                                    row[results.getIndexFromColumnName(MediaStore.Audio.AlbumColumns.ARTIST)]))
+                            .setExtras(extras).build(),
+                            MediaBrowserCompat.MediaItem.FLAG_PLAYABLE));
                 }
-                else
-                {
-                    Log.d(TAG_LOGS,"Songs mode 3");
-                    int start,end;
-                    if(pageSize != 0)
-                    {
-                        start = pageSize * page;
-                        end = start + pageSize;
-                        if(end > songs.size())
-                            end = songs.size();
-                    }
-                    else
-                    {
-                        start = 0;
-                        end = songs.size();
-                    }
-                    if(start < end)
-                    {
-                        for(Song song : songs.subList(start,end))
-                            items.add(song.toMediaItem());
-                    }
-                    pageSize = 0;
-                    Log.d(TAG_LOGS,"Packet (songs), from " + start + " to " + end);
-                }
+                results.release();
                 break;
             }
             case ID_ALBUMS:
             {
-                ArrayList<Integer> indexes = new ArrayList<>();
-                trimToAlbums(songs,indexes);
-                items.ensureCapacity(indexes.size());
-                String album;
-                for(int index : indexes)
-                    items.add(new MediaBrowserCompat.MediaItem(
-                            new MediaDescriptionCompat.Builder()
-                            .setTitle(album = songs.get(index).getAlbum())
-                            .setMediaId(parentId + album)
-                            .build(),MediaBrowserCompat.MediaItem.FLAG_BROWSABLE));
+                Log.d(TAG_LOGS,"Processing albums case");
+                List<String> columns = new ArrayList<>(Arrays.asList(
+                        MediaStore.Audio.AlbumColumns.ALBUM_ID,
+                        MediaStore.MediaColumns.TITLE,
+                        MediaStore.Audio.AlbumColumns.ARTIST));
+                String[] requestedColumns = new String[0];
+                int[] requestedTypes = new int[0];
+                if(options.containsKey(EXTRA_COLUMNS))
+                {
+                    columns.addAll(Arrays.asList(requestedColumns = options.getStringArray(EXTRA_COLUMNS)));
+                    requestedTypes = options.getIntArray(EXTRA_TYPES);
+                }
+                Log.d(TAG_LOGS,"Added " + requestedColumns.length + " columns");
+                MediaScanner.MediaScanResult results = scanner.subscan(ALBUMS_URI,
+                        pageFrom,pageTo,columns,null,null);
+                Log.d(TAG_LOGS,"Scan ended");
+                for(String[] row : results.getAll())
+                {
+                    Bundle extras = new Bundle();
+                    if(options.containsKey(EXTRA_COLUMNS))
+                    {
+                        int a = requestedTypes.length == requestedColumns.length ? 0 : -1,b;
+                        String c;
+                        for(String column : requestedColumns)
+                        {
+                            c = row[results.getIndexFromColumnName(column)];
+                            if(a > -1)
+                            {
+                                b = requestedTypes[a];
+                            }
+                            else
+                                b = TYPE_STRING;
+                            switch(b)
+                            {
+                                case TYPE_INT:
+                                {
+                                    extras.putInt(column,Integer.parseInt(c));
+                                    break;
+                                }
+                                case TYPE_LONG:
+                                {
+                                    extras.putLong(column,Long.parseLong(c));
+                                    break;
+                                }
+                                default:
+                                {
+                                    extras.putString(column,c);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    items.add(new MediaBrowserCompat.MediaItem(new MediaDescriptionCompat.Builder()
+                            .setMediaId(row[results.getIndexFromColumnName(MediaStore.Audio.AlbumColumns.ALBUM_ID)])
+                            .setTitle(row[results.getIndexFromColumnName(MediaStore.MediaColumns.TITLE)])
+                            .setSubtitle(row[results.getIndexFromColumnName(MediaStore.Audio.AlbumColumns.ARTIST)])
+                            .setExtras(extras).build(),
+                            MediaBrowserCompat.MediaItem.FLAG_BROWSABLE));
+                }
+                results.release();
                 break;
             }
             case ID_ARTISTS:
             {
-                ArrayList<Integer> indexes = new ArrayList<>();
-                trimToArtists(songs,indexes);
-                items.ensureCapacity(indexes.size());
-                String artist;
-                for(int index : indexes)
-                    items.add(new MediaBrowserCompat.MediaItem(
-                            new MediaDescriptionCompat.Builder()
-                                    .setTitle(artist = songs.get(index).getArtist())
-                                    .setMediaId(parentId + artist)
-                                    .build(),MediaBrowserCompat.MediaItem.FLAG_BROWSABLE));
-                break;
+                /*scanner.scan(new String[] {
+                                MediaStore.Audio.AlbumColumns.ARTIST_ID},
+                        null,null,MediaStore.Audio.AlbumColumns.ARTIST + " ASC");
+                break;*/
             }
-            case ID_YEARS:
+            case ID_GENRES:
             {
-                ArrayList<Integer> indexes = new ArrayList<>();
-                trimToYears(songs,indexes);
-                items.ensureCapacity(indexes.size());
-                int year;
-                for(int index : indexes)
-                    items.add(new MediaBrowserCompat.MediaItem(
-                            new MediaDescriptionCompat.Builder()
-                                    .setTitle(Integer.toString(year = songs.get(index).getYear()))
-                                    .setMediaId(parentId + year)
-                                    .build(),MediaBrowserCompat.MediaItem.FLAG_BROWSABLE));
-                break;
+                /*scanner.scan(new String[] {
+                                MediaStore.Audio.GenresColumns.NAME},
+                        null,null,MediaStore.Audio.GenresColumns.NAME + " ASC");
+                break;*/
             }
         }
         Log.d(TAG_LOGS,items.size() + " children found");
-        if(pageSize == 0)
-            result.sendResult(items);
-        else
-        {
-            int from = page * pageSize;
-            int to = page * pageSize + pageSize;
-            if(to > items.size())
-                to = items.size();
-            if(from <= to)
-                result.sendResult(items.subList(from,to));
-            else
-                result.sendResult(null);
-            Log.d(TAG_LOGS,"Packet (items), from " + from + " to " + to);
-        }
+        Log.d(TAG_LOGS,"Packet (items), from " + pageFrom + " to " + pageTo);
+        result.sendResult(items);
     }
 
     private final class MediaSessionCallback extends MediaSessionCompat.Callback{
@@ -277,12 +320,25 @@ public class PlayService extends MediaBrowserServiceCompat
                     .build());
         }
 
-        private void updateMetadata(Song song)
+        private void updateMetadata(String originalMediaId)
         {
+            MediaScanner scanner = new MediaScanner(getContentResolver());
+            MediaScanner.MediaScanResult result = scanner.subscan(SONGS_URI,1,new String[]{
+                            MediaStore.MediaColumns.TITLE,
+                            MediaStore.Audio.AlbumColumns.ALBUM,
+                            MediaStore.Audio.AlbumColumns.ARTIST,
+                            MediaStore.MediaColumns.DURATION,},
+                    MediaStore.MediaColumns._ID + "=" + originalMediaId,null);
             mediaSession.setMetadata(new MediaMetadataCompat.Builder()
-                    .putLong(MediaMetadataCompat.METADATA_KEY_DURATION,player.getDuration())
-                    .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE,song.getTitle().toString())
-                    .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE,song.getSongDescription())
+                    .putLong(MediaMetadataCompat.METADATA_KEY_DURATION,
+                            Long.parseLong(result.getCell(
+                                    MediaStore.MediaColumns.DURATION,0)))
+                    .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE,
+                            result.getCell(MediaStore.MediaColumns.TITLE,0))
+                    .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE,
+                            Song.getSongDescription(
+                                    result.getCell(MediaStore.Audio.AlbumColumns.ALBUM,0),
+                                    result.getCell(MediaStore.Audio.AlbumColumns.ARTIST,0)))
                     .build());
         }
 
@@ -291,6 +347,12 @@ public class PlayService extends MediaBrowserServiceCompat
         {
             try
             {
+                player.setOnCompletionListener(new MediaPlayer.OnCompletionListener(){
+                    @Override
+                    public void onCompletion(MediaPlayer mp){
+                        onPause();
+                    }
+                });
                 player.start();
                 playNotif.setSmallIcon(R.drawable.ic_play_notification);
                 startForeground(NOTIFICATION_STATUS,playNotif.build());
@@ -339,31 +401,26 @@ public class PlayService extends MediaBrowserServiceCompat
         }
 
         @Override
-        public void onPlayFromMediaId(String id,Bundle extras)
+        public void onPlayFromMediaId(String mediaId,Bundle extras)
         {
-            String path = Song.getPathFromMediaId(id);
-            Log.d(TAG_LOGS,"Trying to play " + path);
-            if(player != null)
-            {
-                player.stop();
-                player.release();
-            }
+            int index = mediaId.indexOf(";");
+            final String subId = mediaId.substring(index + 1);
+            Log.d(TAG_LOGS,"Trying to play " + subId + " with index " + index);
+            onStop();
             player = new MediaPlayer();
             try
             {
-                player.setDataSource(path);
+                index = Integer.parseInt(mediaId.substring(0,mediaId.indexOf(";")));
+                ParcelFileDescriptor file = getBaseContext().getContentResolver().openFileDescriptor(Uri.withAppendedPath(
+                        SONGS_URI[Integer.parseInt(mediaId.substring(0,index))],
+                        subId),"r");
+                player.setDataSource(file.getFileDescriptor());
                 player.setOnPreparedListener(new MediaPlayer.OnPreparedListener(){
                     @Override
                     public void onPrepared(MediaPlayer mp){
-                        playNotif.setContentTitle(path);
+                        playNotif.setContentTitle(subId);
                         onPlay();
-                        updateMetadata(songs.get(Song.getIdFromMediaId(id)));
-                    }
-                });
-                player.setOnCompletionListener(new MediaPlayer.OnCompletionListener(){
-                    @Override
-                    public void onCompletion(MediaPlayer mp){
-                        onPause();
+                        updateMetadata(subId);
                     }
                 });
                 player.prepare();
@@ -372,7 +429,6 @@ public class PlayService extends MediaBrowserServiceCompat
             {
                 e.printStackTrace();
             }
-
         }
 
         @Override
@@ -430,10 +486,10 @@ public class PlayService extends MediaBrowserServiceCompat
     {
         super.onCreate();
         prefs = getSharedPreferences(PREFERENCE_MAIN,MODE_PRIVATE);
-        if(prefs.contains(KEY_SONGLIST_LAST_SIZE))
+        /*if(prefs.contains(KEY_SONGLIST_LAST_SIZE))
             songs = new ArrayList<>(prefs.getInt(KEY_SONGLIST_LAST_SIZE,100));
         else
-            songs = new ArrayList<>();
+            songs = new ArrayList<>();*/
         mediaSession = new MediaSessionCompat(this,TAG_LOGS);
         manager = NotificationManagerCompat.from(this);
         stateBuilder = new PlaybackStateCompat.Builder().setActions(
@@ -469,7 +525,7 @@ public class PlayService extends MediaBrowserServiceCompat
                 .setShowCancelButton(true)
                 .setCancelButtonIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(this,
                         PlaybackStateCompat.ACTION_STOP)));
-        scan();
+        //scan();
         Log.d(TAG_LOGS,"Service created");
     }
 
@@ -488,13 +544,13 @@ public class PlayService extends MediaBrowserServiceCompat
             }
             case MESSAGE_SCAN_REQUESTED:
             {
-                scan();
+                //scan();
                 break;
             }
         }
     }
 
-    public void scan()
+    /*public void scan()
     {
         PendingIntent pendingIntent = PendingIntent.getActivity(this,0,new Intent(this,MainActivity.class),PendingIntent.FLAG_UPDATE_CURRENT);
         final Notification notification = new NotificationCompat.Builder(this,CHANNEL_ID_INFO)
@@ -515,26 +571,19 @@ public class PlayService extends MediaBrowserServiceCompat
             }
 
             @Override
-            public void onScanResult(SongsAdapter.Song song){
+            public void onScanResult(Song song){
                 songs.add(song);
             }
 
             @Override
             public void onScanStop(){
-                /*Collections.sort(songs,new Comparator<Song>(){
-                    @Override
-                    public int compare(Song o1,Song o2){
-                        return o1.getTitle().toString().compareTo(o2.getTitle().toString());
-                    }
-                });*/
                 manager.cancel(NOTIFICATION_SCAN);
                 prefs.edit().putInt(KEY_SONGLIST_LAST_SIZE,songs.size()).apply();
                 Log.d(TAG_LOGS,"Scan finished, items: " + songs.size());
             }
         });
-        scanner.setIncludeMediaFiles(prefs.getBoolean(KEY_SYSTEM_MEDIA,false));
         scanner.startScan();
-    }
+    }*/
 
     @Override
     public int onStartCommand(Intent intent,int flags,int startId)

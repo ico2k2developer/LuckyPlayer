@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
-        android:name=".LuckyPlayer"
+        android:name=".LuckyPlayer2"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -23,16 +23,16 @@
             android:name="com.google.android.gms.car.application"
             android:resource="@xml/automotive_app_desc" />
 
-        <provider
+        <!--<provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="it.developing.ico2k2.luckyplayer.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
 
-            <!--<meta-data
+            <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/files" />-->
-        </provider>
+                android:resource="@xml/files" />
+        </provider>-->
 
         <activity
             android:name=".activities.MainActivity"

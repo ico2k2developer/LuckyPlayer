@@ -14,13 +14,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import it.developing.ico2k2.luckyplayer.R;
-import it.developing.ico2k2.luckyplayer.adapters.SongsAdapter;
+import it.developing.ico2k2.luckyplayer.adapters.Song;
 import it.developing.ico2k2.luckyplayer.fragments.base.BaseFragment;
 
 public class PlayerFragment extends BaseFragment implements Player
 {
     private boolean playing = false,touchingBar = false;
-    private int progress = 0,total = 1;
+    private long progress = 0,total = 1;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,ViewGroup container,Bundle savedInstance)
@@ -59,7 +59,7 @@ public class PlayerFragment extends BaseFragment implements Player
             @Override
             public void onStopTrackingTouch(SeekBar seekBar){
                 MediaControllerCompat controller = MediaControllerCompat.getMediaController(getActivity());
-                controller.getTransportControls().seekTo((long)seekBar.getProgress());
+                controller.getTransportControls().seekTo(seekBar.getProgress());
                 touchingBar = false;
             }
         });
@@ -76,16 +76,16 @@ public class PlayerFragment extends BaseFragment implements Player
         return playing;
     }
 
-    public void setTimeProgress(int ms)
+    public void setTimeProgress(long ms)
     {
         progress = ms;
-        updateTimeState();
+        updateTimeProgress();
     }
 
-    public void setTimeTotal(int ms)
+    public void setTimeTotal(long ms)
     {
         total = ms;
-        updateTimeState();
+        updateTimeTotal();
     }
 
     public void setTitle(String title)
@@ -162,22 +162,24 @@ public class PlayerFragment extends BaseFragment implements Player
         }
     }
 
-    protected void updateTimeState()
+    protected void updateTimeProgress()
     {
         SeekBar bar = getTimeBar();
         if(bar != null)
         {
             if(!touchingBar)
-                bar.setProgress(progress);
-            bar.setMax(total);
-            getCurrentTimeLabel().setText(SongsAdapter.getSongTimeDescription(progress));
-            getTotalTimeLabel().setText(SongsAdapter.getSongTimeDescription(total));
+                bar.setProgress((int)progress);
+            getCurrentTimeLabel().setText(Song.getSongTimeDescription(progress));
         }
     }
 
-    public void loadSong(SongsAdapter.Song song)
+    protected void updateTimeTotal()
     {
-        setTitle(song.getTitle().toString());
-        setSubtitle(song.getSongDescription());
+        SeekBar bar = getTimeBar();
+        if(bar != null)
+        {
+            bar.setMax((int)total);
+            getTotalTimeLabel().setText(Song.getSongTimeDescription(total));
+        }
     }
 }

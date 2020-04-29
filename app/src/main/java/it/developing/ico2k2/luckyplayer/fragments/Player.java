@@ -7,8 +7,8 @@ import android.widget.TextView;
 public interface Player
 {
     void setPlaying(boolean playing);
-    void setTimeProgress(int ms);
-    void setTimeTotal(int ms);
+    void setTimeProgress(long ms);
+    void setTimeTotal(long ms);
     void setTitle(String title);
     void setSubtitle(String subtitle);
     ImageButton getPlayButton();

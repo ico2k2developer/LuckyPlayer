@@ -35,15 +35,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import it.developing.ico2k2.luckyplayer.R;
+import it.developing.ico2k2.luckyplayer.Utils;
 import it.developing.ico2k2.luckyplayer.activities.base.BaseActivity;
 import it.developing.ico2k2.luckyplayer.dialogs.ConfirmDialog;
 import it.developing.ico2k2.luckyplayer.dialogs.DefaultDialog;
 
-import static it.developing.ico2k2.luckyplayer.Keys.KEY_NOTIFICATION_TINT;
-import static it.developing.ico2k2.luckyplayer.Keys.KEY_THEME;
-import static it.developing.ico2k2.luckyplayer.Keys.TAG_LOGS;
-import static it.developing.ico2k2.luckyplayer.lib.Utils.adapterMapsFromAdapterList;
-import static it.developing.ico2k2.luckyplayer.lib.Utils.getThemeFromName;
+import static it.developing.ico2k2.luckyplayer.Utils.KEY_NOTIFICATION_TINT;
+import static it.developing.ico2k2.luckyplayer.Utils.KEY_THEME;
+import static it.developing.ico2k2.luckyplayer.Utils.TAG_LOGS;
+import static it.developing.ico2k2.luckyplayer.Utils.adapterMapsFromAdapterList;
 
 public class SettingsActivity extends BaseActivity
 {
@@ -492,7 +492,7 @@ public class SettingsActivity extends BaseActivity
                         String item = items.get(a);
                         try
                         {
-                            themes.add(a,getThemeFromName(item));
+                            themes.add(a,Utils.getThemeFromName(item));
                         }
                         catch(Exception e)
                         {

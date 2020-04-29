@@ -25,9 +25,9 @@ import it.developing.ico2k2.luckyplayer.activities.base.BasePlayingActivity;
 import it.developing.ico2k2.luckyplayer.fragments.SongListFragment;
 import it.developing.ico2k2.luckyplayer.services.PlayService;
 
-import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_DESTROY;
-import static it.developing.ico2k2.luckyplayer.Keys.MESSAGE_SCAN_REQUESTED;
-import static it.developing.ico2k2.luckyplayer.Keys.TAG_LOGS;
+import static it.developing.ico2k2.luckyplayer.Utils.MESSAGE_DESTROY;
+import static it.developing.ico2k2.luckyplayer.Utils.MESSAGE_SCAN_REQUESTED;
+import static it.developing.ico2k2.luckyplayer.Utils.TAG_LOGS;
 
 public class TabsActivity extends BasePlayingActivity
 {
@@ -40,16 +40,18 @@ public class TabsActivity extends BasePlayingActivity
         private String[] ids =
         {
             PlayService.ID_SONGS,
-            PlayService.ID_ALBUMS,
+            /*PlayService.ID_ALBUMS,
             PlayService.ID_ARTISTS,
-            PlayService.ID_YEARS,
+            PlayService.ID_GENRES,*/
         };
         private ArrayList<String> tags;
 
         public PagerAdapter(FragmentManager fm)
         {
             super(fm,BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-            tabs = getResources().getStringArray(R.array.tabs);
+            //tabs = getResources().getStringArray(R.array.tabs);
+            tabs = new String[1];
+            tabs[0] = getResources().getStringArray(R.array.tabs)[0];
             tags = new ArrayList<>(getCount());
         }
 

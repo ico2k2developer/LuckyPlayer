@@ -2,14 +2,24 @@ apply plugin: 'com.android.application'
 
 android
 {
+    signingConfigs
+    {
+        release
+        {
+            keyAlias 'ico2k2'
+            keyPassword 'androiddeveloper'
+            storeFile file('G:/Progetti Android/keystore.jks')
+            storePassword 'icolino2002'
+        }
+    }
     compileSdkVersion 29
     defaultConfig
     {
         applicationId "it.developing.ico2k2.luckyplayer"
-        minSdkVersion 14
+        minSdkVersion 16
         targetSdkVersion 29
         versionCode 28
-        versionName "1.7"
+        versionName "2.0"
     }
     buildTypes
     {
@@ -24,7 +34,7 @@ android
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    buildToolsVersion = '28.0.3'
+    buildToolsVersion = '29.0.3'
 }
 
 dependencies
@@ -42,12 +52,12 @@ dependencies
     implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha3'*/
 
     implementation 'androidx.core:core:1.2.0'
-    implementation 'androidx.fragment:fragment:1.2.2'
+    implementation 'androidx.fragment:fragment:1.2.4'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.palette:palette:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'androidx.preference:preference:1.1.0'
+    implementation 'androidx.preference:preference:1.1.1'
     implementation 'androidx.legacy:legacy-support-v13:1.0.0'
     implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
     implementation 'androidx.annotation:annotation:1.1.0'
@@ -60,4 +70,5 @@ dependencies
     implementation files('libs/jaudiotagger-2.2.4-SNAPSHOT.jar')
     implementation 'androidx.media:media:1.1.0'
     implementation 'androidx.media2:media2:1.0.0-alpha04'
+    implementation 'org.jetbrains:annotations:15.0'
 }

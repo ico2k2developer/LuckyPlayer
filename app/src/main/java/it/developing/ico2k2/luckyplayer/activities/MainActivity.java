@@ -3,8 +3,8 @@ package it.developing.ico2k2.luckyplayer.activities;
 import android.app.Activity;
 import android.content.Intent;
 
-import static it.developing.ico2k2.luckyplayer.Keys.KEY_INITIALIZED;
-import static it.developing.ico2k2.luckyplayer.Keys.PREFERENCE_MAIN;
+import static it.developing.ico2k2.luckyplayer.Utils.KEY_INITIALIZED;
+import static it.developing.ico2k2.luckyplayer.Utils.PREFERENCE_MAIN;
 
 public class MainActivity extends Activity
 {

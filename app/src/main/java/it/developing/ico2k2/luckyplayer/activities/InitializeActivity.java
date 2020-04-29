@@ -8,12 +8,12 @@ import android.view.View;
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.base.BaseActivity;
 
-import static it.developing.ico2k2.luckyplayer.Keys.KEY_DATA_INITIALIZED;
-import static it.developing.ico2k2.luckyplayer.Keys.KEY_INITIALIZED;
-import static it.developing.ico2k2.luckyplayer.Keys.KEY_NOTIFICATION_TINT;
-import static it.developing.ico2k2.luckyplayer.Keys.KEY_SONGLIST_PACKET_SIZE;
-import static it.developing.ico2k2.luckyplayer.Keys.KEY_SYSTEM_MEDIA;
-import static it.developing.ico2k2.luckyplayer.Keys.KEY_THEME;
+import static it.developing.ico2k2.luckyplayer.Utils.KEY_DATA_INITIALIZED;
+import static it.developing.ico2k2.luckyplayer.Utils.KEY_INITIALIZED;
+import static it.developing.ico2k2.luckyplayer.Utils.KEY_NOTIFICATION_TINT;
+import static it.developing.ico2k2.luckyplayer.Utils.KEY_SONGLIST_PACKET_SIZE;
+import static it.developing.ico2k2.luckyplayer.Utils.KEY_SYSTEM_MEDIA;
+import static it.developing.ico2k2.luckyplayer.Utils.KEY_THEME;
 
 public class InitializeActivity extends BaseActivity
 {

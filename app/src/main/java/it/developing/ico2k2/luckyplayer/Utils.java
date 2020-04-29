@@ -1,9 +1,17 @@
 package it.developing.ico2k2.luckyplayer;
 
-public final class Keys
+import android.app.AlertDialog;
+import android.content.Context;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+public final class Utils
 {
     public static final String TAG_LOGS = "Player's logs";
-
 
     public static final String PREFERENCE_MAIN = "main";
 
@@ -38,4 +46,36 @@ public final class Keys
     public static final String MESSAGE_SCAN_REQUESTED = "scan request";
     public static final String MESSAGE_SCAN_COMPLETED = "19";
     public static final String MESSAGE_PLAYER = "20";
-}
+
+    public static int getThemeFromName(String name) throws NoSuchFieldException,IllegalAccessException
+    {
+        name = name.replace(" ","_");
+        return R.style.class.getField(name).getInt(R.style.class);
+    }
+
+    public static ArrayList<Map<String,String>> adapterMapsFromAdapterList(ArrayList<String> formats,String listTitle)
+    {
+        ArrayList<Map<String,String>> result = new ArrayList<>(formats.size());
+        for(String a : formats)
+        {
+            Map<String,String> map = new HashMap<>();
+            map.put(listTitle,a);
+            result.add(map);
+        }
+        return result;
+    }
+
+    public static void showException(Context context,Exception e)
+    {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+        dialog.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+        dialog.setTitle(android.R.string.dialog_alert_title);
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        e.printStackTrace(printWriter);
+        dialog.setMessage(stringWriter.toString());
+        dialog.setCancelable(true);
+        dialog.create().show();
+    }
+
+    }

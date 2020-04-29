@@ -51,9 +51,9 @@ import it.developing.ico2k2.luckyplayer.fragments.base.BaseFragment;
 import it.developing.ico2k2.luckyplayer.tasks.AlbumArtLoadTask;
 import it.developing.ico2k2.luckyplayer.tasks.AsyncThread;
 
-import static it.developing.ico2k2.luckyplayer.Keys.EXTRA_URI;
-import static it.developing.ico2k2.luckyplayer.Keys.FILE_PROVIDER_AUTHORITY;
-import static it.developing.ico2k2.luckyplayer.Keys.TAG_LOGS;
+import static it.developing.ico2k2.luckyplayer.Utils.EXTRA_URI;
+import static it.developing.ico2k2.luckyplayer.Utils.FILE_PROVIDER_AUTHORITY;
+import static it.developing.ico2k2.luckyplayer.Utils.TAG_LOGS;
 
 public class InfoActivity extends BaseActivity
 {

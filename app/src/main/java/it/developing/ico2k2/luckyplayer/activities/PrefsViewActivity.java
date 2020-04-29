@@ -24,7 +24,7 @@ import it.developing.ico2k2.luckyplayer.activities.base.BaseActivity;
 import it.developing.ico2k2.luckyplayer.adapters.base.BaseAdapter;
 import it.developing.ico2k2.luckyplayer.adapters.lib.ViewHandle;
 
-import static it.developing.ico2k2.luckyplayer.Keys.TAG_LOGS;
+import static it.developing.ico2k2.luckyplayer.Utils.TAG_LOGS;
 
 public class PrefsViewActivity extends BaseActivity
 {

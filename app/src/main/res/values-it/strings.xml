@@ -65,14 +65,29 @@
     <string name="player_notification_text" formatted="false">%s è attivo in background</string>
     <string name="song_show_details" formatted="false">Mostra dettagli</string>
     <string name="settings_mediafile" formatted="false">File multimediali</string>
-    <string name="settings_mediafile_systemmedia_category" formatted="false">File multimediali di sistema</string>
-    <string name="settings_include_systemmedia" formatted="false">Includi file multimediali di sistema</string>
-    <string name="settings_include_systemmedia_sub" formatted="false">Includi file multimediali di sistema nella scansione multimediale</string>
+    <string name="settings_mediafile_category" formatted="false">File multimediali</string>
+    <string name="settings_include_alarm" formatted="false">Includi suonerie sveglie</string>
+    <string name="settings_include_alarm_sub" formatted="false">Includi suonerie sveglie nella scansione multimediale</string>
+    <string name="settings_include_audiobook" formatted="false">Includi audiolibri</string>
+    <string name="settings_include_audiobook_sub" formatted="false">Includi audiolibri nella scansione multimediale</string>
+    <string name="settings_include_music" formatted="false">Includi file musicali</string>
+    <string name="settings_include_music_sub" formatted="false">Includi file musicali nella scansione multimediale</string>
+    <string name="settings_include_notification" formatted="false">Includi suonerie notifiche</string>
+    <string name="settings_include_notification_sub" formatted="false">Includi suonerie notifiche nella scansione multimediale</string>
+    <string name="settings_include_podcast" formatted="false">Includi podcast</string>
+    <string name="settings_include_podcast_sub" formatted="false">Includi podcast nella scansione multimediale</string>
+    <string name="settings_include_ringtone" formatted="false">Includi suonerie telefono</string>
+    <string name="settings_include_ringtone_sub" formatted="false">Includi suonerie telefono nella scansione multimediale</string>
+    <string name="settings_include_other" formatted="false">Includi altri tipi di file multimediali</string>
+    <string name="settings_include_other_sub" formatted="false">Includi altri tipi di file multimediali nella scansione multimediale</string>
     <string name="refresh_songlist" formatted="false">Aggiorna lista canzoni</string>
     <string name="songs_count" formatted="false">%d1 canzoni</string>
     <string name="songs_sum" formatted="false">Tempo totale: %s</string>
     <string name="saving" formatted="false">Salvataggio&#8230;\n\nGrandi immagini possono richiedere molto tempo per il salvataggio</string>
-    <string name="no_songs_found" formatted="false">Nessuna canzone disponibile!</string>
+    <string name="no_songs_found" formatted="false">Nessun file multimediale disponibile! Forse cambiare le impostazioni della scansione multimendiale aiuta</string>
+    <string name="no_songs_found_button" formatted="false">Vai a %s</string>
+    <string name="no_songs_permission" formatted="false">L\'accesso alla memoria locale non è stato consentito</string>
+    <string name="no_songs_permission_button" formatted="false">Consenti ora</string>
     <string name="stop_play_service" formatted="false">Ferma</string>
     <string name="play" formatted="false">Play</string>
     <string name="pause" formatted="false">Pausa</string>
@@ -95,6 +110,7 @@
     <string name="share_artistlist" formatted="false">Condividi lista di artisti</string>
     <string name="repeat_playlist" formatted="false">Loop</string>
     <string name="random_playlist" formatted="false">Casuale</string>
+    <string name="show_every_time" formatted="false">Mostra questo ogni volta</string>
     <string name="repeat_single_playlist" formatted="false">Ripeti</string>
     <string name="shuffle_on" formatted="false">Ordine casuale attivo</string>
     <string name="shuffle_off" formatted="false">Ordine casuale disattivo</string>
@@ -119,6 +135,8 @@
     <string name="color_primary" formatted="false">Colore principale</string>
     <string name="color_primary_dark" formatted="false">Colore principale scuro</string>
     <string name="color_accent" formatted="false">Colore tono</string>
+    <string name="permission_reason" formatted="false">Il permesso che non hai consentito è necessario per far sì che l\'app funzioni a dovere. Vuoi consentirlo ora?</string>
+    <string name="permission_reason_data" formatted="false">L\'accesso alla memoria rende possibile la riproduzione dei file musicali locali</string>
     <string name="description_album">%s1, %s2 canzoni</string>
     <string name="description_artist">%s1 album, %s2 canzoni</string>
     <string name="description_year">%s1 artisti, %s2 album, %s3 canzoni</string>

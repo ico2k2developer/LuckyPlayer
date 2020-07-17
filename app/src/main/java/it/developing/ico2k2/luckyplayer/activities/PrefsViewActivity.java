@@ -37,7 +37,7 @@ public class PrefsViewActivity extends BaseActivity
         setContentView(R.layout.activity_prefs_view);
         setSupportActionBar(findViewById(R.id.toolbar));
         getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
         RecyclerView list = findViewById(R.id.list);
         list.setHasFixedSize(false);
         list.setNestedScrollingEnabled(true);

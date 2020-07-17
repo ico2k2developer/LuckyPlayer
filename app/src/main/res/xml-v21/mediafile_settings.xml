@@ -3,12 +3,37 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
-        android:title="@string/settings_mediafile_systemmedia_category">
+        android:title="@string/settings_mediafile_category">
 
         <SwitchPreference
-            android:title="@string/settings_include_systemmedia"
-            android:summary="@string/settings_include_systemmedia_sub"
-            android:key="@string/settings_include_systemmedia"/>
+            android:title="@string/settings_include_music"
+            android:summary="@string/settings_include_music_sub"
+            android:key="@string/settings_include_music_key"/>
+
+        <SwitchPreference
+            android:title="@string/settings_include_podcast"
+            android:summary="@string/settings_include_music_sub"
+            android:key="@string/settings_include_podcast_key"/>
+
+        <SwitchPreference
+            android:title="@string/settings_include_notification"
+            android:summary="@string/settings_include_notification_sub"
+            android:key="@string/settings_include_notification_key"/>
+
+        <SwitchPreference
+            android:title="@string/settings_include_alarm"
+            android:summary="@string/settings_include_alarm_sub"
+            android:key="@string/settings_include_alarm_key"/>
+
+        <SwitchPreference
+            android:title="@string/settings_include_ringtone"
+            android:summary="@string/settings_include_ringtone_sub"
+            android:key="@string/settings_include_ringtone_key"/>
+
+        <SwitchPreference
+            android:title="@string/settings_include_other"
+            android:summary="@string/settings_include_other_sub"
+            android:key="@string/settings_include_other_key"/>
 
     </PreferenceCategory>
 

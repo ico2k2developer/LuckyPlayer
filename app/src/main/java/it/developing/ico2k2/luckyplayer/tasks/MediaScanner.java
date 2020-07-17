@@ -69,10 +69,65 @@ public class MediaScanner
 
     public MediaScanResult subscan(Uri[] uris,int from,int to,String[] columns,String selection,String[] selectionArgs)
     {
+        MediaScanResult result;
         Log.d(TAG_LOGS,"Scan asked for range: " + from + " to " + to + ", selection: " + selection);
+        if(from < 0 || to < 0)
+        {
+            result = totalScan(uris,columns,selection,selectionArgs);
+        }
+        else if(from != to)
+        {
+            result = new MediaScanResult();
+            int start = 0,i = 0,id = -1;
+            result.data = new ArrayList<>(to - from);
+            result.keys = new HashMap<>(columns.length);
+            for(String column : columns)
+            {
+                if(column.endsWith(MediaStore.Audio.Media._ID))
+                    id = i;
+                result.keys.put(column,i);
+                i++;
+            }
+            Cursor cursor = null;
+            i = 0;
+            for(Uri uri : uris)
+            {
+                Log.d(TAG_LOGS,"Query, uri: " + uri.toString() + ", columns: " + Arrays.toString(columns) + ", selection: " + selection + ", selection args: " + selectionArgs);
+                cursor = ContentResolverCompat.query(resolver,uri,columns,selection,selectionArgs,null,null);
+                Log.d(TAG_LOGS,"Cursor contains " + cursor.getCount() + " elements");
+                if(from < (start + cursor.getCount()))
+                {
+                    Log.d(TAG_LOGS,"Valid uri: " + uri.toString());
+                    cursor.move(from - start);
+                    while(cursor.moveToNext() && from < to)
+                    {
+                        result.data.add(processFile(i,id,cursor));
+                        from++;
+                    }
+                }
+                start += cursor.getCount();
+                Log.d(TAG_LOGS,"Jumping to the next uri");
+                i++;
+            }
+            if(cursor != null)
+                cursor.close();
+        }
+        else
+            result = new MediaScanResult();
+        return result;
+    }
+
+    public MediaScanResult totalScan(Uri[] uris,List<String> columns,String selection,String[] selectionArgs)
+    {
+        return totalScan(uris,columns.toArray(new String[0]),selection,selectionArgs);
+    }
+
+    public MediaScanResult totalScan(Uri[] uris,String[] columns,String selection,String[] selectionArgs)
+    {
         MediaScanResult result = new MediaScanResult();
+        Log.d(TAG_LOGS,"Total scan asked, selection: " + selection);
         int start = 0,i = 0,id = -1;
-        result.data = new ArrayList<>(to - from);
+        result.data = new ArrayList<>();
         result.keys = new HashMap<>(columns.length);
         for(String column : columns)
         {
@@ -87,18 +142,11 @@ public class MediaScanner
         {
             Log.d(TAG_LOGS,"Checking uri: " + uri.toString());
             cursor = ContentResolverCompat.query(resolver,uri,columns,selection,selectionArgs,null,null);
-            if(from < (start + cursor.getCount()))
-            {
-                Log.d(TAG_LOGS,"Valid uri: " + uri.toString());
-                cursor.move(from - start);
-                while(cursor.moveToNext() && from < to)
+            Log.d(TAG_LOGS,"Cursor contains " + cursor.getCount() + " elements");
+                while(cursor.moveToNext())
                 {
                     result.data.add(processFile(i,id,cursor));
-                    Log.d(TAG_LOGS,"Processing index: " + from + " (" + cursor.getPosition() + ") " + Arrays.toString(result.getRow(result.data.size() - 1)));
-                    from++;
                 }
-            }
-            start += cursor.getCount();
             Log.d(TAG_LOGS,"Jumping to the next uri");
             i++;
         }
@@ -109,33 +157,36 @@ public class MediaScanner
 
     public MediaScanResult subscan(Uri[] uris,int count,String[] columns,String selection,String[] selectionArgs)
     {
-        Log.d(TAG_LOGS,"Scan asked for " + count + " items, selection: " + selection);
         MediaScanResult result = new MediaScanResult();
-        int i = 0,id = -1;
-        result.data = new ArrayList<>(count);
-        result.keys = new HashMap<>(columns.length);
-        for(String column : columns)
+        Log.d(TAG_LOGS,"Scan asked for " + count + " items, selection: " + selection);
+        if(count > 0)
         {
-            if(column.endsWith(MediaStore.Audio.Media._ID))
-                id = i;
-            result.keys.put(column,i);
-            i++;
-        }
-        Cursor cursor;
-        i = 0;
-        for(Uri uri : uris)
-        {
-            Log.d(TAG_LOGS,"Checking uri: " + uri.toString());
-            cursor = ContentResolverCompat.query(resolver,uri,columns,selection,selectionArgs,null,null);
-            Log.d(TAG_LOGS,"Valid uri: " + uri.toString());
-            while(cursor.moveToNext() && count != 0)
+            int i = 0,id = -1;
+            result.data = new ArrayList<>(count);
+            result.keys = new HashMap<>(columns.length);
+            for(String column : columns)
             {
-                Log.d(TAG_LOGS,"Found new item, remaining: " + count);
-                result.data.add(processFile(i,id,cursor));
-                count--;
+                if(column.endsWith(MediaStore.Audio.Media._ID))
+                    id = i;
+                result.keys.put(column,i);
+                i++;
             }
-            Log.d(TAG_LOGS,"Jumping to the next uri");
-            i++;
+            Cursor cursor;
+            i = 0;
+            for(Uri uri : uris)
+            {
+                Log.d(TAG_LOGS,"Checking uri: " + uri.toString());
+                cursor = ContentResolverCompat.query(resolver,uri,columns,selection,selectionArgs,null,null);
+                Log.d(TAG_LOGS,"Valid uri: " + uri.toString());
+                while(cursor.moveToNext() && count != 0)
+                {
+                    Log.d(TAG_LOGS,"Found new item, remaining: " + count);
+                    result.data.add(processFile(i,id,cursor));
+                    count--;
+                }
+                Log.d(TAG_LOGS,"Jumping to the next uri");
+                i++;
+            }
         }
         return result;
     }

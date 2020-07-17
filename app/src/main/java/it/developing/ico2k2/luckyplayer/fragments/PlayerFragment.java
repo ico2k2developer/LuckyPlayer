@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import it.developing.ico2k2.luckyplayer.R;
-import it.developing.ico2k2.luckyplayer.adapters.Song;
+import it.developing.ico2k2.luckyplayer.adapters.items.Song;
 import it.developing.ico2k2.luckyplayer.fragments.base.BaseFragment;
 
 public class PlayerFragment extends BaseFragment implements Player

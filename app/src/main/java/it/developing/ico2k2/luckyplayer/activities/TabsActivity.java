@@ -1,5 +1,6 @@
 package it.developing.ico2k2.luckyplayer.activities;
 
+import android.Manifest;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -18,21 +19,22 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 
-import java.util.ArrayList;
-
 import it.developing.ico2k2.luckyplayer.R;
+import it.developing.ico2k2.luckyplayer.Utils;
 import it.developing.ico2k2.luckyplayer.activities.base.BasePlayingActivity;
 import it.developing.ico2k2.luckyplayer.fragments.SongListFragment;
 import it.developing.ico2k2.luckyplayer.services.PlayService;
 
+import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
 import static it.developing.ico2k2.luckyplayer.Utils.MESSAGE_DESTROY;
-import static it.developing.ico2k2.luckyplayer.Utils.MESSAGE_SCAN_REQUESTED;
+import static it.developing.ico2k2.luckyplayer.Utils.REQUEST_CODE_PERMISSIONS;
 import static it.developing.ico2k2.luckyplayer.Utils.TAG_LOGS;
+import static it.developing.ico2k2.luckyplayer.Utils.permissionDialog;
 
 public class TabsActivity extends BasePlayingActivity
 {
+
     private ViewPager pager;
-    private PagerAdapter adapter;
 
     public class PagerAdapter extends FragmentStatePagerAdapter
     {
@@ -40,19 +42,17 @@ public class TabsActivity extends BasePlayingActivity
         private String[] ids =
         {
             PlayService.ID_SONGS,
-            /*PlayService.ID_ALBUMS,
+            PlayService.ID_ALBUMS,
             PlayService.ID_ARTISTS,
-            PlayService.ID_GENRES,*/
+            PlayService.ID_GENRES,
         };
-        private ArrayList<String> tags;
 
         public PagerAdapter(FragmentManager fm)
         {
             super(fm,BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-            //tabs = getResources().getStringArray(R.array.tabs);
-            tabs = new String[1];
-            tabs[0] = getResources().getStringArray(R.array.tabs)[0];
-            tags = new ArrayList<>(getCount());
+            tabs = getResources().getStringArray(R.array.tabs);
+            //tabs = new String[1];
+            //tabs[0] = getResources().getStringArray(R.array.tabs)[0];
         }
 
         @Override
@@ -81,6 +81,7 @@ public class TabsActivity extends BasePlayingActivity
         setContentView(R.layout.activity_tabs);
         setSupportActionBar(findViewById(R.id.toolbar));
 
+        PagerAdapter adapter;
         TabLayout tabLayout = findViewById(R.id.tabs_tab_layout);
         pager = findViewById(R.id.tabs_pager);
         adapter = new PagerAdapter(getSupportFragmentManager());
@@ -137,11 +138,10 @@ public class TabsActivity extends BasePlayingActivity
                 }
             };
 
-
     @Override
     public void onStart() {
         super.onStart();
-        //browser.connect();
+        Utils.askForPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE,REQUEST_CODE_PERMISSIONS);
     }
 
     @Override
@@ -150,14 +150,44 @@ public class TabsActivity extends BasePlayingActivity
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,@NonNull String[] permissions,@NonNull int[] grantResults)
+    {
+        if(grantResults.length > 0)
+        {
+            switch(requestCode)
+            {
+                case REQUEST_CODE_PERMISSIONS:
+                {
+                    if(grantResults[0] == PERMISSION_GRANTED)
+                        refresh();
+                    else
+                        permissionDialog(this,
+                                Manifest.permission.READ_EXTERNAL_STORAGE,
+                                REQUEST_CODE_PERMISSIONS,
+                                getString(R.string.permission_reason_data),
+                                getString(R.string.settings_permission_data_no_more_key));
+
+                    break;
+                }
+            }
+        }
+    }
+
+    protected void refresh()
+    {
+        pager.getAdapter().notifyDataSetChanged();
+    }
+
     @Override
     public void onStop() {
         super.onStop();
         // (see "stay in sync with the MediaSession")
-        /*if (MediaControllerCompat.getMediaController(this) != null) {
+        if (MediaControllerCompat.getMediaController(this) != null) {
             MediaControllerCompat.getMediaController(this).unregisterCallback(controllerCallback);
-        }*/
-        //browser.disconnect();
+        }
+        getMediaBrowser().disconnect();
 
     }
 
@@ -186,7 +216,7 @@ public class TabsActivity extends BasePlayingActivity
             }
             case R.id.menuRefresh:
             {
-                sendMessageToService(MESSAGE_SCAN_REQUESTED);
+                refresh();
                 break;
             }
             case R.id.menuExit:

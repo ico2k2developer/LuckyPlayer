@@ -11,6 +11,10 @@
     <color name="colorPrimaryDarkBlue">#0000B6</color>
     <color name="colorAccentBlue">#007CF5</color>
     <color name="colorAccentBlueTranslucent">#80007CF5</color>
+    <color name="colorPrimaryPurple">#8E1CF2</color>
+    <color name="colorPrimaryDarkPurple">#5200B6</color>
+    <color name="colorAccentPurple">#F518F5</color>
+    <color name="colorAccentPurpleTranslucent">#80F518F5</color>
     <color name="colorPrimaryOrange">#F24020</color>
     <color name="colorPrimaryDarkOrange">#B63818</color>
     <color name="colorAccentOrange">#CD6419</color>

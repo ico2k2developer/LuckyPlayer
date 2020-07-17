@@ -43,6 +43,27 @@
         <item name="actionModeStyle">@style/Theme.Style.ActionMode</item>
     </style>
 
+    <style name="Theme.Dark.Purple" parent="Theme.Standard.Dark.Purple">
+        <item name="fontFamily">@font/roboto</item>
+        <item name="buttonStyle">@style/Theme.Style.Button</item>
+        <item name="toolbarStyle">@style/Theme.Style.Toolbar</item>
+        <item name="actionModeStyle">@style/Theme.Style.ActionMode</item>
+    </style>
+
+    <style name="Theme.Light.Purple" parent="Theme.Standard.Light.Purple">
+        <item name="fontFamily">@font/roboto</item>
+        <item name="buttonStyle">@style/Theme.Style.Button</item>
+        <item name="toolbarStyle">@style/Theme.Style.Toolbar</item>
+        <item name="actionModeStyle">@style/Theme.Style.ActionMode</item>
+    </style>
+
+    <style name="Theme.Light.DarkActionBar.Purple" parent="Theme.Standard.Light.DarkActionBar.Purple">
+        <item name="fontFamily">@font/roboto</item>
+        <item name="buttonStyle">@style/Theme.Style.Button</item>
+        <item name="toolbarStyle">@style/Theme.Style.Toolbar</item>
+        <item name="actionModeStyle">@style/Theme.Style.ActionMode</item>
+    </style>
+
     <style name="Theme.Dark.Blue" parent="Theme.Standard.Dark.Blue">
         <item name="fontFamily">@font/roboto</item>
         <item name="buttonStyle">@style/Theme.Style.Button</item>

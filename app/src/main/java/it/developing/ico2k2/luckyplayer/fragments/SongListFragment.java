@@ -1,47 +1,75 @@
 package it.developing.ico2k2.luckyplayer.fragments;
 
+import android.Manifest;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.reflect.Constructor;
 import java.util.List;
 
 import it.developing.ico2k2.luckyplayer.MediaBrowserDependent;
 import it.developing.ico2k2.luckyplayer.R;
-import it.developing.ico2k2.luckyplayer.adapters.Song;
-import it.developing.ico2k2.luckyplayer.adapters.SongsAdapter;
+import it.developing.ico2k2.luckyplayer.adapters.MusicItemsAdapter;
+import it.developing.ico2k2.luckyplayer.adapters.items.Album;
+import it.developing.ico2k2.luckyplayer.adapters.items.Artist;
+import it.developing.ico2k2.luckyplayer.adapters.items.Genre;
+import it.developing.ico2k2.luckyplayer.adapters.items.MusicItem;
+import it.developing.ico2k2.luckyplayer.adapters.items.Song;
 import it.developing.ico2k2.luckyplayer.adapters.lib.ViewHandle;
 import it.developing.ico2k2.luckyplayer.fragments.base.BaseFragment;
 import it.developing.ico2k2.luckyplayer.services.PlayService;
 
+import static android.support.v4.media.MediaBrowserCompat.EXTRA_PAGE;
+import static android.support.v4.media.MediaBrowserCompat.EXTRA_PAGE_SIZE;
+import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
+import static it.developing.ico2k2.luckyplayer.Utils.REQUEST_CODE_PERMISSIONS;
 import static it.developing.ico2k2.luckyplayer.Utils.TAG_LOGS;
+import static it.developing.ico2k2.luckyplayer.Utils.goToAppSettingsPageForPermission;
+import static it.developing.ico2k2.luckyplayer.services.PlayService.ARG_LUCKY;
+import static it.developing.ico2k2.luckyplayer.services.PlayService.ID_ALBUMS;
+import static it.developing.ico2k2.luckyplayer.services.PlayService.ID_ARTISTS;
+import static it.developing.ico2k2.luckyplayer.services.PlayService.ID_GENRES;
+import static it.developing.ico2k2.luckyplayer.services.PlayService.ID_SONGS;
 import static it.developing.ico2k2.luckyplayer.services.PlayService.TYPE_INT;
 import static it.developing.ico2k2.luckyplayer.services.PlayService.TYPE_LONG;
 
 public class SongListFragment extends BaseFragment
 {
-    private static final int ID_MENU_INFO = 0XAAAA;
+    private static final int ID_MENU_INFO = 0x10;
+
+    private static final int VIEW_LIST = 0x10;
+    private static final int VIEW_LABEL = 0x11;
+    private static final int VIEW_BUTTON = 0x12;
 
     private static final String ARG_ROOT = "root";
 
-    private RecyclerView list;
-    private SongsAdapter adapter;
-    //private int contextClickPosition;
+    private MusicItemsAdapter adapter;
+    private int contextClickPosition;
     private String root;
 
     public static SongListFragment create(String root)
@@ -61,16 +89,16 @@ public class SongListFragment extends BaseFragment
         setRetainInstance(true);
         if(getArguments() != null)
             root = getArguments().getString(ARG_ROOT);
-        adapter = new SongsAdapter();
-        adapter.setOrder(SongsAdapter.OrderType.ALPHABETICAL);
+        adapter = new MusicItemsAdapter();
+        adapter.setOrder(MusicItemsAdapter.OrderType.ALPHABETICAL);
         adapter.setOnItemClickListener(new ViewHandle.OnItemClickListener(){
             @Override
             public void onItemClick(ViewHandle handle,int position){
-                Song song = adapter.get(position);
-                MediaControllerCompat.getMediaController(getActivity()).getTransportControls().playFromMediaId(song.getDescription().getMediaId(),null);
-                Toast.makeText(getContext(),"Song for position " + position + " is " +
-                        song.getDescription().getTitle() + " with id " +
-                        song.getDescription().getMediaId(),Toast.LENGTH_LONG).show();
+                MusicItem item = adapter.get(position);
+                MediaControllerCompat.getMediaController(getActivity()).getTransportControls().playFromMediaId(item.getDescription().getMediaId(),null);
+                Toast.makeText(getContext(),"Item for position " + position + " is " +
+                        item.getDescription().getTitle() + " with id " +
+                        item.getDescription().getMediaId(),Toast.LENGTH_LONG).show();
             }
         });
         adapter.setOnItemContextMenuListener(new ViewHandle.OnItemContextMenuListener(){
@@ -78,7 +106,7 @@ public class SongListFragment extends BaseFragment
             public void onContextMenu(ContextMenu menu,View v,ContextMenu.ContextMenuInfo menuInfo,int position){
                 menu.setHeaderTitle(((TextView)v.findViewById(R.id.itemTitle)).getText());
                 menu.add(Menu.NONE,ID_MENU_INFO,70,R.string.song_info);
-                //contextClickPosition = position;
+                contextClickPosition = position;
             }
         });
         Log.d(TAG_LOGS,"Fragment created, root: " + root);
@@ -90,13 +118,14 @@ public class SongListFragment extends BaseFragment
         boolean result = true;
         switch(item.getItemId())
         {
-            /*case ID_MENU_INFO:
+            case ID_MENU_INFO:
             {
-                Intent intent = new Intent(getActivity(),InfoActivity.class);
+                /*Intent intent = new Intent(getActivity(),InfoActivity.class);
                 intent.setData(Uri.parse(Song.getPathFromMediaId(adapter.get(contextClickPosition).getMediaId())));
-                startActivity(intent);
+                startActivity(intent);*/
+                Toast.makeText(getContext(),adapter.get(contextClickPosition).toMediaItem().getMediaId(),Toast.LENGTH_SHORT).show();
                 break;
-            }*/
+            }
             default:
             {
                 result = false;
@@ -108,76 +137,131 @@ public class SongListFragment extends BaseFragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,ViewGroup container,Bundle savedInstance)
     {
-        list = new RecyclerView(getContext());
+        RecyclerView list = new RecyclerView(getContext());
+        list.setTag(VIEW_LIST);
         list.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         list.setLayoutManager(layoutManager);
         list.setHasFixedSize(false);
         list.setAdapter(adapter);
-        //container.addView(list);
-        Log.d(TAG_LOGS,"Creating fragment\'s views, root: " + root + ", is list null? " + (list == null));
-        return list;
+        LinearLayoutCompat layout = new LinearLayoutCompat(getContext());
+        layout.setLayoutParams(new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
+        layout.setOrientation(LinearLayoutCompat.VERTICAL);
+        layout.setGravity(Gravity.CENTER);
+        layout.addView(list);
+        Log.d(TAG_LOGS,"Creating fragment's views, root: " + root + ", is list null? " + (list == null));
+        return layout;
     }
 
     @Override
     public void onViewCreated(@NonNull View view,@Nullable Bundle savedInstanceState)
     {
         super.onViewCreated(view,savedInstanceState);
-        requestItems();
-        Log.d(TAG_LOGS,"Fragment\' views created, root: " + root);
+        try
+        {
+            requestItems();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        Log.d(TAG_LOGS,"Fragment's views created, root: " + root);
     }
 
-    protected void requestItems()
-    {
-        Bundle options = new Bundle();
-        options.putInt(MediaBrowserCompat.EXTRA_PAGE,0);
-        options.putInt(MediaBrowserCompat.EXTRA_PAGE_SIZE,500);
-        options.putStringArray(PlayService.EXTRA_COLUMNS,new String[]{
-                MediaStore.MediaColumns.DURATION,
-                MediaStore.Audio.AudioColumns.TRACK,
-        });
-        options.putIntArray(PlayService.EXTRA_TYPES,new int[]{
-                TYPE_LONG,
-                TYPE_INT,
-        });
+    public void requestItems() throws JSONException{
+        JSONObject json = new JSONObject();
+        json.put(EXTRA_PAGE,0);
+        json.put(EXTRA_PAGE_SIZE,PreferenceManager.getDefaultSharedPreferences(getContext()).getInt(getString(R.string.settings_songlist_packet_size_key),250));
+        JSONArray a = new JSONArray();
+        JSONArray b = new JSONArray();
+        Class c = null;
+        switch(root)
+        {
+            case ID_SONGS:
+            {
+                a.put(MediaStore.Audio.AudioColumns.DURATION);
+                a.put(MediaStore.Audio.AudioColumns.TRACK);
+                b.put(TYPE_LONG);
+                b.put(TYPE_INT);
+                c = Song.class;
+                break;
+            }
+            case ID_ALBUMS:
+            {
+                c = Album.class;
+                break;
+            }
+            case ID_ARTISTS:
+            {
+                c = Artist.class;
+                break;
+            }
+            case ID_GENRES:
+            {
+                c = Genre.class;
+                break;
+            }
+        }
+        final Constructor constructor;
+        try
+        {
+            constructor = c.getConstructor(MediaBrowserCompat.MediaItem.class);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        json.put(PlayService.EXTRA_COLUMNS,a);
+        json.put(PlayService.EXTRA_TYPES,b);
+        String id = ARG_LUCKY + root + json.toString();
+        Log.d(TAG_LOGS,"Subscribing to " + id + ", page: " + json.getInt(EXTRA_PAGE));
         MediaBrowserCompat mediaBrowser = ((MediaBrowserDependent)getActivity()).getMediaBrowser();
-        mediaBrowser.subscribe(root,options,new MediaBrowserCompat.SubscriptionCallback(){
-
+        adapter.clear();
+        mediaBrowser.subscribe(id,new MediaBrowserCompat.SubscriptionCallback(){
             @Override
-            public void onChildrenLoaded(@NonNull String parentId,@NonNull List<MediaBrowserCompat.MediaItem> children,@NonNull Bundle options){
-                int page = options.getInt(MediaBrowserCompat.EXTRA_PAGE);
-                Log.d(TAG_LOGS,"Loading children from fragment, page: " + page);
-                if(page == 0)
-                    adapter.clear();
-                if(children.isEmpty())
+            public void onChildrenLoaded(@NonNull String parentId,@NonNull List<MediaBrowserCompat.MediaItem> children,@NonNull Bundle oldOptions){
+                try
                 {
-                    Log.d(TAG_LOGS,"No children available");
-                    mediaBrowser.unsubscribe(parentId);
-                    updateList();
-                }
-                else
-                {
-                    for(MediaBrowserCompat.MediaItem child : children)
+                    JSONObject json = new JSONObject(parentId.substring((ARG_LUCKY + root).length()));
+                    int page = json.getInt(EXTRA_PAGE);
+                    int size = json.getInt(EXTRA_PAGE_SIZE);
+                    Log.d(TAG_LOGS,"Loading " + children.size() + " children from fragment, page: " + page + ", size: " + size);
+                    //examineBundle(options);
+                    for(MediaBrowserCompat.MediaItem item : children)
                     {
                         try
                         {
-                            adapter.add(new Song(child));
+                            adapter.add(constructor.newInstance(item));
                         }
                         catch(Exception e)
                         {
                             e.printStackTrace();
                         }
                     }
-                    options.putInt(MediaBrowserCompat.EXTRA_PAGE,page + 1);
-                    mediaBrowser.subscribe(parentId,options,this);
+                    if(children.size() == size)
+                    {
+                        json.put(EXTRA_PAGE,page + 1);
+                        Log.d(TAG_LOGS,"Subscribing again to " + parentId + ", page: " + json.getInt(EXTRA_PAGE));
+                        mediaBrowser.subscribe(root + json.toString(),this);
+                    }
+                    else
+                    {
+                        Log.d(TAG_LOGS,"Children load ended");
+                        mediaBrowser.unsubscribe(parentId,this);
+                        updateList();
+                    }
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
                 }
             }
 
             @Override
             public void onError(@NonNull String parentId,@NonNull Bundle options){
                 Log.d(TAG_LOGS,"Error occurred when trying to load children at id: " +
-                        parentId + ", page " + options.getInt(MediaBrowserCompat.EXTRA_PAGE));
-                mediaBrowser.unsubscribe(parentId);
+                        parentId + ", page " + options.getInt(EXTRA_PAGE));
+                mediaBrowser.unsubscribe(parentId,this);
                 updateList();
             }
 
@@ -195,8 +279,59 @@ public class SongListFragment extends BaseFragment
 
     void updateList()
     {
-        adapter.reorder();
-        adapter.notifyDataSetChanged();
+        LinearLayoutCompat container = (LinearLayoutCompat)getView();
+        if(adapter.getItemCount() == 0)
+        {
+            container.findViewWithTag(VIEW_LIST).setVisibility(View.GONE);
+            TextView label = container.findViewWithTag(VIEW_LABEL);
+            Button button = container.findViewWithTag(VIEW_BUTTON);
+            if(label == null)
+            {
+                label = new TextView(getContext(),null,android.R.attr.textAppearanceMedium);
+                label.setLayoutParams(new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT));
+                label.setGravity(Gravity.CENTER_HORIZONTAL);
+                label.setTag(VIEW_LABEL);
+                container.addView(label);
+            }
+            else
+                label.setVisibility(View.VISIBLE);
+            if(button == null)
+            {
+                button = new Button(getContext(),null,android.R.attr.buttonBarButtonStyle);
+                button.setLayoutParams(new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT));
+                label.setTag(VIEW_BUTTON);
+                container.addView(button);
+            }
+            else
+                button.setVisibility(View.VISIBLE);
+            if(ContextCompat.checkSelfPermission(getContext(),Manifest.permission.READ_EXTERNAL_STORAGE) == PERMISSION_GRANTED)
+            {
+                label.setText(R.string.no_songs_found);
+                button.setText(getString(R.string.no_songs_found_button).replace("%s",getString(R.string.settings_mediafile)));
+            }
+            else
+            {
+                label.setText(R.string.no_songs_permission);
+                button.setText(R.string.no_songs_permission_button);
+                button.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v){
+                        goToAppSettingsPageForPermission(getActivity(),REQUEST_CODE_PERMISSIONS);
+                    }
+                });
+            }
+        }
+        else
+        {
+            View view = container.findViewWithTag(VIEW_LABEL);
+            if(view != null)
+                view.setVisibility(View.GONE);
+            view = container.findViewWithTag(VIEW_BUTTON);
+            if(view != null)
+                view.setVisibility(View.GONE);
+            adapter.reorder();
+            adapter.notifyDataSetChanged();
+        }
         Toast.makeText(getContext(),adapter.getItemCount() + " items",Toast.LENGTH_SHORT).show();
     }
 }

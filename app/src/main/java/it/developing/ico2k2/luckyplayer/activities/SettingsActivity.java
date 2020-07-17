@@ -40,8 +40,6 @@ import it.developing.ico2k2.luckyplayer.activities.base.BaseActivity;
 import it.developing.ico2k2.luckyplayer.dialogs.ConfirmDialog;
 import it.developing.ico2k2.luckyplayer.dialogs.DefaultDialog;
 
-import static it.developing.ico2k2.luckyplayer.Utils.KEY_NOTIFICATION_TINT;
-import static it.developing.ico2k2.luckyplayer.Utils.KEY_THEME;
 import static it.developing.ico2k2.luckyplayer.Utils.TAG_LOGS;
 import static it.developing.ico2k2.luckyplayer.Utils.adapterMapsFromAdapterList;
 
@@ -105,7 +103,7 @@ public class SettingsActivity extends BaseActivity
         });
         list.setAdapter(adapter);
         handleIntent(getIntent());
-        getMainSharedPreferences().edit().putInt(KEY_NOTIFICATION_TINT,getColorPrimary()).apply();
+        getMainSharedPreferences().edit().putInt(getString(R.string.settings_notification_tint_key),getColorPrimary()).apply();
     }
 
     @Override
@@ -380,7 +378,6 @@ public class SettingsActivity extends BaseActivity
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             handleIntent(getIntent());
-            getMainSharedPreferences().edit().putInt(KEY_NOTIFICATION_TINT,getColorPrimary()).apply();
         }
 
         @Override
@@ -502,11 +499,11 @@ public class SettingsActivity extends BaseActivity
                     }
                     SimpleAdapter adapter = new SimpleAdapter(getActivity(),adapterMapsFromAdapterList(items,LIST_TITLE),android.R.layout.simple_list_item_1,new String[]{LIST_TITLE},new int[]{android.R.id.text1});
                     themeSpinner.setAdapter(adapter);
-                    themeSpinner.setSelection(themes.indexOf(prefs.getInt(KEY_THEME,0)));
+                    themeSpinner.setSelection(themes.indexOf(prefs.getInt(getString(R.string.settings_theme_key),0)));
                     themeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
                         @Override
                         public void onItemSelected(AdapterView<?> parent,View v,int position,long id){
-                            int currentTheme = prefs.getInt(KEY_THEME,0);
+                            int currentTheme = prefs.getInt(getString(R.string.settings_theme_key),0);
                             if(currentTheme == themes.get(position))
                                 view.findViewById(R.id.theme_apply).setVisibility(View.GONE);
                             else
@@ -523,7 +520,7 @@ public class SettingsActivity extends BaseActivity
                     view.findViewById(R.id.theme_apply).setOnClickListener(new View.OnClickListener(){
                         @Override
                         public void onClick(View v){
-                            prefs.edit().putInt(KEY_THEME,themes.get(themeSpinner.getSelectedItemPosition())).apply();
+                            prefs.edit().putInt(getString(R.string.settings_theme_key),themes.get(themeSpinner.getSelectedItemPosition())).apply();
                             Intent intent = new Intent(getActivity(),getActivity().getClass());
                             intent.putExtra(ARGUMENT_PREFERENCE,preference);
                             intent.putExtra(ARGUMENT_INDEX,preferenceIndex);
@@ -627,7 +624,7 @@ public class SettingsActivity extends BaseActivity
             {
                 case R.string.settings_advanced:
                 {
-                    getPreferenceScreen().findPreference(getString(R.string.settings_delete_all))
+                    getPreferenceScreen().findPreference(getString(R.string.settings_delete_all_key))
                             .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
                     {
                         @Override
@@ -648,7 +645,7 @@ public class SettingsActivity extends BaseActivity
                             return true;
                         }
                     });
-                    getPreferenceScreen().findPreference(getString(R.string.settings_prefs_data))
+                    getPreferenceScreen().findPreference(getString(R.string.settings_prefs_data_key))
                             .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
                     {
                         @Override

@@ -1,19 +1,15 @@
 package it.developing.ico2k2.luckyplayer.activities;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+
+import androidx.annotation.StyleRes;
 
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.base.BaseActivity;
-
-import static it.developing.ico2k2.luckyplayer.Utils.KEY_DATA_INITIALIZED;
-import static it.developing.ico2k2.luckyplayer.Utils.KEY_INITIALIZED;
-import static it.developing.ico2k2.luckyplayer.Utils.KEY_NOTIFICATION_TINT;
-import static it.developing.ico2k2.luckyplayer.Utils.KEY_SONGLIST_PACKET_SIZE;
-import static it.developing.ico2k2.luckyplayer.Utils.KEY_SYSTEM_MEDIA;
-import static it.developing.ico2k2.luckyplayer.Utils.KEY_THEME;
 
 public class InitializeActivity extends BaseActivity
 {
@@ -25,38 +21,55 @@ public class InitializeActivity extends BaseActivity
         setSupportActionBar(findViewById(R.id.toolbar));
         findViewById(R.id.initialize_fab).setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(View v){
-                getMainSharedPreferences().edit().putBoolean(KEY_INITIALIZED,true).apply();
-                startActivity(new Intent(InitializeActivity.this,MainActivity.class));
+            public void onClick(View v)
+            {
+                Intent intent = new Intent();
+                setResult(RESULT_OK,intent);
                 finish();
             }
         });
     }
 
-    @Override
-    public void onStart()
+    public boolean onThemeChanged(@StyleRes int oldTheme,@StyleRes int newTheme)
     {
-        super.onStart();
-        setup();
+        return getMainSharedPreferences().getBoolean(getString(R.string.settings_initialized_key),false);
     }
 
-    public void setup()
-    {
-        SharedPreferences prefs = getMainSharedPreferences();
-        if(!prefs.getBoolean(KEY_DATA_INITIALIZED,false))
-        {
-            prefs.edit().putBoolean(KEY_SYSTEM_MEDIA,false).apply();
-            prefs.edit().putInt(KEY_THEME,THEME_DEFAULT).apply();
-            prefs.edit().putInt(KEY_NOTIFICATION_TINT,getColorPrimary()).apply();
-            prefs.edit().putBoolean(KEY_DATA_INITIALIZED,true).apply();
-            prefs.edit().putInt(KEY_SONGLIST_PACKET_SIZE,150).apply();
-        }
-    }
-
-    @Override
     public boolean onNoDataFound()
     {
-        super.onNoDataFound();
         return false;
+    }
+
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.menu_initialize,menu);
+        menu.findItem(R.id.menuShowEveryTime).setChecked(getMainSharedPreferences().getBoolean(getString(R.string.settings_show_init_every_time_key),false));
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item)
+    {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        boolean result = true;
+
+        switch(id)
+        {
+            case R.id.menuShowEveryTime:
+            {
+                item.setChecked(!item.isChecked());
+                getMainSharedPreferences().edit()
+                        .putBoolean(getString(R.string.settings_show_init_every_time_key),item.isChecked())
+                        .apply();
+                break;
+            }
+        }
+        return result;
     }
 }

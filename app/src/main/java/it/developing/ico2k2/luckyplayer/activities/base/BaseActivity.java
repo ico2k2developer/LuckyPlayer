@@ -1,12 +1,10 @@
 package it.developing.ico2k2.luckyplayer.activities.base;
 
-import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,17 +19,14 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.StyleRes;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.MainActivity;
 
-import static it.developing.ico2k2.luckyplayer.Utils.KEY_INITIALIZED;
-import static it.developing.ico2k2.luckyplayer.Utils.KEY_THEME;
-import static it.developing.ico2k2.luckyplayer.Utils.PREFERENCE_MAIN;
 import static it.developing.ico2k2.luckyplayer.Utils.TAG_LOGS;
 
 public abstract class BaseActivity extends AppCompatActivity
@@ -44,8 +39,9 @@ public abstract class BaseActivity extends AppCompatActivity
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-        prefs = getSharedPreferences(PREFERENCE_MAIN,MODE_PRIVATE);
-        currentTheme = setTheme(prefs.getInt(KEY_THEME,0),THEME_DEFAULT);
+        prefs = getMainSharedPreferences();
+        currentTheme = prefs.getInt(getString(R.string.settings_theme_key),THEME_DEFAULT);
+        setTheme(currentTheme);
         super.onCreate(savedInstanceState);
         setKitKatStatusBarColor(getColorPrimaryDark());
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH)
@@ -81,24 +77,24 @@ public abstract class BaseActivity extends AppCompatActivity
     public void onResume()
     {
         super.onResume();
-        if(prefs.getBoolean(KEY_INITIALIZED,false))
+        if(prefs.getBoolean(getString(R.string.settings_initialized_key),false))
         {
-            int theme = prefs.getInt(KEY_THEME,0);
+            int theme = prefs.getInt(getString(R.string.settings_theme_key),THEME_DEFAULT);
             if(theme != currentTheme)
             {
                 if(onThemeChanged(currentTheme,theme))
                 {
-                    Log.d(TAG_LOGS,"Restarting " + getClass().getName()+ " because of theme change");
-                    startActivity(getIntent());
+                    Log.d(TAG_LOGS,"Restarting " + getClass().getName() + " because of theme change");
                     finish();
+                    startActivity(getIntent());
                 }
 
             }
-            else
+            /*else
             {
                 if(ActivityCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE) !=  PackageManager.PERMISSION_GRANTED)
                     ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},0);
-            }
+            }*/
 
         }
         else
@@ -134,7 +130,7 @@ public abstract class BaseActivity extends AppCompatActivity
 
     public SharedPreferences getMainSharedPreferences()
     {
-        return prefs;
+        return PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     protected int setTheme(@StyleRes int theme,@StyleRes int exceptionTheme)

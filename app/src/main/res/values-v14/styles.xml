@@ -335,6 +335,30 @@
         <item name="playButton">@drawable/player_button_red</item>
     </style>
 
+    <style name="Theme.Standard.Dark.Purple" parent="Theme.Dark">
+        <item name="colorAccent">@color/colorAccentPurple</item>
+        <item name="colorPrimary">@color/colorPrimaryPurple</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkPurple</item>
+        <item name="playButton">@drawable/player_button_purple</item>
+    </style>
+
+    <style name="Theme.Standard.Light.Purple" parent="Theme.Light">
+        <item name="colorAccent">@color/colorAccentPurple</item>
+        <item name="colorPrimary">@color/colorPrimaryPurple</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkPurple</item>
+        <item name="playButton">@drawable/player_button_purple</item>
+        <item name="titleTextColor">@color/colorPrimaryPurple</item>
+        <item name="subtitleTextColor">@color/colorPrimaryPurple</item>
+        <item name="toolbarBackgroundColor">@android:color/white</item>
+    </style>
+
+    <style name="Theme.Standard.Light.DarkActionBar.Purple" parent="Theme.Light.DarkActionBar">
+        <item name="colorAccent">@color/colorAccentPurple</item>
+        <item name="colorPrimary">@color/colorPrimaryPurple</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkPurple</item>
+        <item name="playButton">@drawable/player_button_purple</item>
+    </style>
+
     <style name="Theme.Standard.Dark.Blue" parent="Theme.Dark">
         <item name="colorAccent">@color/colorAccentBlue</item>
         <item name="colorPrimary">@color/colorPrimaryBlue</item>
@@ -418,6 +442,12 @@
     <style name="Theme.Light.Red" parent="Theme.Standard.Light.Red" />
 
     <style name="Theme.Light.DarkActionBar.Red" parent="Theme.Standard.Light.DarkActionBar.Red" />
+
+    <style name="Theme.Dark.Purple" parent="Theme.Standard.Dark.Purple" />
+
+    <style name="Theme.Light.Purple" parent="Theme.Standard.Light.Purple" />
+
+    <style name="Theme.Light.DarkActionBar.Purple" parent="Theme.Standard.Light.DarkActionBar.Purple" />
 
     <style name="Theme.Dark.Blue" parent="Theme.Standard.Dark.Blue" />
 

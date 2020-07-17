@@ -21,6 +21,12 @@
 
     <style name="Theme.Light.DarkActionBar.Red" parent="Theme.Standard.Light.DarkActionBar.Red"/>
 
+    <style name="Theme.Dark.Purple" parent="Theme.Standard.Dark.Purple"/>
+
+    <style name="Theme.Light.Purple" parent="Theme.Standard.Light.Purple"/>
+
+    <style name="Theme.Light.DarkActionBar.Purple" parent="Theme.Standard.Light.DarkActionBar.Purple"/>
+
     <style name="Theme.Dark.Blue" parent="Theme.Standard.Dark.Blue"/>
 
     <style name="Theme.Light.Blue" parent="Theme.Standard.Light.Blue"/>

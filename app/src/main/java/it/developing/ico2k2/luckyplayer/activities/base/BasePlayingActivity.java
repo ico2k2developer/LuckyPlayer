@@ -1,8 +1,6 @@
 package it.developing.ico2k2.luckyplayer.activities.base;
 
-import android.Manifest;
 import android.content.ComponentName;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
@@ -16,12 +14,10 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -30,7 +26,6 @@ import it.developing.ico2k2.luckyplayer.MediaBrowserDependent;
 import it.developing.ico2k2.luckyplayer.fragments.SmallPlayerFragment;
 import it.developing.ico2k2.luckyplayer.services.PlayService;
 
-import static it.developing.ico2k2.luckyplayer.Utils.MESSAGE_SCAN_REQUESTED;
 import static it.developing.ico2k2.luckyplayer.Utils.TAG_LOGS;
 
 public abstract class BasePlayingActivity extends BaseActivity implements MediaBrowserDependent
@@ -212,16 +207,13 @@ public abstract class BasePlayingActivity extends BaseActivity implements MediaB
         },null);
     }
 
-    protected static final int REQUEST_SCAN = 0x10;
-    protected static final int REQUEST_SONGS = 0x11;
-
-    public void requestScan()
+    /*public void requestScan()
     {
         if(ActivityCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE) !=  PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUEST_SCAN);
         else
             MediaControllerCompat.getMediaController(this).getTransportControls().sendCustomAction(MESSAGE_SCAN_REQUESTED,null);
-    }
+    }*/
 
     /*public void requestSongs(String requestCode)
     {
@@ -241,7 +233,7 @@ public abstract class BasePlayingActivity extends BaseActivity implements MediaB
         }
     }*/
 
-    @Override
+    /*@Override
     public void onRequestPermissionsResult(int requestCode,@NonNull String[] permissions,@NonNull int[] grantResults)
     {
         if(grantResults.length > 0)
@@ -254,27 +246,22 @@ public abstract class BasePlayingActivity extends BaseActivity implements MediaB
                         requestScan();
                     break;
                 }
-                /*case REQUEST_SONGS:
-                {
-                    String key = Integer.toString(REQUEST_SONGS);
-                    if(grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                        requestSongs(bundle.getString(key));
-                    bundle.remove(key);
-                    break;
-                }*/
-
-                // other 'case' lines to check for other
-                // permissions this app might request.
             }
         }
-    }
+    }*/
 
     @Override
     public void onStart()
     {
         super.onStart();
-        if(!browser.isConnected() && !connected)
+        try
+        {
             browser.connect();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -294,7 +281,7 @@ public abstract class BasePlayingActivity extends BaseActivity implements MediaB
     {
         super.onStop();
         MediaControllerCompat controller = MediaControllerCompat.getMediaController(BasePlayingActivity.this);
-        if (controller != null)
+        if(controller != null)
         {
             controller.unregisterCallback(controllerCallback);
         }

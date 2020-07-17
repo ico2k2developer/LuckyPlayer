@@ -72,15 +72,31 @@
     <string name="player_notification_text" formatted="false">%s is running background</string>
     <string name="song_show_details" formatted="false">Show details</string>
     <string name="settings_mediafile" formatted="false">Media files</string>
-    <string name="settings_mediafile_systemmedia_category" formatted="false">System media files</string>
-    <string name="settings_include_systemmedia" formatted="false">Include system media files</string>
-    <string name="settings_include_systemmedia_sub" formatted="false">Include system files in media scan</string>
+    <string name="settings_mediafile_category" formatted="false">Media files</string>
+    <string name="settings_include_alarm" formatted="false">Include alarms</string>
+    <string name="settings_include_alarm_sub" formatted="false">Include alarms in media scan</string>
+    <string name="settings_include_audiobook" formatted="false">Include audiobooks</string>
+    <string name="settings_include_audiobook_sub" formatted="false">Include audiobooks in media scan</string>
+    <string name="settings_include_music" formatted="false">Include music</string>
+    <string name="settings_include_music_sub" formatted="false">Include music in media scan</string>
+    <string name="settings_include_notification" formatted="false">Include notifications</string>
+    <string name="settings_include_notification_sub" formatted="false">Include notifications in media scan</string>
+    <string name="settings_include_podcast" formatted="false">Include podcast</string>
+    <string name="settings_include_podcast_sub" formatted="false">Include podcast in media scan</string>
+    <string name="settings_include_ringtone" formatted="false">Include ringtones</string>
+    <string name="settings_include_ringtone_sub" formatted="false">Include ringtones in media scan</string>
+    <string name="settings_include_other" formatted="false">Include other kinds of media files</string>
+    <string name="settings_include_other_sub" formatted="false">Include other kinds of media files in media scan</string>
     <string name="systemMediaPath" formatted="false" translatable="false">system/media/audio</string>
     <string name="refresh_songlist" formatted="false">Refresh song list</string>
+    <string name="show_every_time" formatted="false">Show this every time</string>
     <string name="songs_count" formatted="false">%d1 songs</string>
     <string name="songs_sum" formatted="false">Total time: %s</string>
     <string name="saving" formatted="false">Saving&#8230;\n\nBig images may take long time to save</string>
-    <string name="no_songs_found" formatted="false">No songs found!</string>
+    <string name="no_songs_found" formatted="false">No media files found! Maybe changing media scan settings helps</string>
+    <string name="no_songs_found_button" formatted="false">Go to %s</string>
+    <string name="no_songs_permission" formatted="false">Local data access permission has not been granted!</string>
+    <string name="no_songs_permission_button" formatted="false">Grant permission</string>
     <string name="stop_play_service" formatted="false">Stop</string>
     <string name="play" formatted="false">Play</string>
     <string name="play_media" formatted="false">Play media</string>
@@ -127,9 +143,39 @@
     <string name="color_primary" formatted="false">Primary color</string>
     <string name="color_primary_dark" formatted="false">Primary dark color</string>
     <string name="color_accent" formatted="false">Accent color</string>
+    <string name="permission_reason" formatted="false">The permission you denied is needed in order to make the app work properly. Would you like to grant it now?</string>
+    <string name="permission_reason_data" formatted="false">Data access permission makes it possible to play local music</string>
     <string name="description_album">%s1, %s2 songs</string>
     <string name="description_artist">%s1 albums, %s2 songs</string>
     <string name="description_year">%s1 artists, %s2 albums, %s3 songs</string>
+
+    <!-- Preference Keys -->
+
+    <string name="settings_include_music_key" formatted="false" translatable="false">include music</string>
+    <string name="settings_include_podcast_key" formatted="false" translatable="false">include podcast</string>
+    <string name="settings_include_alarm_key" formatted="false" translatable="false">include alarm</string>
+    <string name="settings_include_notification_key" formatted="false" translatable="false">include notification</string>
+    <string name="settings_include_audiobook_key" formatted="false" translatable="false">include audiobook</string>
+    <string name="settings_include_ringtone_key" formatted="false" translatable="false">include ringtone</string>
+    <string name="settings_include_other_key" formatted="false" translatable="false">include other</string>
+    <string name="settings_prefs_data_key" formatted="false" translatable="false">prefs data</string>
+    <string name="settings_delete_all_key" formatted="false" translatable="false">delete all</string>
+    <string name="settings_initialized_key" formatted="false" translatable="false">initialized</string>
+    <string name="settings_data_initialized_key" formatted="false" translatable="false">data initialized</string>
+    <string name="settings_theme_key" formatted="false" translatable="false">theme</string>
+    <string name="settings_notification_tint_key" formatted="false" translatable="false">notification tint</string>
+    <string name="settings_songlist_packet_size_key" formatted="false" translatable="false">songlist packet size</string>
+    <string name="settings_show_init_every_time_key" formatted="false" translatable="false">show init every time</string>
+    <string name="settings_permission_data_no_more_key" formatted="false" translatable="false">no more data permission</string>
+
+    <!--
+        public static final String KEY_INITIALIZED = "initialized";
+    public static final String KEY_DATA_INITIALIZED = "data initialized";
+    public static final String KEY_SYSTEM_MEDIA = "system media";
+    public static final String KEY_THEME = "theme";
+    public static final String KEY_NOTIFICATION_TINT = "notification tint";
+    public static final String KEY_SONGLIST_PACKET_SIZE = "songlist packet size";
+    -->
 
     <string-array name="info_details_tag_titles">
         <item>Acoustic fingerprint</item>
@@ -258,6 +304,9 @@
         <item>Theme Dark Red</item>
         <item>Theme Light Red</item>
         <item>Theme Light DarkActionBar Red</item>
+        <item>Theme Dark Purple</item>
+        <item>Theme Light Purple</item>
+        <item>Theme Light DarkActionBar Purple</item>
         <item>Theme Dark Blue</item>
         <item>Theme Light Blue</item>
         <item>Theme Light DarkActionBar Blue</item>

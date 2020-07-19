@@ -203,14 +203,17 @@ public class SongListFragment extends BaseFragment
             }
         }
         final Constructor constructor;
+        Constructor constructor1;
         try
         {
-            constructor = c.getConstructor(MediaBrowserCompat.MediaItem.class);
+            constructor1 = c.getConstructor(MediaBrowserCompat.MediaItem.class);
         }
         catch(Exception e)
         {
+            constructor1 = null;
             e.printStackTrace();
         }
+        constructor = constructor1;
         json.put(PlayService.EXTRA_COLUMNS,a);
         json.put(PlayService.EXTRA_TYPES,b);
         String id = ARG_LUCKY + root + json.toString();
@@ -231,7 +234,7 @@ public class SongListFragment extends BaseFragment
                     {
                         try
                         {
-                            adapter.add(constructor.newInstance(item));
+                            adapter.add((MusicItem)constructor.newInstance(item));
                         }
                         catch(Exception e)
                         {

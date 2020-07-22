@@ -4,7 +4,7 @@ import android.os.Parcelable;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 
-public abstract class MusicItem implements Parcelable
+public abstract class MusicItem extends Object implements Parcelable
 {
     public static final String DESCRIPTION_FORMAT = "%s1, %s2";
 

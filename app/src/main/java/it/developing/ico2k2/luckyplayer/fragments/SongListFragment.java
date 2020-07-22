@@ -225,16 +225,18 @@ public class SongListFragment extends BaseFragment
             public void onChildrenLoaded(@NonNull String parentId,@NonNull List<MediaBrowserCompat.MediaItem> children,@NonNull Bundle oldOptions){
                 try
                 {
+                    Log.d(TAG_LOGS,"Loading " + children.size() + " children from fragment, id: " + parentId);
                     JSONObject json = new JSONObject(parentId.substring((ARG_LUCKY + root).length()));
                     int page = json.getInt(EXTRA_PAGE);
                     int size = json.getInt(EXTRA_PAGE_SIZE);
-                    Log.d(TAG_LOGS,"Loading " + children.size() + " children from fragment, page: " + page + ", size: " + size);
                     //examineBundle(options);
+                    if(page == 0)
+                        adapter.clear();
                     for(MediaBrowserCompat.MediaItem item : children)
                     {
                         try
                         {
-                            adapter.add((MusicItem)constructor.newInstance(item));
+                            adapter.add((MusicItem) constructor.newInstance(item));
                         }
                         catch(Exception e)
                         {
@@ -245,7 +247,7 @@ public class SongListFragment extends BaseFragment
                     {
                         json.put(EXTRA_PAGE,page + 1);
                         Log.d(TAG_LOGS,"Subscribing again to " + parentId + ", page: " + json.getInt(EXTRA_PAGE));
-                        mediaBrowser.subscribe(root + json.toString(),this);
+                        mediaBrowser.subscribe(ARG_LUCKY + root + json.toString(),this);
                     }
                     else
                     {

@@ -2,6 +2,7 @@ package it.developing.ico2k2.luckyplayer.adapters;
 
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -163,6 +164,14 @@ public class MusicItemsAdapter extends BaseAdapter<MusicItemsAdapter.MusicItemHa
         else
             holder.index.setVisibility(View.GONE);
         holder.title.setText(item.getDescription().getTitle());
+        String description = item.getTextDescription();
+        if(TextUtils.isEmpty(description))
+            holder.description.setVisibility(View.GONE);
+        else
+        {
+            holder.description.setVisibility(View.VISIBLE);
+            holder.description.setText(description);
+        }
         holder.description.setText(item.getTextDescription());
         holder.time.setText(item.getTimeDescription());
         holder.time.setVisibility(View.VISIBLE);

@@ -22,7 +22,8 @@
             android:id="@+id/player_time"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/player_title"/>
+            app:layout_constraintBottom_toTopOf="@id/player_title"
+            android:textIsSelectable="true"/>
 
         <androidx.appcompat.widget.AppCompatSeekBar
             android:layout_width="0dp"
@@ -39,7 +40,8 @@
             android:gravity="end"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/player_next"/>
+            app:layout_constraintBottom_toTopOf="@id/player_next"
+            android:textIsSelectable="true"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="0dp"
@@ -53,7 +55,7 @@
             android:textAppearance="@android:style/TextAppearance.Medium"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/player_bar"
-            app:layout_constraintEnd_toStartOf="@id/player_previous"/>
+            app:layout_constraintEnd_toStartOf="@id/player_previous" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="0dp"

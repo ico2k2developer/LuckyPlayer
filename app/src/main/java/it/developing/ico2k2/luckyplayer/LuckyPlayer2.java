@@ -21,9 +21,9 @@ public class LuckyPlayer2 extends Application
             NotificationChannel channel;
             channel = new NotificationChannel(CHANNEL_ID_MAIN,getString(R.string.main_notification_channel),NotificationManager.IMPORTANCE_DEFAULT);
             notificationManager.createNotificationChannel(channel);
-            channel = new NotificationChannel(CHANNEL_ID_INFO,getString(R.string.info_notification_channel),NotificationManager.IMPORTANCE_DEFAULT);
+            channel = new NotificationChannel(CHANNEL_ID_INFO,getString(R.string.info_notification_channel),NotificationManager.IMPORTANCE_LOW);
             notificationManager.createNotificationChannel(channel);
-            channel = new NotificationChannel(CHANNEL_ID_STATUS,getString(R.string.status_notification_channel),NotificationManager.IMPORTANCE_DEFAULT);
+            channel = new NotificationChannel(CHANNEL_ID_STATUS,getString(R.string.status_notification_channel),NotificationManager.IMPORTANCE_LOW);
             notificationManager.createNotificationChannel(channel);
         }
     }

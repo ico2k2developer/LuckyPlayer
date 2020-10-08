@@ -72,7 +72,7 @@ public class InfoActivity extends BaseActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbarLayout = findViewById(R.id.info_appbar_collapsingLayout);
         tagDetails = (DetailsFragment)getSupportFragmentManager().findFragmentById(R.id.info_details_tag);
-        tagDetails.setOnFragmentInitialized(new BaseFragment.OnFragmentInitialized(){
+        /*tagDetails.setOnFragmentInitialized(new BaseFragment.OnFragmentInitialized(){
             @Override
             public void onInitialized(@NonNull View view){
                 tagDetails.setTitle(R.string.info_details_tag);
@@ -84,7 +84,7 @@ public class InfoActivity extends BaseActivity
             public void onInitialized(@NonNull View view){
                 fileDetails.setTitle(R.string.info_details_file);
             }
-        });
+        });*/
         toolbarLayout.setTitleEnabled(true);
 
         toolbar.setOnHierarchyChangeListener(new ViewGroup.OnHierarchyChangeListener(){
@@ -170,12 +170,12 @@ public class InfoActivity extends BaseActivity
                     showDetailDialog(tagAdapter.get(position));
                 }
             });
-            tagDetails.setOnFragmentInitialized(new BaseFragment.OnFragmentInitialized(){
+            /*tagDetails.setOnFragmentInitialized(new BaseFragment.OnFragmentInitialized(){
                 @Override
                 public void onInitialized(@NonNull View view){
                     tagDetails.setAdapter(tagAdapter);
                 }
-            });
+            });*/
             AudioHeader header = audio.getAudioHeader();
             titles = getResources().getStringArray(R.array.info_details_file_titles);
             final DetailsAdapter fileAdapter = new DetailsAdapter(titles.length);
@@ -196,12 +196,12 @@ public class InfoActivity extends BaseActivity
                     showDetailDialog(fileAdapter.get(position));
             }
             });
-            fileDetails.setOnFragmentInitialized(new BaseFragment.OnFragmentInitialized(){
+            /*fileDetails.setOnFragmentInitialized(new BaseFragment.OnFragmentInitialized(){
                 @Override
                 public void onInitialized(@NonNull View view){
                     fileDetails.setAdapter(fileAdapter);
                 }
-            });
+            });*/
             final AppCompatImageView imageView = findViewById(R.id.info_album_art);
             AlbumArtLoadTask task = new AlbumArtLoadTask(new AsyncThread.AsyncThreadBaseCallbacks()
             {

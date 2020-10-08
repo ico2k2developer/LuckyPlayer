@@ -173,8 +173,8 @@ public abstract class BasePlayingActivity extends BaseActivity implements MediaB
                             Log.d(TAG_LOGS,"Metadata changed");
                             requestPlayer();
                             playerFragment.setTimeTotal(metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION));
-                            playerFragment.setTitle(metadata.getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE));
-                            playerFragment.setSubtitle(metadata.getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE));
+                            playerFragment.setTitleSubtitle(metadata.getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE),
+                                    metadata.getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE));
                         }
                     });
                 }

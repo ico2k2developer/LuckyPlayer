@@ -8,30 +8,21 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.security.PublicKey;
+
 public class BaseFragment extends Fragment
 {
-    public interface OnFragmentInitialized
-    {
-        void onInitialized(@NonNull View view);
-    }
-
-    private OnFragmentInitialized onInitialized;
-    private boolean initialized = false;
+    private boolean viewCreated = false;
 
     @CallSuper
     @Override
     public void onViewCreated(@NonNull View view,@Nullable Bundle savedInstanceState)
     {
-        if(onInitialized != null)
-            onInitialized.onInitialized(view);
-        initialized = true;
+        viewCreated = true;
     }
 
-    public void setOnFragmentInitialized(OnFragmentInitialized onFragmentInitialized)
+    public boolean isViewCreated()
     {
-        if(initialized)
-            onFragmentInitialized.onInitialized(getView());
-        else
-            onInitialized = onFragmentInitialized;
+        return viewCreated;
     }
 }

@@ -35,6 +35,13 @@ public class SmallPlayerFragment extends PlayerFragment implements Player
             getContext().getTheme().resolveAttribute(R.attr.cardViewBackgroundColor,value,true);
             cardView.setBackgroundColor(ContextCompat.getColor(getContext(),value.resourceId));
         }
+        cardView.findViewById(R.id.player_layout).setOnClickListener(new View.OnClickListener()
+        {
+            @Override public void onClick(View view)
+            {
+
+            }
+        });
     }
 
     @Override

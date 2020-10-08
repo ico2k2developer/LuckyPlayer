@@ -308,12 +308,30 @@ public class PlayService extends MediaBrowserServiceCompat
                                     {
                                         case TYPE_INT:
                                         {
-                                            extras.putInt(column,Integer.parseInt(c));
+                                            int n;
+                                            try
+                                            {
+                                                n = Integer.parseInt(c);
+                                            }
+                                            catch(Exception e)
+                                            {
+                                                n = 0;
+                                            }
+                                            extras.putInt(column,n);
                                             break;
                                         }
                                         case TYPE_LONG:
                                         {
-                                            extras.putLong(column,Long.parseLong(c));
+                                            long n;
+                                            try
+                                            {
+                                                n = Long.parseLong(c);
+                                            }
+                                            catch(Exception e)
+                                            {
+                                                n = 0;
+                                            }
+                                            extras.putLong(column,n);
                                             break;
                                         }
                                         default:
@@ -556,6 +574,7 @@ public class PlayService extends MediaBrowserServiceCompat
 
         private void updateMetadata(String originalMediaId)
         {
+            Log.d(TAG_LOGS,"Updating metadata");
             MediaScanner scanner = new MediaScanner(getContentResolver());
             MediaScanner.MediaScanResult result = scanner.subscan(SONGS_URI,1,new String[]{
                             MediaStore.MediaColumns.TITLE,
@@ -599,12 +618,15 @@ public class PlayService extends MediaBrowserServiceCompat
                         {
                             try
                             {
-                                Thread.sleep(250);
+                                if(player.getCurrentPosition() > 1000)
+                                    Thread.sleep(250);
+                                else
+                                    Thread.sleep(50);
                                 updateState();
                             }
                             catch(Exception e)
                             {
-                                e.printStackTrace();
+                                Log.d(TAG_LOGS,"Update state thread interrupted");
                             }
                         }
                     }
@@ -638,23 +660,23 @@ public class PlayService extends MediaBrowserServiceCompat
         public void onPlayFromMediaId(String mediaId,Bundle extras)
         {
             int index = mediaId.indexOf(";");
-            final String subId = mediaId.substring(index + 1);
-            Log.d(TAG_LOGS,"Trying to play " + subId + " with index " + index);
+            final String id1 = mediaId.substring(0,index),id2 = mediaId.substring(index + 1);
+            Log.d(TAG_LOGS,"Trying to play media id " + mediaId + " (id1: " + id1 + ", id2: " + id2 + ")");
             onStop();
             player = new MediaPlayer();
             try
             {
                 index = Integer.parseInt(mediaId.substring(0,mediaId.indexOf(";")));
                 ParcelFileDescriptor file = getBaseContext().getContentResolver().openFileDescriptor(Uri.withAppendedPath(
-                        SONGS_URI[Integer.parseInt(mediaId.substring(0,index))],
-                        subId),"r");
+                        SONGS_URI[Integer.parseInt(id1)],
+                        id2),"r");
                 player.setDataSource(file.getFileDescriptor());
                 player.setOnPreparedListener(new MediaPlayer.OnPreparedListener(){
                     @Override
                     public void onPrepared(MediaPlayer mp){
-                        playNotif.setContentTitle(subId);
+                        playNotif.setContentTitle(id2);
+                        updateMetadata(id2);
                         onPlay();
-                        updateMetadata(subId);
                     }
                 });
                 player.prepare();
@@ -691,7 +713,7 @@ public class PlayService extends MediaBrowserServiceCompat
             }
             catch(Exception e)
             {
-                e.printStackTrace();
+                Log.d(TAG_LOGS,"Could not stop MediaPlayer");
             }
             startForeground(NOTIFICATION_STATUS,notification);
         }
@@ -738,7 +760,7 @@ public class PlayService extends MediaBrowserServiceCompat
         PendingIntent action = PendingIntent.getService(this,1,intent,PendingIntent.FLAG_CANCEL_CURRENT);
         PendingIntent pending = PendingIntent.getActivity(this,0,new Intent(this,MainActivity.class),PendingIntent.FLAG_UPDATE_CURRENT);
         notification = new NotificationCompat.Builder(this,CHANNEL_ID_INFO)
-                .setColor(prefs.getInt(getString(R.string.settings_theme_key),0))
+                .setColor(prefs.getInt(getString(R.string.settings_notification_tint_key),0))
                 .setSmallIcon(R.drawable.ic_player_notification)
                 .setContentTitle(getString(R.string.player_notification_title).replace("%s",getString(R.string.app_name)))
                 .setContentText(getString(R.string.player_notification_text).replace("%s",getString(R.string.app_name)))

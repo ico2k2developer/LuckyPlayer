@@ -96,9 +96,6 @@ public class SongListFragment extends BaseFragment
             public void onItemClick(ViewHandle handle,int position){
                 MusicItem item = adapter.get(position);
                 MediaControllerCompat.getMediaController(getActivity()).getTransportControls().playFromMediaId(item.getDescription().getMediaId(),null);
-                Toast.makeText(getContext(),"Item for position " + position + " is " +
-                        item.getDescription().getTitle() + " with id " +
-                        item.getDescription().getMediaId(),Toast.LENGTH_LONG).show();
             }
         });
         adapter.setOnItemContextMenuListener(new ViewHandle.OnItemContextMenuListener(){
@@ -113,17 +110,21 @@ public class SongListFragment extends BaseFragment
     }
 
     @Override
-    public boolean onContextItemSelected(MenuItem item)
+    public boolean onContextItemSelected(MenuItem menuItem)
     {
         boolean result = true;
-        switch(item.getItemId())
+        switch(menuItem.getItemId())
         {
             case ID_MENU_INFO:
             {
                 /*Intent intent = new Intent(getActivity(),InfoActivity.class);
                 intent.setData(Uri.parse(Song.getPathFromMediaId(adapter.get(contextClickPosition).getMediaId())));
                 startActivity(intent);*/
-                Toast.makeText(getContext(),adapter.get(contextClickPosition).toMediaItem().getMediaId(),Toast.LENGTH_SHORT).show();
+
+                MusicItem item = adapter.get(contextClickPosition);
+                Toast.makeText(getContext(),"Item for position " + contextClickPosition + " is " +
+                        item.getDescription().getTitle() + " with id " +
+                        item.getDescription().getMediaId(),Toast.LENGTH_LONG).show();
                 break;
             }
             default:
@@ -219,7 +220,6 @@ public class SongListFragment extends BaseFragment
         String id = ARG_LUCKY + root + json.toString();
         Log.d(TAG_LOGS,"Subscribing to " + id + ", page: " + json.getInt(EXTRA_PAGE));
         MediaBrowserCompat mediaBrowser = ((MediaBrowserDependent)getActivity()).getMediaBrowser();
-        adapter.clear();
         mediaBrowser.subscribe(id,new MediaBrowserCompat.SubscriptionCallback(){
             @Override
             public void onChildrenLoaded(@NonNull String parentId,@NonNull List<MediaBrowserCompat.MediaItem> children,@NonNull Bundle oldOptions){

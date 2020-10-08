@@ -90,7 +90,7 @@
 
                 <data android:scheme="file" />
                 <data android:scheme="content" />
-                <data android:mimeType="*/*" />
+                <data android:mimeType="audio/*" />
             </intent-filter>
         </activity>
         <activity

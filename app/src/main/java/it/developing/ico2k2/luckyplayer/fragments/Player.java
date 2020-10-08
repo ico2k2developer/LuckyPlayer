@@ -9,8 +9,7 @@ public interface Player
     void setPlaying(boolean playing);
     void setTimeProgress(long ms);
     void setTimeTotal(long ms);
-    void setTitle(String title);
-    void setSubtitle(String subtitle);
+    void setTitleSubtitle(String title,String subtitle);
     ImageButton getPlayButton();
     SeekBar getTimeBar();
     TextView getTitleLabel();

@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -35,7 +36,7 @@ public class PrefsViewActivity extends BaseActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prefs_view);
-        setSupportActionBar(findViewById(R.id.toolbar));
+        setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
         getSupportActionBar().setHomeButtonEnabled(true);
         //getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
         RecyclerView list = findViewById(R.id.list);

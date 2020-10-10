@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.AppCompatImageButton;
@@ -47,9 +46,9 @@ import it.developing.ico2k2.luckyplayer.adapters.DetailsAdapter;
 import it.developing.ico2k2.luckyplayer.adapters.lib.ViewHandle;
 import it.developing.ico2k2.luckyplayer.dialogs.DefaultDialog;
 import it.developing.ico2k2.luckyplayer.fragments.DetailsFragment;
-import it.developing.ico2k2.luckyplayer.fragments.base.BaseFragment;
-import it.developing.ico2k2.luckyplayer.tasks.AlbumArtLoadTask;
+import it.developing.ico2k2.luckyplayer.tasks.AlbumArtLoadThread;
 import it.developing.ico2k2.luckyplayer.tasks.AsyncThread;
+import it.developing.ico2k2.luckyplayer.tasks.ThreadCallback;
 
 import static it.developing.ico2k2.luckyplayer.Utils.EXTRA_URI;
 import static it.developing.ico2k2.luckyplayer.Utils.FILE_PROVIDER_AUTHORITY;
@@ -203,19 +202,19 @@ public class InfoActivity extends BaseActivity
                 }
             });*/
             final AppCompatImageView imageView = findViewById(R.id.info_album_art);
-            AlbumArtLoadTask task = new AlbumArtLoadTask(new AsyncThread.AsyncThreadBaseCallbacks()
+            AlbumArtLoadThread thread = new AlbumArtLoadThread(path,new ThreadCallback()
             {
                 @Override
-                public void onPreExecute(){
+                public void onThreadCreated(){
                 }
 
                 @Override
-                public void onProgressUpdate(Object... progress){
+                public void onProgressResult(Object result){
 
                 }
 
                 @Override
-                public void onPostExecute(@Nullable Object result){
+                public void onThreadEnded(@Nullable Object result){
                     if(result instanceof Bitmap)
                     {
                         Bitmap albumArt = (Bitmap)result;
@@ -233,8 +232,6 @@ public class InfoActivity extends BaseActivity
                     }
                 }
             });
-            AlbumArtLoadTask.AlbumArtLoadConfig config = new AlbumArtLoadTask.AlbumArtLoadConfig(path);
-            task.execute(config);
         }
         catch(Exception e)
         {
@@ -296,7 +293,7 @@ public class InfoActivity extends BaseActivity
     {
         path = intent.getStringExtra(EXTRA_URI);
         if(path == null)
-            path = getRealPath(intent.getParcelableExtra(Intent.EXTRA_STREAM));
+            path = getRealPath((Uri)intent.getParcelableExtra(Intent.EXTRA_STREAM));
         if(path == null)
             path = getRealPath(intent.getData());
         Log.d(TAG_LOGS,"Path is: " + path);
@@ -327,7 +324,7 @@ public class InfoActivity extends BaseActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        final int id = item.getItemId();
         boolean result = true;
 
         switch(id)
@@ -335,19 +332,19 @@ public class InfoActivity extends BaseActivity
             case R.id.info_save_cover:
             case R.id.info_send_cover:
             {
-                AlbumArtLoadTask task = new AlbumArtLoadTask(new AsyncThread.AsyncThreadBaseCallbacks()
-                {
-                    @Override
-                    public void onPreExecute(){
-                    }
-
-                    @Override
-                    public void onProgressUpdate(Object... progress){
+                AlbumArtLoadThread thread = new AlbumArtLoadThread(path,new ThreadCallback(){
+                    @Override public void onThreadCreated()
+                    {
 
                     }
 
-                    @Override
-                    public void onPostExecute(@Nullable Object result){
+                    @Override public void onProgressResult(Object result)
+                    {
+
+                    }
+
+                    @Override public void onThreadEnded(@Nullable Object result)
+                    {
                         if(result instanceof Bitmap)
                         {
                             Bitmap albumArt = (Bitmap)result;
@@ -392,8 +389,6 @@ public class InfoActivity extends BaseActivity
                         }
                     }
                 });
-                AlbumArtLoadTask.AlbumArtLoadConfig config = new AlbumArtLoadTask.AlbumArtLoadConfig(path);
-                task.execute(config);
                 break;
             }
             default:

@@ -4,11 +4,71 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public class AlbumArtLoadTask extends AsyncTask<AlbumArtLoadTask.AlbumArtLoadConfig,Void,Bitmap>
+public class AlbumArtLoadThread
+{
+    private String uri;
+    private int width,height;
+    private ThreadCallback callbacks;
+
+    public AlbumArtLoadThread(String uri,int width,int height,@NonNull ThreadCallback callbacks)
+    {
+        this.uri = uri;
+        this.width = width;
+        this.height = height;
+        this.callbacks = callbacks;
+        run();
+    }
+
+    public AlbumArtLoadThread(String uri,@NonNull ThreadCallback callbacks)
+    {
+        this(uri,0,0,callbacks);
+    }
+
+    private void run()
+    {
+        Handler handler = new Handler();
+        handler.post(new Runnable(){
+            @Override public void run()
+            {
+                callbacks.onThreadCreated();
+                Bitmap bitmap = null;
+                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+                try
+                {
+                    if(!TextUtils.isEmpty(uri))
+                    {
+                        retriever.setDataSource(uri);
+                        byte[] bytes = retriever.getEmbeddedPicture();
+                        if(bytes != null)
+                        {
+                            bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                            if(width > 0 && height > 0)
+                            {
+                                bitmap = Bitmap.createScaledBitmap(bitmap,width,height,false);
+                            }
+                            callbacks.onProgressResult(bitmap);
+                        }
+                    }
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                }
+                retriever.release();
+                callbacks.onProgressResult(bitmap);
+            }
+        });
+    }
+}
+
+/*public class AlbumArtLoadTask extends AsyncTask<AlbumArtLoadTask.AlbumArtLoadConfig,Void,Bitmap>
 {
     private AsyncThread.AsyncThreadBaseCallbacks callbacks;
 
@@ -83,4 +143,4 @@ public class AlbumArtLoadTask extends AsyncTask<AlbumArtLoadTask.AlbumArtLoadCon
     {
         callbacks.onPostExecute(result);
     }
-}
+}*/

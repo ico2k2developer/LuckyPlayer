@@ -17,6 +17,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.tabs.TabLayout;
 
 import it.developing.ico2k2.luckyplayer.R;
@@ -79,7 +80,7 @@ public class TabsActivity extends BasePlayingActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabs);
-        setSupportActionBar(findViewById(R.id.toolbar));
+        setSupportActionBar((MaterialToolbar)findViewById(R.id.toolbar));
 
         PagerAdapter adapter;
         TabLayout tabLayout = findViewById(R.id.tabs_tab_layout);

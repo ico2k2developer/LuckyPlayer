@@ -115,7 +115,7 @@ public final class Utils
         return result;
     }
 
-    public static void permissionDialog(BaseActivity context,String permission,int requestCode,@Nullable String permissionReason,@Nullable String noMorePreferenceKey)
+    public static void permissionDialog(final BaseActivity context,final String permission,final int requestCode,@Nullable String permissionReason,@Nullable final String noMorePreferenceKey)
     {
         boolean shouldShow = true;
         if(noMorePreferenceKey != null)

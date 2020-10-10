@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Standard.Dark" parent="Theme.AppCompat">
+    <style name="Theme.Standard" parent="Theme.MaterialComponents">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="preferenceTheme">@style/Theme.Style.Preference</item>
+        <item name="searchViewStyle">@style/Theme.Style.SearchView</item>
+        <item name="subtitleTextColor">?titleTextColor</item>
+        <item name="toolbarBackgroundColor">?colorPrimary</item>
+    </style>
+
+    <style name="Theme.Standard.Dark" parent="Theme.MaterialComponents">
         <item name="actionOverflowButtonStyle">@style/Theme.Dark.Style.ActionButton.Overflow</item>
         <item name="homeAsUpIndicator">@drawable/ic_back_material_dark</item>
         <item name="actionModeShareDrawable">@drawable/ic_share_material_dark</item>
-        <item name="preferenceTheme">@style/Theme.Style.Preference</item>
-        <item name="searchViewStyle">@style/Theme.Style.SearchView</item>
         <item name="titleTextColor">@android:color/white</item>
-        <item name="subtitleTextColor">?titleTextColor</item>
-        <item name="toolbarBackgroundColor">?colorPrimary</item>
         <item name="playButton">@drawable/player_button_dark</item>
         <item name="cardViewBackgroundColor">@color/medium_grey</item>
         <item name="toolbarShadow">@drawable/shadow_default</item>
@@ -105,17 +108,11 @@
 
     </style>
 
-    <style name="Theme.Standard.Light" parent="Theme.AppCompat.Light">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+    <style name="Theme.Standard.Light" parent="Theme.MaterialComponents.Light">
         <item name="actionOverflowButtonStyle">@style/Theme.Light.Style.ActionButton.Overflow</item>
         <item name="homeAsUpIndicator">@drawable/ic_back_material_light</item>
         <item name="actionModeShareDrawable">@drawable/ic_share_material_light</item>
-        <item name="preferenceTheme">@style/Theme.Style.Preference</item>
-        <item name="searchViewStyle">@style/Theme.Style.SearchView</item>
         <item name="titleTextColor">@android:color/black</item>
-        <item name="subtitleTextColor">?titleTextColor</item>
-        <item name="toolbarBackgroundColor">?colorPrimary</item>
         <item name="playButton">@drawable/player_button_light</item>
         <item name="cardViewBackgroundColor">@color/light_white</item>
         <item name="toolbarShadow">@drawable/shadow_default_light</item>
@@ -209,17 +206,11 @@
 
     </style>
 
-    <style name="Theme.Standard.Light.DarkActionBar" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+    <style name="Theme.Standard.Light.DarkActionBar" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <item name="actionOverflowButtonStyle">@style/Theme.Dark.Style.ActionButton.Overflow</item>
         <item name="homeAsUpIndicator">@drawable/ic_back_material_dark</item>
         <item name="actionModeShareDrawable">@drawable/ic_share_material_dark</item>
-        <item name="preferenceTheme">@style/Theme.Style.Preference</item>
-        <item name="searchViewStyle">@style/Theme.Style.SearchView</item>
         <item name="titleTextColor">@android:color/white</item>
-        <item name="subtitleTextColor">?titleTextColor</item>
-        <item name="toolbarBackgroundColor">?colorPrimary</item>
         <item name="playButton">@drawable/player_button_light</item>
         <item name="cardViewBackgroundColor">@color/light_white</item>
         <item name="toolbarShadow">@drawable/shadow_default</item>

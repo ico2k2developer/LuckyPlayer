@@ -219,7 +219,7 @@ public class SongListFragment extends BaseFragment
         json.put(PlayService.EXTRA_TYPES,b);
         String id = ARG_LUCKY + root + json.toString();
         Log.d(TAG_LOGS,"Subscribing to " + id + ", page: " + json.getInt(EXTRA_PAGE));
-        MediaBrowserCompat mediaBrowser = ((MediaBrowserDependent)getActivity()).getMediaBrowser();
+        final MediaBrowserCompat mediaBrowser = ((MediaBrowserDependent)getActivity()).getMediaBrowser();
         mediaBrowser.subscribe(id,new MediaBrowserCompat.SubscriptionCallback(){
             @Override
             public void onChildrenLoaded(@NonNull String parentId,@NonNull List<MediaBrowserCompat.MediaItem> children,@NonNull Bundle oldOptions){

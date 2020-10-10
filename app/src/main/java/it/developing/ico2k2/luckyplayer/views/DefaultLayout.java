@@ -24,7 +24,6 @@ public class DefaultLayout extends CoordinatorLayout
     private static final int ID_MAIN_LAYOUT = 0xFACE1;
     private static final int ID_INNER_LAYOUT = 0xFACE2;
 
-    private View shadow;
     private ConstraintLayout layout;
     private ConstraintLayout.LayoutParams params2;
     private ConstraintSet set;
@@ -54,10 +53,10 @@ public class DefaultLayout extends CoordinatorLayout
         setWillNotDraw(false);
         layout = new ConstraintLayout(getContext());
         layout.setId(ID_MAIN_LAYOUT);
-        shadow = new View(getContext());
+        View shadow = new View(getContext());
         shadow.setId(ID_SHADOW);
         shadow.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                getResources().getDimensionPixelSize(R.dimen.toolbar_shadow_height)));
+                                                                 getResources().getDimensionPixelSize(R.dimen.toolbar_shadow_height)));
         TypedValue value = new TypedValue();
         getContext().getTheme().resolveAttribute(R.attr.toolbarShadow,value,true);
         shadow.setBackgroundResource(value.resourceId);

@@ -127,11 +127,11 @@
         <item name="actionModeStyle">@style/Theme.Style.ActionMode</item>
     </style>
 
-    <style name="Theme.Style.Button" parent="Widget.AppCompat.Button">
+    <style name="Theme.Style.Button" parent="Widget.MaterialComponents.Button">
         <item name="fontFamily">@font/roboto_medium</item>
     </style>
 
-    <style name="Theme.Style.Toolbar" parent="Widget.AppCompat.Toolbar">
+    <style name="Theme.Style.Toolbar" parent="Widget.MaterialComponents.Toolbar">
         <item name="titleTextAppearance">@style/Theme.Style.Toolbar.TitleTextAppearance</item>
     </style>
 

@@ -12,12 +12,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.tabs.TabLayout;
 
 import it.developing.ico2k2.luckyplayer.R;
@@ -80,7 +80,7 @@ public class TabsActivity extends BasePlayingActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabs);
-        setSupportActionBar((MaterialToolbar)findViewById(R.id.toolbar));
+        setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
 
         PagerAdapter adapter;
         TabLayout tabLayout = findViewById(R.id.tabs_tab_layout);

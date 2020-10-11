@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Standard" parent="Theme.MaterialComponents">
+    <style name="Theme.Standard.Dark" parent="Theme.MaterialComponents">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="preferenceTheme">@style/Theme.Style.Preference</item>
-        <item name="searchViewStyle">@style/Theme.Style.SearchView</item>
-        <item name="subtitleTextColor">?titleTextColor</item>
-        <item name="toolbarBackgroundColor">?colorPrimary</item>
-    </style>
-
-    <style name="Theme.Standard.Dark" parent="Theme.MaterialComponents">
         <item name="actionOverflowButtonStyle">@style/Theme.Dark.Style.ActionButton.Overflow</item>
         <item name="homeAsUpIndicator">@drawable/ic_back_material_dark</item>
         <item name="actionModeShareDrawable">@drawable/ic_share_material_dark</item>
+        <item name="preferenceTheme">@style/Theme.Style.Preference</item>
+        <item name="searchViewStyle">@style/Theme.Style.SearchView</item>
         <item name="titleTextColor">@android:color/white</item>
+        <item name="subtitleTextColor">?titleTextColor</item>
+        <item name="toolbarBackgroundColor">?colorPrimary</item>
         <item name="playButton">@drawable/player_button_dark</item>
         <item name="cardViewBackgroundColor">@color/medium_grey</item>
         <item name="toolbarShadow">@drawable/shadow_default</item>
@@ -109,10 +106,16 @@
     </style>
 
     <style name="Theme.Standard.Light" parent="Theme.MaterialComponents.Light">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
         <item name="actionOverflowButtonStyle">@style/Theme.Light.Style.ActionButton.Overflow</item>
         <item name="homeAsUpIndicator">@drawable/ic_back_material_light</item>
         <item name="actionModeShareDrawable">@drawable/ic_share_material_light</item>
+        <item name="preferenceTheme">@style/Theme.Style.Preference</item>
+        <item name="searchViewStyle">@style/Theme.Style.SearchView</item>
         <item name="titleTextColor">@android:color/black</item>
+        <item name="subtitleTextColor">?titleTextColor</item>
+        <item name="toolbarBackgroundColor">?colorPrimary</item>
         <item name="playButton">@drawable/player_button_light</item>
         <item name="cardViewBackgroundColor">@color/light_white</item>
         <item name="toolbarShadow">@drawable/shadow_default_light</item>
@@ -207,10 +210,16 @@
     </style>
 
     <style name="Theme.Standard.Light.DarkActionBar" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
         <item name="actionOverflowButtonStyle">@style/Theme.Dark.Style.ActionButton.Overflow</item>
         <item name="homeAsUpIndicator">@drawable/ic_back_material_dark</item>
         <item name="actionModeShareDrawable">@drawable/ic_share_material_dark</item>
+        <item name="preferenceTheme">@style/Theme.Style.Preference</item>
+        <item name="searchViewStyle">@style/Theme.Style.SearchView</item>
         <item name="titleTextColor">@android:color/white</item>
+        <item name="subtitleTextColor">?titleTextColor</item>
+        <item name="toolbarBackgroundColor">?colorPrimary</item>
         <item name="playButton">@drawable/player_button_light</item>
         <item name="cardViewBackgroundColor">@color/light_white</item>
         <item name="toolbarShadow">@drawable/shadow_default</item>
@@ -303,6 +312,7 @@
     </style>
 
     <style name="Theme.Standard.Dark.Red" parent="Theme.Dark">
+        <item name="rippleColor">@color/colorAccentRed</item>
         <item name="colorAccent">@color/colorAccentRed</item>
         <item name="colorPrimary">@color/colorPrimaryRed</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkRed</item>
@@ -310,6 +320,7 @@
     </style>
 
     <style name="Theme.Standard.Light.Red" parent="Theme.Light">
+        <item name="rippleColor">@color/colorAccentRed</item>
         <item name="colorAccent">@color/colorAccentRed</item>
         <item name="colorPrimary">@color/colorPrimaryRed</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkRed</item>
@@ -320,6 +331,7 @@
     </style>
 
     <style name="Theme.Standard.Light.DarkActionBar.Red" parent="Theme.Light.DarkActionBar">
+        <item name="rippleColor">@color/colorAccentRed</item>
         <item name="colorAccent">@color/colorAccentRed</item>
         <item name="colorPrimary">@color/colorPrimaryRed</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkRed</item>
@@ -327,6 +339,7 @@
     </style>
 
     <style name="Theme.Standard.Dark.Purple" parent="Theme.Dark">
+        <item name="rippleColor">@color/colorAccentPurple</item>
         <item name="colorAccent">@color/colorAccentPurple</item>
         <item name="colorPrimary">@color/colorPrimaryPurple</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkPurple</item>
@@ -334,6 +347,7 @@
     </style>
 
     <style name="Theme.Standard.Light.Purple" parent="Theme.Light">
+        <item name="rippleColor">@color/colorAccentPurple</item>
         <item name="colorAccent">@color/colorAccentPurple</item>
         <item name="colorPrimary">@color/colorPrimaryPurple</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkPurple</item>
@@ -344,6 +358,7 @@
     </style>
 
     <style name="Theme.Standard.Light.DarkActionBar.Purple" parent="Theme.Light.DarkActionBar">
+        <item name="rippleColor">@color/colorAccentPurple</item>
         <item name="colorAccent">@color/colorAccentPurple</item>
         <item name="colorPrimary">@color/colorPrimaryPurple</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkPurple</item>
@@ -351,6 +366,7 @@
     </style>
 
     <style name="Theme.Standard.Dark.Blue" parent="Theme.Dark">
+        <item name="rippleColor">@color/colorAccentBlue</item>
         <item name="colorAccent">@color/colorAccentBlue</item>
         <item name="colorPrimary">@color/colorPrimaryBlue</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkBlue</item>
@@ -358,6 +374,7 @@
     </style>
 
     <style name="Theme.Standard.Light.Blue" parent="Theme.Light">
+        <item name="rippleColor">@color/colorAccentBlue</item>
         <item name="colorAccent">@color/colorAccentBlue</item>
         <item name="colorPrimary">@color/colorPrimaryBlue</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkBlue</item>
@@ -368,6 +385,7 @@
     </style>
 
     <style name="Theme.Standard.Light.DarkActionBar.Blue" parent="Theme.Light.DarkActionBar">
+        <item name="rippleColor">@color/colorAccentBlue</item>
         <item name="colorAccent">@color/colorAccentBlue</item>
         <item name="colorPrimary">@color/colorPrimaryBlue</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkBlue</item>
@@ -375,6 +393,7 @@
     </style>
 
     <style name="Theme.Standard.Dark.Orange" parent="Theme.Dark">
+        <item name="rippleColor">@color/colorAccentOrange</item>
         <item name="colorAccent">@color/colorAccentOrange</item>
         <item name="colorPrimary">@color/colorPrimaryOrange</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkOrange</item>
@@ -382,6 +401,7 @@
     </style>
 
     <style name="Theme.Standard.Light.Orange" parent="Theme.Light">
+        <item name="rippleColor">@color/colorAccentOrange</item>
         <item name="colorAccent">@color/colorAccentOrange</item>
         <item name="colorPrimary">@color/colorPrimaryOrange</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkOrange</item>
@@ -392,6 +412,7 @@
     </style>
 
     <style name="Theme.Standard.Light.DarkActionBar.Orange" parent="Theme.Light.DarkActionBar">
+        <item name="rippleColor">@color/colorAccentOrange</item>
         <item name="colorAccent">@color/colorAccentOrange</item>
         <item name="colorPrimary">@color/colorPrimaryOrange</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkOrange</item>
@@ -399,6 +420,7 @@
     </style>
 
     <style name="Theme.Standard.Dark.Green" parent="Theme.Dark">
+        <item name="rippleColor">@color/colorAccentGreen</item>
         <item name="colorAccent">@color/colorAccentGreen</item>
         <item name="colorPrimary">@color/colorPrimaryGreen</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkGreen</item>
@@ -406,6 +428,7 @@
     </style>
 
     <style name="Theme.Standard.Light.Green" parent="Theme.Light">
+        <item name="rippleColor">@color/colorAccentGreen</item>
         <item name="colorAccent">@color/colorAccentGreen</item>
         <item name="colorPrimary">@color/colorPrimaryGreen</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkGreen</item>
@@ -416,6 +439,7 @@
     </style>
 
     <style name="Theme.Standard.Light.DarkActionBar.Green" parent="Theme.Light.DarkActionBar">
+        <item name="rippleColor">@color/colorAccentGreen</item>
         <item name="colorAccent">@color/colorAccentGreen</item>
         <item name="colorPrimary">@color/colorPrimaryGreen</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkGreen</item>
@@ -476,7 +500,7 @@
         <item name="closeIcon">?ic_exit</item>
     </style>
 
-    <style name="Theme.Style.TabLayout" parent="Widget.Design.TabLayout">
+    <style name="Theme.Style.TabLayout" parent="Widget.MaterialComponents.TabLayout">
         <item name="tabIndicatorColor">?tabSelectedTextColor</item>
         <item name="tabTextAppearance">@style/Theme.Style.TabLayout.TabTextAppearance</item>
     </style>

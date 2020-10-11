@@ -2,6 +2,16 @@ apply plugin: 'com.android.application'
 
 android
 {
+    signingConfigs
+    {
+        release
+        {
+            keyAlias 'ico2k2'
+            keyPassword 'androiddeveloper'
+            storeFile file('C:/keystore.jks')
+            storePassword 'icolino2002'
+        }
+    }
     compileSdkVersion 30
     defaultConfig
     {
@@ -18,16 +28,6 @@ android
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-    }
-    signingConfigs
-    {
-        release
-            {
-                keyAlias 'ico2k2'
-                keyPassword 'androiddeveloper'
-                storeFile file('C:/keystore.jks')
-                storePassword 'icolino2002'
-            }
     }
 }
 

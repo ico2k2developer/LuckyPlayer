@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import it.developing.ico2k2.luckyplayer.NotificationBuilder;
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.MainActivity;
 import it.developing.ico2k2.luckyplayer.adapters.items.Song;
@@ -112,7 +113,7 @@ public class PlayService extends MediaBrowserServiceCompat
 
     private SharedPreferences prefs;
     private NotificationManagerCompat manager;
-    private NotificationCompat.Builder playNotif;
+    private NotificationBuilder playNotif;
     private Notification notification;
     private MediaSessionCompat mediaSession;
     private PlaybackStateCompat.Builder stateBuilder;
@@ -576,6 +577,7 @@ public class PlayService extends MediaBrowserServiceCompat
         {
             Log.d(TAG_LOGS,"Updating metadata");
             MediaScanner scanner = new MediaScanner(getContentResolver());
+            String title,description;
             MediaScanner.MediaScanResult result = scanner.subscan(SONGS_URI,1,new String[]{
                             MediaStore.MediaColumns.TITLE,
                             MediaStore.Audio.AlbumColumns.ALBUM,
@@ -587,12 +589,14 @@ public class PlayService extends MediaBrowserServiceCompat
                             Long.parseLong(result.getCell(
                                     MediaStore.Audio.AudioColumns.DURATION,0)))
                     .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE,
-                            result.getCell(MediaStore.MediaColumns.TITLE,0))
+                            title = result.getCell(MediaStore.MediaColumns.TITLE,0))
                     .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE,
-                            Song.getSongDescription(
+                            description = Song.getSongDescription(
                                     result.getCell(MediaStore.Audio.AlbumColumns.ALBUM,0),
                                     result.getCell(MediaStore.Audio.AlbumColumns.ARTIST,0)))
                     .build());
+            playNotif.setContentTitle(title);
+            playNotif.setContentText(description);
         }
 
         @Override
@@ -608,7 +612,9 @@ public class PlayService extends MediaBrowserServiceCompat
                 });
                 player.start();
                 playNotif.setSmallIcon(R.drawable.ic_play_notification);
-                startForeground(NOTIFICATION_STATUS,playNotif.build());
+                playNotif.removeActions();
+                playNotif.addAction(pause);
+                manager.notify(NOTIFICATION_STATUS,playNotif.build());
                 if(thread != null)
                     thread.interrupt();
                 thread = new Thread(new Runnable(){
@@ -694,7 +700,9 @@ public class PlayService extends MediaBrowserServiceCompat
             {
                 player.pause();
                 playNotif.setSmallIcon(R.drawable.ic_pause_notification);
-                startForeground(NOTIFICATION_STATUS,playNotif.build());
+                playNotif.removeActions();
+                playNotif.addAction(play);
+                manager.notify(NOTIFICATION_STATUS,playNotif.build());
                 thread.interrupt();
                 updateState();
             }
@@ -715,7 +723,7 @@ public class PlayService extends MediaBrowserServiceCompat
             {
                 Log.d(TAG_LOGS,"Could not stop MediaPlayer");
             }
-            startForeground(NOTIFICATION_STATUS,notification);
+            manager.notify(NOTIFICATION_STATUS,notification);
         }
 
         @Override
@@ -736,6 +744,8 @@ public class PlayService extends MediaBrowserServiceCompat
         public void onPlayFromSearch(final String query,final Bundle extras){
         }
     }
+
+    private NotificationCompat.Action play,pause;
 
     @Override
     public void onCreate()
@@ -769,19 +779,23 @@ public class PlayService extends MediaBrowserServiceCompat
                 .addAction(R.drawable.ic_exit_notification_action,getString(R.string.exit),action)
                 .build();
         startForeground(NOTIFICATION_STATUS,notification);
-        playNotif = new NotificationCompat.Builder(this,CHANNEL_ID_STATUS)
+        playNotif = (NotificationBuilder)new NotificationBuilder(this,CHANNEL_ID_STATUS)
                 .setContentIntent(mediaSession.getController().getSessionActivity())
                 .setDeleteIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(this,PlaybackStateCompat.ACTION_STOP))
-                .addAction(new NotificationCompat.Action(
-                        android.R.drawable.ic_media_play, getString(R.string.pause),
-                        MediaButtonReceiver.buildMediaButtonPendingIntent(this,
-                                PlaybackStateCompat.ACTION_PLAY_PAUSE)))
                 .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
                         .setMediaSession(mediaSession.getSessionToken())
                         .setShowActionsInCompactView(0)
                 .setShowCancelButton(true)
                 .setCancelButtonIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(this,
                         PlaybackStateCompat.ACTION_STOP)));
+        play = new NotificationCompat.Action(
+                android.R.drawable.ic_media_pause, getString(R.string.pause),
+                MediaButtonReceiver.buildMediaButtonPendingIntent(this,
+                        PlaybackStateCompat.ACTION_PLAY));
+        pause = new NotificationCompat.Action(
+                android.R.drawable.ic_media_play, getString(R.string.play),
+                MediaButtonReceiver.buildMediaButtonPendingIntent(this,
+                        PlaybackStateCompat.ACTION_PAUSE));
         //scan();
         Log.d(TAG_LOGS,"Service created");
     }
@@ -795,7 +809,7 @@ public class PlayService extends MediaBrowserServiceCompat
         {
             case MESSAGE_DESTROY:
             {
-                stopForeground(true);
+                stopForeground(false);
                 stopSelf();
                 break;
             }

@@ -304,7 +304,7 @@ public class SongListFragment extends BaseFragment
             {
                 button = new Button(getContext(),null,android.R.attr.buttonBarButtonStyle);
                 button.setLayoutParams(new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT));
-                label.setTag(VIEW_BUTTON);
+                button.setTag(VIEW_BUTTON);
                 container.addView(button);
             }
             else

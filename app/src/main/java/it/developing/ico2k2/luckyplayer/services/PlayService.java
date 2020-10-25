@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import it.developing.ico2k2.luckyplayer.NotificationBuilder;
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.MainActivity;
 import it.developing.ico2k2.luckyplayer.adapters.items.Song;
@@ -113,7 +112,7 @@ public class PlayService extends MediaBrowserServiceCompat
 
     private SharedPreferences prefs;
     private NotificationManagerCompat manager;
-    private NotificationBuilder playNotif;
+    private NotificationCompat.Builder playNotif;
     private Notification notification;
     private MediaSessionCompat mediaSession;
     private PlaybackStateCompat.Builder stateBuilder;
@@ -612,8 +611,7 @@ public class PlayService extends MediaBrowserServiceCompat
                 });
                 player.start();
                 playNotif.setSmallIcon(R.drawable.ic_play_notification);
-                playNotif.removeActions();
-                playNotif.addAction(pause);
+                //playNotif.addAction(pause);
                 manager.notify(NOTIFICATION_STATUS,playNotif.build());
                 if(thread != null)
                     thread.interrupt();
@@ -700,8 +698,7 @@ public class PlayService extends MediaBrowserServiceCompat
             {
                 player.pause();
                 playNotif.setSmallIcon(R.drawable.ic_pause_notification);
-                playNotif.removeActions();
-                playNotif.addAction(play);
+                //playNotif.addAction(play);
                 manager.notify(NOTIFICATION_STATUS,playNotif.build());
                 thread.interrupt();
                 updateState();
@@ -779,10 +776,10 @@ public class PlayService extends MediaBrowserServiceCompat
                 .addAction(R.drawable.ic_exit_notification_action,getString(R.string.exit),action)
                 .build();
         startForeground(NOTIFICATION_STATUS,notification);
-        playNotif = (NotificationBuilder)new NotificationBuilder(this,CHANNEL_ID_STATUS)
+        playNotif = (NotificationCompat.Builder)new NotificationCompat.Builder(this,CHANNEL_ID_STATUS)
                 .setContentIntent(mediaSession.getController().getSessionActivity())
                 .setDeleteIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(this,PlaybackStateCompat.ACTION_STOP))
-                .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
+                .setStyle(new Notification.MediaStyle()
                         .setMediaSession(mediaSession.getSessionToken())
                         .setShowActionsInCompactView(0)
                 .setShowCancelButton(true)

@@ -21,7 +21,7 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -32,24 +32,25 @@
             android:id="@android:id/list"
             android:scrollbars="vertical"
             android:background="?cardViewBackgroundColor"
-            app:layout_constraintWidth_percent="30"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            android:layout_weight="1"/>
 
-        <View
-            android:layout_width="@dimen/toolbar_shadow_height"
-            android:layout_height="match_parent"
-            android:background="?toolbarShadowLateral"
-            app:layout_constraintStart_toEndOf="@android:id/list"/>
-
-        <FrameLayout
+        <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:id="@+id/settings_frame"
-            app:layout_constraintStart_toEndOf="@android:id/list"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            android:layout_weight="2">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <View
+                android:layout_width="@dimen/toolbar_shadow_height"
+                android:layout_height="match_parent"
+                android:background="?toolbarShadowLateral"/>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/settings_frame"/>
+
+        </RelativeLayout>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </it.developing.ico2k2.luckyplayer.views.DefaultLayout>

@@ -188,7 +188,7 @@ public class PlayService extends MediaBrowserServiceCompat
     public void onLoadChildren(@NonNull String parentId,@NonNull Result<List<MediaBrowserCompat.MediaItem>> result,@NonNull Bundle options)
     {
         ArrayList<MediaBrowserCompat.MediaItem> items;
-        if(ContextCompat.checkSelfPermission(this,READ_EXTERNAL_STORAGE) ==  PackageManager.PERMISSION_GRANTED)
+        if(ContextCompat.checkSelfPermission(this,READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
         {
             String arg1,id,arg2;
             int index1 = parentId.indexOf(ID_ROOT.charAt(0)),index2 = parentId.indexOf(ID_ROOT.charAt(ID_ROOT.length() - 1));
@@ -779,7 +779,7 @@ public class PlayService extends MediaBrowserServiceCompat
         playNotif = (NotificationCompat.Builder)new NotificationCompat.Builder(this,CHANNEL_ID_STATUS)
                 .setContentIntent(mediaSession.getController().getSessionActivity())
                 .setDeleteIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(this,PlaybackStateCompat.ACTION_STOP))
-                .setStyle(new Notification.MediaStyle()
+                .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
                         .setMediaSession(mediaSession.getSessionToken())
                         .setShowActionsInCompactView(0)
                 .setShowCancelButton(true)

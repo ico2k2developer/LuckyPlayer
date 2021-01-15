@@ -33,7 +33,7 @@ public class InitializeActivity extends BaseActivity
 
     public boolean onThemeChanged(@StyleRes int oldTheme,@StyleRes int newTheme)
     {
-        return getMainSharedPreferences().getBoolean(getString(R.string.settings_initialized_key),false);
+        return getMainSharedPreferences().getBoolean(getString(R.string.key_initialized),false);
     }
 
     public boolean onNoDataFound()
@@ -41,13 +41,11 @@ public class InitializeActivity extends BaseActivity
         return false;
     }
 
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
         getMenuInflater().inflate(R.menu.menu_initialize,menu);
-        menu.findItem(R.id.menuShowEveryTime).setChecked(getMainSharedPreferences().getBoolean(getString(R.string.settings_show_init_every_time_key),false));
+        menu.findItem(R.id.menuShowEveryTime).setChecked(getMainSharedPreferences().getBoolean(getString(R.string.key_show_init_every_time),false));
         return true;
     }
 
@@ -66,9 +64,13 @@ public class InitializeActivity extends BaseActivity
             {
                 item.setChecked(!item.isChecked());
                 getMainSharedPreferences().edit()
-                        .putBoolean(getString(R.string.settings_show_init_every_time_key),item.isChecked())
+                        .putBoolean(getString(R.string.key_show_init_every_time),item.isChecked())
                         .apply();
                 break;
+            }
+            default:
+            {
+                result = super.onOptionsItemSelected(item);
             }
         }
         return result;

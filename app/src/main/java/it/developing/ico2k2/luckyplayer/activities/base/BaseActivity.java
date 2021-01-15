@@ -1,6 +1,5 @@
 package it.developing.ico2k2.luckyplayer.activities.base;
 
-import android.annotation.TargetApi;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
@@ -13,7 +12,6 @@ import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
@@ -24,10 +22,10 @@ import androidx.preference.PreferenceManager;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
+import org.jetbrains.annotations.Nullable;
+
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.MainActivity;
-
-import static it.developing.ico2k2.luckyplayer.Utils.TAG_LOGS;
 
 public abstract class BaseActivity extends AppCompatActivity
 {
@@ -40,62 +38,59 @@ public abstract class BaseActivity extends AppCompatActivity
     public void onCreate(Bundle savedInstanceState)
     {
         prefs = getMainSharedPreferences();
-        currentTheme = prefs.getInt(getString(R.string.settings_theme_key),THEME_DEFAULT);
+        currentTheme = prefs.getInt(getString(R.string.key_theme),THEME_DEFAULT);
         setTheme(currentTheme);
         super.onCreate(savedInstanceState);
-        setKitKatStatusBarColor(getColorPrimaryDark());
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH)
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
         {
-            if(getNavigationBarColored())
-                getWindow().setNavigationBarColor(getNavigationBarDefaultColor());
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            {
+                if(getNavigationBarColored())
+                    getWindow().setNavigationBarColor(getNavigationBarDefaultColor());
+            }
+            else
+                setKitKatStatusBarColor(getColorPrimaryDark());
         }
-        Log.d(TAG_LOGS,getClass().getSimpleName() + ": created");
+        Log.d(getClass().getSimpleName(),getClass().getSimpleName() + ": created");
     }
 
     @Override
     public void onPause()
     {
         super.onPause();
-        Log.d(TAG_LOGS,getClass().getSimpleName() + ": paused");
+        Log.d(getClass().getSimpleName(),getClass().getSimpleName() + ": paused");
     }
 
     @Override
     public void onStop()
     {
         super.onStop();
-        Log.d(TAG_LOGS,getClass().getSimpleName() + ": stopped");
+        Log.d(getClass().getSimpleName(),getClass().getSimpleName() + ": stopped");
     }
 
     @Override
     public void onStart()
     {
         super.onStart();
-        Log.d(TAG_LOGS,getClass().getSimpleName() + ": started");
+        Log.d(getClass().getSimpleName(),getClass().getSimpleName() + ": started");
     }
 
     @Override
     public void onResume()
     {
         super.onResume();
-        if(prefs.getBoolean(getString(R.string.settings_initialized_key),false))
+        if(prefs.getBoolean(getString(R.string.key_initialized),false))
         {
-            int theme = prefs.getInt(getString(R.string.settings_theme_key),THEME_DEFAULT);
+            int theme = prefs.getInt(getString(R.string.key_theme),THEME_DEFAULT);
             if(theme != currentTheme)
             {
                 if(onThemeChanged(currentTheme,theme))
                 {
-                    Log.d(TAG_LOGS,"Restarting " + getClass().getName() + " because of theme change");
+                    Log.d(getClass().getSimpleName(),"Restarting " + getClass().getName() + " because of theme change");
                     finish();
                     startActivity(getIntent());
                 }
-
             }
-            /*else
-            {
-                if(ActivityCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE) !=  PackageManager.PERMISSION_GRANTED)
-                    ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},0);
-            }*/
-
         }
         else
         {
@@ -105,21 +100,22 @@ public abstract class BaseActivity extends AppCompatActivity
                 finish();
             }
         }
-        Log.d(TAG_LOGS,getClass().getSimpleName() + ": resumed");
+        Log.d(getClass().getSimpleName(),getClass().getSimpleName() + ": resumed");
     }
 
     public boolean onThemeChanged(@StyleRes int oldTheme,@StyleRes int newTheme)
     {
-        Log.d(TAG_LOGS,getClass().getSimpleName() + ": theme has changed! " + oldTheme + " to " + newTheme);
+        Log.d(getClass().getSimpleName(),getClass().getSimpleName() + ": theme has changed! " + oldTheme + " to " + newTheme);
         return true;
     }
 
     public boolean onNoDataFound()
     {
-        Log.d(TAG_LOGS,getClass().getSimpleName() + ": no data found!");
+        Log.d(getClass().getSimpleName(),getClass().getSimpleName() + ": no data found!");
         return true;
     }
 
+    @Nullable
     public View getContentView()
     {
         View result = findViewById(android.R.id.content);
@@ -214,25 +210,24 @@ public abstract class BaseActivity extends AppCompatActivity
         return result;
     }
 
-    @TargetApi(19)
+    private static final int FLAG_TRANSLUCENT_STATUS = 0x04000000;
+
+    @RequiresApi(19)
     protected void setTranslucentStatusBar(boolean translucent)
     {
         if(translucent)
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            getWindow().addFlags(FLAG_TRANSLUCENT_STATUS);
         else
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            getWindow().clearFlags(FLAG_TRANSLUCENT_STATUS);
     }
 
-    @TargetApi(19)
+    @RequiresApi(19)
     protected void setKitKatStatusBarColor(int color)
     {
-        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT || Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT_WATCH)
-        {
-            setTranslucentStatusBar(true);
-            SystemBarTintManager tintManager = new SystemBarTintManager(this);
-            tintManager.setStatusBarTintEnabled(true);
-            tintManager.setTintColor(color);
-        }
+        setTranslucentStatusBar(true);
+        SystemBarTintManager tintManager = new SystemBarTintManager(this);
+        tintManager.setStatusBarTintEnabled(true);
+        tintManager.setTintColor(color);
     }
 
     @Override

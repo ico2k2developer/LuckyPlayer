@@ -2,6 +2,7 @@ package it.developing.ico2k2.luckyplayer.services;
 
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -19,7 +20,6 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
@@ -40,21 +40,14 @@ import it.developing.ico2k2.luckyplayer.adapters.items.Song;
 import it.developing.ico2k2.luckyplayer.tasks.MediaScanner;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
-import static android.provider.MediaStore.Audio.AudioColumns.IS_ALARM;
-import static android.provider.MediaStore.Audio.AudioColumns.IS_AUDIOBOOK;
-import static android.provider.MediaStore.Audio.AudioColumns.IS_MUSIC;
-import static android.provider.MediaStore.Audio.AudioColumns.IS_NOTIFICATION;
-import static android.provider.MediaStore.Audio.AudioColumns.IS_PODCAST;
-import static android.provider.MediaStore.Audio.AudioColumns.IS_RINGTONE;
 import static android.support.v4.media.MediaBrowserCompat.EXTRA_PAGE;
 import static android.support.v4.media.MediaBrowserCompat.EXTRA_PAGE_SIZE;
-import static it.developing.ico2k2.luckyplayer.Utils.APP_PACKAGE;
 import static it.developing.ico2k2.luckyplayer.Utils.CHANNEL_ID_INFO;
 import static it.developing.ico2k2.luckyplayer.Utils.CHANNEL_ID_STATUS;
 import static it.developing.ico2k2.luckyplayer.Utils.KEY_REQUEST;
 import static it.developing.ico2k2.luckyplayer.Utils.MESSAGE_DESTROY;
 import static it.developing.ico2k2.luckyplayer.Utils.MESSAGE_SCAN_REQUESTED;
-import static it.developing.ico2k2.luckyplayer.Utils.TAG_LOGS;
+import static it.developing.ico2k2.luckyplayer.Utils.PACKAGE_LUCKY;
 import static it.developing.ico2k2.luckyplayer.Utils.examineBundle;
 
 public class PlayService extends MediaBrowserServiceCompat
@@ -121,7 +114,7 @@ public class PlayService extends MediaBrowserServiceCompat
     @Override
     public BrowserRoot onGetRoot(@NonNull String clientPackageName,int clientUid,Bundle rootHints)
     {
-        Log.d(TAG_LOGS,"Root request from " + clientPackageName);
+        Log.d(getClass().getSimpleName(),"Root request from " + clientPackageName);
         String result = "";
         switch(clientPackageName)
         {
@@ -130,7 +123,7 @@ public class PlayService extends MediaBrowserServiceCompat
                 result = ARG_AUTO;
                 break;
             }
-            case APP_PACKAGE:
+            case PACKAGE_LUCKY:
             {
                 result = ARG_LUCKY;
             }
@@ -142,46 +135,8 @@ public class PlayService extends MediaBrowserServiceCompat
     @Override
     public void onLoadChildren(@NonNull String parentId,@NonNull Result<List<MediaBrowserCompat.MediaItem>> result)
     {
-        Log.w(TAG_LOGS,"Children request does not contain Bundle options!");
+        Log.w(getClass().getSimpleName(),"Children request does not contain Bundle options!");
         onLoadChildren(parentId,result,new Bundle());
-    }
-
-    private boolean negIf(boolean value,boolean negIf)
-    {
-        if(negIf)
-            return !value;
-        else
-            return value;
-    }
-
-    public @Nullable String buildQuerySelectionString()
-    {
-        StringBuilder selection = new StringBuilder();
-        String andOr,comparator;
-        boolean neg = prefs.getBoolean(getString(R.string.settings_include_other_key),false);
-        if(neg)
-        {
-            comparator = " == 0";
-            andOr = " AND ";
-        }
-        else
-        {
-            comparator = " != 0";
-            andOr = " OR ";
-        }
-        if(negIf(prefs.getBoolean(getString(R.string.settings_include_music_key),false),neg))
-            selection.append(IS_MUSIC).append(comparator).append(andOr);
-        if(negIf(prefs.getBoolean(getString(R.string.settings_include_ringtone_key),false),neg))
-            selection.append(IS_RINGTONE).append(comparator).append(andOr);
-        if(negIf(prefs.getBoolean(getString(R.string.settings_include_notification_key),false),neg))
-            selection.append(IS_NOTIFICATION).append(comparator).append(andOr);
-        if(negIf(prefs.getBoolean(getString(R.string.settings_include_podcast_key),false),neg))
-            selection.append(IS_PODCAST).append(comparator).append(andOr);
-        if(negIf(prefs.getBoolean(getString(R.string.settings_include_alarm_key),false),neg))
-            selection.append(IS_ALARM).append(comparator).append(andOr);
-        if(negIf(prefs.getBoolean(getString(R.string.settings_include_audiobook_key),false),neg) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-            selection.append(IS_AUDIOBOOK).append(comparator).append(andOr);
-        return selection.length() > 0 ? selection.substring(0,selection.length() - andOr.length()) : null;
     }
 
     @Override
@@ -195,7 +150,7 @@ public class PlayService extends MediaBrowserServiceCompat
             arg1 = parentId.substring(0,index1);
             arg2 = parentId.substring(index2 + 1);
             id = parentId.substring(index1,index2 + 1);
-            Log.d(TAG_LOGS,"Children request from client " + arg1 + " with path " + id + ", arguments: " + arg2);
+            Log.d(getClass().getSimpleName(),"Children request from client " + arg1 + " with path " + id + ", arguments: " + arg2);
             result.detach();
             int pageFrom = -1,pageTo = -1;
             switch(arg1)
@@ -235,18 +190,18 @@ public class PlayService extends MediaBrowserServiceCompat
             {
                 pageFrom = options.getInt(EXTRA_PAGE);
                 pageTo = options.getInt(MediaBrowserCompat.EXTRA_PAGE_SIZE);
-                Log.d(TAG_LOGS,"Using paging mode, page: " + pageFrom + ", size: " + pageTo);
+                Log.d(getClass().getSimpleName(),"Using paging mode, page: " + pageFrom + ", size: " + pageTo);
                 pageFrom *= pageTo;
                 pageTo += pageFrom;
                 items = new ArrayList<>(pageTo - pageFrom);
             }
             else
             {
-                Log.w(TAG_LOGS,"Running in non paging mode: if too much, songs may be lost during transition!");
+                Log.w(getClass().getSimpleName(),"Running in non paging mode: if too much, songs may be lost during transition!");
                 items = new ArrayList<>();
             }
             MediaScanner scanner = new MediaScanner(getContentResolver());
-            Log.d(TAG_LOGS,"MediaScanner created");
+            Log.d(getClass().getSimpleName(),"MediaScanner created");
             switch(id)
             {
                 case ID_ROOT:
@@ -270,7 +225,7 @@ public class PlayService extends MediaBrowserServiceCompat
                 {
                     if(mediaSelection != null)
                     {
-                        Log.d(TAG_LOGS,"Processing songs case");
+                        Log.d(getClass().getSimpleName(),"Processing songs case");
                         List<String> columns = new ArrayList<>(Arrays.asList(
                                 MediaStore.MediaColumns._ID,
                                 MediaStore.MediaColumns.TITLE,
@@ -284,10 +239,10 @@ public class PlayService extends MediaBrowserServiceCompat
                             requestedColumns = options.getStringArray(EXTRA_COLUMNS);
                             requestedTypes = options.getIntArray(EXTRA_TYPES);
                         }
-                        Log.d(TAG_LOGS,"Added " + requestedColumns.length + " columns");
+                        Log.d(getClass().getSimpleName(),"Added " + requestedColumns.length + " columns");
                         MediaScanner.MediaScanResult results = scanner.subscan(SONGS_URI,
                                 pageFrom,pageTo,columns,mediaSelection,null);
-                        Log.d(TAG_LOGS,"Scan ended");
+                        Log.d(getClass().getSimpleName(),"Scan ended");
                         for(String[] row : results.getAll())
                         {
                             Bundle extras = new Bundle();
@@ -354,12 +309,12 @@ public class PlayService extends MediaBrowserServiceCompat
                         results.release();
                     }
                     else
-                        Log.d(TAG_LOGS,"Skipped songs query because media selection string is null");
+                        Log.d(getClass().getSimpleName(),"Skipped songs query because media selection string is null");
                     break;
                 }
                 case ID_ALBUMS:
                 {
-                    Log.d(TAG_LOGS,"Processing albums case");
+                    Log.d(getClass().getSimpleName(),"Processing albums case");
                     List<String> columns = new ArrayList<>(Arrays.asList(
                             MediaStore.Audio.Albums._ID,
                             MediaStore.Audio.Albums.ALBUM,
@@ -371,10 +326,10 @@ public class PlayService extends MediaBrowserServiceCompat
                         columns.addAll(Arrays.asList(requestedColumns = options.getStringArray(EXTRA_COLUMNS)));
                         requestedTypes = options.getIntArray(EXTRA_TYPES);
                     }
-                    Log.d(TAG_LOGS,"Added " + requestedColumns.length + " columns");
+                    Log.d(getClass().getSimpleName(),"Added " + requestedColumns.length + " columns");
                     MediaScanner.MediaScanResult results = scanner.subscan(ALBUMS_URI,
                             pageFrom,pageTo,columns,null,null);
-                    Log.d(TAG_LOGS,"Scan ended");
+                    Log.d(getClass().getSimpleName(),"Scan ended");
                     for(String[] row : results.getAll())
                     {
                         Bundle extras = new Bundle();
@@ -423,7 +378,7 @@ public class PlayService extends MediaBrowserServiceCompat
                 }
                 case ID_ARTISTS:
                 {
-                    Log.d(TAG_LOGS,"Processing artists case");
+                    Log.d(getClass().getSimpleName(),"Processing artists case");
                     List<String> columns = new ArrayList<>(Arrays.asList(
                             MediaStore.Audio.Artists._ID,
                             MediaStore.Audio.ArtistColumns.ARTIST,
@@ -435,10 +390,10 @@ public class PlayService extends MediaBrowserServiceCompat
                         columns.addAll(Arrays.asList(requestedColumns = options.getStringArray(EXTRA_COLUMNS)));
                         requestedTypes = options.getIntArray(EXTRA_TYPES);
                     }
-                    Log.d(TAG_LOGS,"Added " + requestedColumns.length + " columns");
+                    Log.d(getClass().getSimpleName(),"Added " + requestedColumns.length + " columns");
                     MediaScanner.MediaScanResult results = scanner.subscan(ARTISTS_URI,
                             pageFrom,pageTo,columns,null,null);
-                    Log.d(TAG_LOGS,"Scan ended");
+                    Log.d(getClass().getSimpleName(),"Scan ended");
                     for(String[] row : results.getAll())
                     {
                         Bundle extras = new Bundle();
@@ -487,7 +442,7 @@ public class PlayService extends MediaBrowserServiceCompat
                 }
                 case ID_GENRES:
                 {
-                    /*Log.d(TAG_LOGS,"Processing genres case");
+                    /*Log.d(getClass().getSimpleName(),"Processing genres case");
                     List<String> columns = new ArrayList<>(Arrays.asList(
                             MediaStore.Audio.Genres._ID,
                             MediaStore.Audio.Genres.NAME));
@@ -498,10 +453,10 @@ public class PlayService extends MediaBrowserServiceCompat
                         columns.addAll(Arrays.asList(requestedColumns = options.getStringArray(EXTRA_COLUMNS)));
                         requestedTypes = options.getIntArray(EXTRA_TYPES);
                     }
-                    Log.d(TAG_LOGS,"Added " + requestedColumns.length + " columns");
+                    Log.d(getClass().getSimpleName(),"Added " + requestedColumns.length + " columns");
                     MediaScanner.MediaScanResult results = scanner.subscan(GENRES_URI,
                             pageFrom,pageTo,columns,null,null);
-                    Log.d(TAG_LOGS,"Scan ended");
+                    Log.d(getClass().getSimpleName(),"Scan ended");
                     for(String[] row : results.getAll())
                     {
                         Bundle extras = new Bundle();
@@ -548,12 +503,12 @@ public class PlayService extends MediaBrowserServiceCompat
                     break;
                 }
             }
-            Log.d(TAG_LOGS,items.size() + " children found");
-            Log.d(TAG_LOGS,"Packet (items), from " + pageFrom + " to " + pageTo);
+            Log.d(getClass().getSimpleName(),items.size() + " children found");
+            Log.d(getClass().getSimpleName(),"Packet (items), from " + pageFrom + " to " + pageTo);
         }
         else
         {
-            Log.w(TAG_LOGS,"Permission " + READ_EXTERNAL_STORAGE + " not granted");
+            Log.w(getClass().getSimpleName(),"Permission " + READ_EXTERNAL_STORAGE + " not granted");
             items = new ArrayList<>();
         }
         result.sendResult(items);
@@ -574,7 +529,7 @@ public class PlayService extends MediaBrowserServiceCompat
 
         private void updateMetadata(String originalMediaId)
         {
-            Log.d(TAG_LOGS,"Updating metadata");
+            Log.d(getClass().getSimpleName(),"Updating metadata");
             MediaScanner scanner = new MediaScanner(getContentResolver());
             String title,description;
             MediaScanner.MediaScanResult result = scanner.subscan(SONGS_URI,1,new String[]{
@@ -611,8 +566,14 @@ public class PlayService extends MediaBrowserServiceCompat
                 });
                 player.start();
                 playNotif.setSmallIcon(R.drawable.ic_play_notification);
-                //playNotif.addAction(pause);
-                manager.notify(NOTIFICATION_STATUS,playNotif.build());
+                Notification n = playNotif.build();
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+                {
+                    Notification.Action[] a = new Notification.Action[1];
+                    a[0] = play;
+                    n.actions = a;
+                }
+                manager.notify(NOTIFICATION_STATUS,n);
                 if(thread != null)
                     thread.interrupt();
                 thread = new Thread(new Runnable(){
@@ -630,7 +591,7 @@ public class PlayService extends MediaBrowserServiceCompat
                             }
                             catch(Exception e)
                             {
-                                Log.d(TAG_LOGS,"Update state thread interrupted");
+                                Log.d(getClass().getSimpleName(),"Update state thread interrupted");
                             }
                         }
                     }
@@ -665,7 +626,7 @@ public class PlayService extends MediaBrowserServiceCompat
         {
             int index = mediaId.indexOf(";");
             final String id1 = mediaId.substring(0,index),id2 = mediaId.substring(index + 1);
-            Log.d(TAG_LOGS,"Trying to play media id " + mediaId + " (id1: " + id1 + ", id2: " + id2 + ")");
+            Log.d(getClass().getSimpleName(),"Trying to play media id " + mediaId + " (id1: " + id1 + ", id2: " + id2 + ")");
             onStop();
             player = new MediaPlayer();
             try
@@ -698,8 +659,14 @@ public class PlayService extends MediaBrowserServiceCompat
             {
                 player.pause();
                 playNotif.setSmallIcon(R.drawable.ic_pause_notification);
-                //playNotif.addAction(play);
-                manager.notify(NOTIFICATION_STATUS,playNotif.build());
+                Notification n = playNotif.build();
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+                {
+                    Notification.Action[] a = new Notification.Action[1];
+                    a[0] = pause;
+                    n.actions = a;
+                }
+                manager.notify(NOTIFICATION_STATUS,n);
                 thread.interrupt();
                 updateState();
             }
@@ -718,7 +685,7 @@ public class PlayService extends MediaBrowserServiceCompat
             }
             catch(Exception e)
             {
-                Log.d(TAG_LOGS,"Could not stop MediaPlayer");
+                Log.d(getClass().getSimpleName(),"Could not stop MediaPlayer");
             }
             manager.notify(NOTIFICATION_STATUS,notification);
         }
@@ -742,7 +709,7 @@ public class PlayService extends MediaBrowserServiceCompat
         }
     }
 
-    private NotificationCompat.Action play,pause;
+    private Notification.Action play,pause;
 
     @Override
     public void onCreate()
@@ -754,7 +721,7 @@ public class PlayService extends MediaBrowserServiceCompat
             songs = new ArrayList<>(prefs.getInt(KEY_SONGLIST_LAST_SIZE,100));
         else
             songs = new ArrayList<>();*/
-        mediaSession = new MediaSessionCompat(this,TAG_LOGS);
+        mediaSession = new MediaSessionCompat(this,getClass().getSimpleName(),new ComponentName(this,Intent.ACTION_MEDIA_BUTTON),null);
         manager = NotificationManagerCompat.from(this);
         stateBuilder = new PlaybackStateCompat.Builder().setActions(
                         PlaybackStateCompat.ACTION_PLAY |
@@ -767,7 +734,7 @@ public class PlayService extends MediaBrowserServiceCompat
         PendingIntent action = PendingIntent.getService(this,1,intent,PendingIntent.FLAG_CANCEL_CURRENT);
         PendingIntent pending = PendingIntent.getActivity(this,0,new Intent(this,MainActivity.class),PendingIntent.FLAG_UPDATE_CURRENT);
         notification = new NotificationCompat.Builder(this,CHANNEL_ID_INFO)
-                .setColor(prefs.getInt(getString(R.string.settings_notification_tint_key),0))
+                .setColor(prefs.getInt(getString(R.string.key_notification_tint),0))
                 .setSmallIcon(R.drawable.ic_player_notification)
                 .setContentTitle(getString(R.string.player_notification_title).replace("%s",getString(R.string.app_name)))
                 .setContentText(getString(R.string.player_notification_text).replace("%s",getString(R.string.app_name)))
@@ -782,24 +749,27 @@ public class PlayService extends MediaBrowserServiceCompat
                 .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
                         .setMediaSession(mediaSession.getSessionToken())
                         .setShowActionsInCompactView(0)
-                .setShowCancelButton(true)
-                .setCancelButtonIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(this,
+                        .setShowCancelButton(true)
+                        .setCancelButtonIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(this,
                         PlaybackStateCompat.ACTION_STOP)));
-        play = new NotificationCompat.Action(
-                android.R.drawable.ic_media_pause, getString(R.string.pause),
-                MediaButtonReceiver.buildMediaButtonPendingIntent(this,
-                        PlaybackStateCompat.ACTION_PLAY));
-        pause = new NotificationCompat.Action(
-                android.R.drawable.ic_media_play, getString(R.string.play),
-                MediaButtonReceiver.buildMediaButtonPendingIntent(this,
-                        PlaybackStateCompat.ACTION_PAUSE));
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+        {
+            play = new Notification.Action(
+                    android.R.drawable.ic_media_pause, getString(R.string.pause),
+                    MediaButtonReceiver.buildMediaButtonPendingIntent(this,
+                            PlaybackStateCompat.ACTION_PLAY));
+            pause = new Notification.Action(
+                    android.R.drawable.ic_media_play, getString(R.string.play),
+                    MediaButtonReceiver.buildMediaButtonPendingIntent(this,
+                            PlaybackStateCompat.ACTION_PAUSE));
+        }
         //scan();
-        Log.d(TAG_LOGS,"Service created");
+        Log.d(getClass().getSimpleName(),"Service created");
     }
 
     public void elaborateRequest(String what,Bundle args)
     {
-        Log.d(TAG_LOGS,"Elaborating request " + what + " in service");
+        Log.d(getClass().getSimpleName(),"Elaborating request " + what + " in service");
         if(args != null)
             args.setClassLoader(getClassLoader());
         switch(what)
@@ -835,7 +805,7 @@ public class PlayService extends MediaBrowserServiceCompat
             public void onScanStart(){
                 songs.clear();
                 manager.notify(NOTIFICATION_SCAN,notification);
-                Log.d(TAG_LOGS,"Scan started");
+                Log.d(getClass().getSimpleName(),"Scan started");
             }
 
             @Override
@@ -847,7 +817,7 @@ public class PlayService extends MediaBrowserServiceCompat
             public void onScanStop(){
                 manager.cancel(NOTIFICATION_SCAN);
                 prefs.edit().putInt(KEY_SONGLIST_LAST_SIZE,songs.size()).apply();
-                Log.d(TAG_LOGS,"Scan finished, items: " + songs.size());
+                Log.d(getClass().getSimpleName(),"Scan finished, items: " + songs.size());
             }
         });
         scanner.startScan();
@@ -856,7 +826,7 @@ public class PlayService extends MediaBrowserServiceCompat
     @Override
     public int onStartCommand(Intent intent,int flags,int startId)
     {
-        Log.d(TAG_LOGS,"Start command received");
+        Log.d(getClass().getSimpleName(),"Start command received");
         elaborateRequest(intent.getStringExtra(KEY_REQUEST),intent.getExtras());
         MediaButtonReceiver.handleIntent(mediaSession,intent);
         return super.onStartCommand(intent,flags,startId);
@@ -881,6 +851,6 @@ public class PlayService extends MediaBrowserServiceCompat
         super.onDestroy();
         mediaSession.release();
         manager.cancel(NOTIFICATION_STATUS);
-        Log.d(TAG_LOGS,"Service destroying");
+        Log.d(getClass().getSimpleName(),"Service destroying");
     }
 }

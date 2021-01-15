@@ -26,6 +26,7 @@ import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentFactory;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -41,7 +42,6 @@ import it.developing.ico2k2.luckyplayer.activities.base.BaseActivity;
 import it.developing.ico2k2.luckyplayer.dialogs.ConfirmDialog;
 import it.developing.ico2k2.luckyplayer.dialogs.DefaultDialog;
 
-import static it.developing.ico2k2.luckyplayer.Utils.TAG_LOGS;
 import static it.developing.ico2k2.luckyplayer.Utils.adapterMapsFromAdapterList;
 
 public class SettingsActivity extends BaseActivity
@@ -50,13 +50,13 @@ public class SettingsActivity extends BaseActivity
     public static final String ARGUMENT_INDEX = "index";
     public static final String LICENSE_APACHE_2_0 = "apache 2.0";
 
-    private PreferenceHeader[] headers =
+    private final PreferenceHeader[] headers =
     {
-        new PreferenceHeader(R.string.settings_mediafile,R.attr.ic_file,true,R.drawable.ic_file_material_dark,false),
-        new PreferenceHeader(R.string.settings_theme,R.attr.ic_image,true,R.drawable.ic_image_material_dark,false),
-        new PreferenceHeader(R.string.settings_advanced,R.attr.ic_settings,true,R.drawable.ic_settings_material_dark,false),
-        new PreferenceHeader(R.string.settings_licenses,R.attr.ic_license,true,R.drawable.ic_license_material_dark,false),
-        new PreferenceHeader(R.string.settings_about,R.attr.ic_info,true,R.drawable.ic_info_material_dark,false),
+        new PreferenceHeader(R.string.key_mediafile,R.attr.ic_file,true,R.drawable.ic_file_material_dark,false),
+        new PreferenceHeader(R.string.key_theme,R.attr.ic_image,true,R.drawable.ic_image_material_dark,false),
+        new PreferenceHeader(R.string.key_advanced,R.attr.ic_settings,true,R.drawable.ic_settings_material_dark,false),
+        new PreferenceHeader(R.string.key_licenses,R.attr.ic_license,true,R.drawable.ic_license_material_dark,false),
+        new PreferenceHeader(R.string.key_about,R.attr.ic_info,true,R.drawable.ic_info_material_dark,false),
     };
 
 
@@ -104,7 +104,7 @@ public class SettingsActivity extends BaseActivity
         });
         list.setAdapter(adapter);
         handleIntent(getIntent());
-        getMainSharedPreferences().edit().putInt(getString(R.string.settings_notification_tint_key),getColorPrimary()).apply();
+        getMainSharedPreferences().edit().putInt(getString(R.string.key_notification_tint),getColorPrimary()).apply();
     }
 
     @Override
@@ -127,7 +127,7 @@ public class SettingsActivity extends BaseActivity
                     index = extras.getInt(ARGUMENT_INDEX);
                 }
             }
-            Log.d(TAG_LOGS,"Settings: " + index);
+            Log.d(getClass().getSimpleName(),"Settings: " + index);
             View v = list.getChildAt(index);
             if(v == null)
             {
@@ -175,21 +175,26 @@ public class SettingsActivity extends BaseActivity
         Bundle bundle = new Bundle();
         bundle.putInt(ARGUMENT_PREFERENCE,headerTitle);
         bundle.putInt(ARGUMENT_INDEX,position);
+        FragmentFactory factory = activity.getSupportFragmentManager().getFragmentFactory();
+        String className;
         switch(headerTitle)
         {
-            case R.string.settings_mediafile:
-            case R.string.settings_advanced:
-            case R.string.settings_licenses:
+            case R.string.key_mediafile:
+            case R.string.key_advanced:
+            case R.string.key_licenses:
             {
-                fragment = SettingsPreferenceFragment.instantiate(activity,SettingsPreferenceFragment.class.getName(),bundle);
+                className = SettingsPreferenceFragment.class.getName();
                 break;
             }
             default:
             {
-                fragment = SettingsFragment.instantiate(activity,SettingsFragment.class.getName(),bundle);
+                className = SettingsFragment.class.getName();
             }
         }
+        fragment = activity.getSupportFragmentManager().getFragmentFactory().instantiate(activity.getClassLoader(),className);
+        fragment.setArguments(bundle);
         FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(android.R.anim.slide_in_left,android.R.anim.fade_out,android.R.anim.fade_in,android.R.anim.slide_out_right);
         transaction.replace(R.id.settings_frame,fragment);
         transaction.commit();
         activity.setTitle(headerTitle);
@@ -222,8 +227,13 @@ public class SettingsActivity extends BaseActivity
 
     protected class PreferenceAdapter extends RecyclerView.Adapter<ViewHolder>
     {
-        private PreferenceHeader[] list;
-        private int margin,background,backgroundSelected,selected = -1,textColor,textColorSelected;
+        private final PreferenceHeader[] list;
+        private final int margin;
+        private final int background;
+        private final int backgroundSelected;
+        private int selected = -1;
+        private final int textColor;
+        private final int textColorSelected;
         private OnPreferenceHeaderClickListener listener;
 
         // Provide a reference to the views for each data item
@@ -451,12 +461,12 @@ public class SettingsActivity extends BaseActivity
             int layout = 0;
             switch(preference)
             {
-                case R.string.settings_theme:
+                case R.string.key_theme:
                 {
                     layout = R.layout.preference_theme;
                     break;
                 }
-                case R.string.settings_about:
+                case R.string.key_about:
                 {
                     layout = R.layout.preference_about;
                     break;
@@ -478,7 +488,7 @@ public class SettingsActivity extends BaseActivity
                 parent.setPadding(0,0,0,0);
             switch(preference)
             {
-                case R.string.settings_theme:
+                case R.string.key_theme:
                 {
                     final SharedPreferences prefs = ((BaseActivity)getActivity()).getMainSharedPreferences();
                     final AppCompatSpinner themeSpinner = view.findViewById(R.id.theme_spinner);
@@ -500,11 +510,11 @@ public class SettingsActivity extends BaseActivity
                     }
                     SimpleAdapter adapter = new SimpleAdapter(getActivity(),adapterMapsFromAdapterList(items,LIST_TITLE),android.R.layout.simple_list_item_1,new String[]{LIST_TITLE},new int[]{android.R.id.text1});
                     themeSpinner.setAdapter(adapter);
-                    themeSpinner.setSelection(themes.indexOf(prefs.getInt(getString(R.string.settings_theme_key),0)));
+                    themeSpinner.setSelection(themes.indexOf(prefs.getInt(getString(R.string.key_theme),0)));
                     themeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
                         @Override
                         public void onItemSelected(AdapterView<?> parent,View v,int position,long id){
-                            int currentTheme = prefs.getInt(getString(R.string.settings_theme_key),0);
+                            int currentTheme = prefs.getInt(getString(R.string.key_theme),0);
                             if(currentTheme == themes.get(position))
                                 view.findViewById(R.id.theme_apply).setVisibility(View.GONE);
                             else
@@ -521,7 +531,7 @@ public class SettingsActivity extends BaseActivity
                     view.findViewById(R.id.theme_apply).setOnClickListener(new View.OnClickListener(){
                         @Override
                         public void onClick(View v){
-                            prefs.edit().putInt(getString(R.string.settings_theme_key),themes.get(themeSpinner.getSelectedItemPosition())).apply();
+                            prefs.edit().putInt(getString(R.string.key_theme),themes.get(themeSpinner.getSelectedItemPosition())).apply();
                             Intent intent = new Intent(getActivity(),getActivity().getClass());
                             intent.putExtra(ARGUMENT_PREFERENCE,preference);
                             intent.putExtra(ARGUMENT_INDEX,preferenceIndex);
@@ -531,7 +541,7 @@ public class SettingsActivity extends BaseActivity
                     });
                     break;
                 }
-                case R.string.settings_about:
+                case R.string.key_about:
                 {
                     Button playStore = view.findViewById(R.id.about_play_store);
                     Button share = view.findViewById(R.id.about_share);
@@ -598,17 +608,17 @@ public class SettingsActivity extends BaseActivity
             }
             switch(preference)
             {
-                case R.string.settings_mediafile:
+                case R.string.key_mediafile:
                 {
                     addPreferencesFromResource(R.xml.mediafile_settings);
                     break;
                 }
-                case R.string.settings_advanced:
+                case R.string.key_advanced:
                 {
                     addPreferencesFromResource(R.xml.advanced_settings);
                     break;
                 }
-                case R.string.settings_licenses:
+                case R.string.key_licenses:
                 {
                     addPreferencesFromResource(R.xml.preference_licenses);
                     break;
@@ -623,9 +633,9 @@ public class SettingsActivity extends BaseActivity
         {
             switch(preference)
             {
-                case R.string.settings_advanced:
+                case R.string.key_advanced:
                 {
-                    getPreferenceScreen().findPreference(getString(R.string.settings_delete_all_key))
+                    getPreferenceScreen().findPreference(getString(R.string.key_delete_all))
                             .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
                     {
                         @Override
@@ -646,7 +656,7 @@ public class SettingsActivity extends BaseActivity
                             return true;
                         }
                     });
-                    getPreferenceScreen().findPreference(getString(R.string.settings_prefs_data_key))
+                    getPreferenceScreen().findPreference(getString(R.string.key_prefs_data))
                             .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
                     {
                         @Override
@@ -658,7 +668,7 @@ public class SettingsActivity extends BaseActivity
                     });
                     break;
                 }
-                case R.string.settings_licenses:
+                case R.string.key_licenses:
                 {
                     int a;
                     for(a = 0; a < getPreferenceScreen().getPreferenceCount(); a++)

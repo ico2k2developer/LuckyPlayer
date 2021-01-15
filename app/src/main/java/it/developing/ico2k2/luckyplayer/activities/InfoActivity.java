@@ -26,7 +26,13 @@ import androidx.appcompat.widget.ShareActionProvider;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 import androidx.core.view.MenuItemCompat;
+import androidx.lifecycle.Observer;
 import androidx.palette.graphics.Palette;
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
 
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
@@ -46,13 +52,10 @@ import it.developing.ico2k2.luckyplayer.adapters.DetailsAdapter;
 import it.developing.ico2k2.luckyplayer.adapters.lib.ViewHandle;
 import it.developing.ico2k2.luckyplayer.dialogs.DefaultDialog;
 import it.developing.ico2k2.luckyplayer.fragments.DetailsFragment;
-import it.developing.ico2k2.luckyplayer.tasks.AlbumArtLoadThread;
-import it.developing.ico2k2.luckyplayer.tasks.AsyncThread;
-import it.developing.ico2k2.luckyplayer.tasks.ThreadCallback;
+import it.developing.ico2k2.luckyplayer.tasks.AlbumArtLoadWorker;
 
 import static it.developing.ico2k2.luckyplayer.Utils.EXTRA_URI;
 import static it.developing.ico2k2.luckyplayer.Utils.FILE_PROVIDER_AUTHORITY;
-import static it.developing.ico2k2.luckyplayer.Utils.TAG_LOGS;
 
 public class InfoActivity extends BaseActivity
 {
@@ -71,19 +74,6 @@ public class InfoActivity extends BaseActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbarLayout = findViewById(R.id.info_appbar_collapsingLayout);
         tagDetails = (DetailsFragment)getSupportFragmentManager().findFragmentById(R.id.info_details_tag);
-        /*tagDetails.setOnFragmentInitialized(new BaseFragment.OnFragmentInitialized(){
-            @Override
-            public void onInitialized(@NonNull View view){
-                tagDetails.setTitle(R.string.info_details_tag);
-            }
-        });
-        fileDetails = (DetailsFragment)getSupportFragmentManager().findFragmentById(R.id.info_details_file);
-        fileDetails.setOnFragmentInitialized(new BaseFragment.OnFragmentInitialized(){
-            @Override
-            public void onInitialized(@NonNull View view){
-                fileDetails.setTitle(R.string.info_details_file);
-            }
-        });*/
         toolbarLayout.setTitleEnabled(true);
 
         toolbar.setOnHierarchyChangeListener(new ViewGroup.OnHierarchyChangeListener(){
@@ -112,7 +102,7 @@ public class InfoActivity extends BaseActivity
         if(contentPath != null)
         {
             result = contentPath.toString();
-            Log.d(TAG_LOGS,"Original path: " + result);
+            Log.d(getClass().getSimpleName(),"Original path: " + result);
             result = contentPath.getPath();
             if(!new File(result).exists())
             {
@@ -132,7 +122,7 @@ public class InfoActivity extends BaseActivity
 
             }
         }
-        Log.d(TAG_LOGS,"Real path: " + result);
+        Log.d(getClass().getSimpleName(),"Real path: " + result);
         return result;
     }
 
@@ -202,34 +192,27 @@ public class InfoActivity extends BaseActivity
                 }
             });*/
             final AppCompatImageView imageView = findViewById(R.id.info_album_art);
-            AlbumArtLoadThread thread = new AlbumArtLoadThread(path,new ThreadCallback()
-            {
+            WorkManager manager = WorkManager.getInstance(this);
+            WorkRequest request = new OneTimeWorkRequest.Builder(AlbumArtLoadWorker.class).setInputData(
+                    new Data.Builder()
+                    .putString(AlbumArtLoadWorker.PARAM_URI_S,path)
+                    .build()).build();
+            manager.enqueue(request);
+            manager.getWorkInfoByIdLiveData(request.getId()).observe(this,new Observer<WorkInfo>(){
                 @Override
-                public void onThreadCreated(){
-                }
-
-                @Override
-                public void onProgressResult(Object result){
-
-                }
-
-                @Override
-                public void onThreadEnded(@Nullable Object result){
-                    if(result instanceof Bitmap)
-                    {
-                        Bitmap albumArt = (Bitmap)result;
-                        Palette.from(albumArt).generate(new Palette.PaletteAsyncListener(){
-                            @Override
-                            public void onGenerated(@Nullable Palette palette){
-                                if(palette != null)
-                                {
-                                    int mutedColor = palette.getMutedColor(R.attr.colorPrimary);
-                                    toolbarLayout.setContentScrimColor(mutedColor);
-                                }
+                public void onChanged(WorkInfo workInfo){
+                    Bitmap image = (Bitmap)workInfo.getOutputData().getKeyValueMap().get(AlbumArtLoadWorker.PARAM_BITMAP_O);
+                    Palette.from(image).generate(new Palette.PaletteAsyncListener(){
+                        @Override
+                        public void onGenerated(@Nullable Palette palette){
+                            if(palette != null)
+                            {
+                                int mutedColor = palette.getMutedColor(R.attr.colorPrimary);
+                                toolbarLayout.setContentScrimColor(mutedColor);
                             }
-                        });
-                        imageView.setImageBitmap(albumArt);
-                    }
+                        }
+                    });
+                    imageView.setImageBitmap(image);
                 }
             });
         }
@@ -296,7 +279,7 @@ public class InfoActivity extends BaseActivity
             path = getRealPath((Uri)intent.getParcelableExtra(Intent.EXTRA_STREAM));
         if(path == null)
             path = getRealPath(intent.getData());
-        Log.d(TAG_LOGS,"Path is: " + path);
+        Log.d(getClass().getSimpleName(),"Path is: " + path);
     }
 
     @Override
@@ -309,7 +292,7 @@ public class InfoActivity extends BaseActivity
         if(path == null)
             resolvePath(getIntent());
         Uri uri = FileProvider.getUriForFile(this,FILE_PROVIDER_AUTHORITY,new File(path));
-        Log.d(TAG_LOGS,"Path: " + uri);
+        Log.d(getClass().getSimpleName(),"Path: " + uri);
         intent.putExtra(Intent.EXTRA_STREAM,uri);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         sap.setShareIntent(intent);
@@ -332,59 +315,52 @@ public class InfoActivity extends BaseActivity
             case R.id.info_save_cover:
             case R.id.info_send_cover:
             {
-                AlbumArtLoadThread thread = new AlbumArtLoadThread(path,new ThreadCallback(){
-                    @Override public void onThreadCreated()
-                    {
-
-                    }
-
-                    @Override public void onProgressResult(Object result)
-                    {
-
-                    }
-
-                    @Override public void onThreadEnded(@Nullable Object result)
-                    {
-                        if(result instanceof Bitmap)
+                WorkManager manager = WorkManager.getInstance(this);
+                WorkRequest request = new OneTimeWorkRequest.Builder(AlbumArtLoadWorker.class).setInputData(
+                        new Data.Builder()
+                                .putString(AlbumArtLoadWorker.PARAM_URI_S,path)
+                                .build()).build();
+                manager.enqueue(request);
+                manager.getWorkInfoByIdLiveData(request.getId()).observe(this,new Observer<WorkInfo>(){
+                    @Override
+                    public void onChanged(WorkInfo workInfo){
+                        Bitmap image = (Bitmap)workInfo.getOutputData().getKeyValueMap().get(AlbumArtLoadWorker.PARAM_BITMAP_O);
+                        File dir;
+                        String name;
+                        if(id == R.id.info_send_cover)
                         {
-                            Bitmap albumArt = (Bitmap)result;
-                            File dir;
-                            String name;
-                            if(id == R.id.info_send_cover)
+                            dir = new File(getExternalCacheDir(),"covers");
+                            dir.mkdir();
+                            name = FILENAME_COVER;
+                        }
+                        else
+                        {
+                            dir = getExternalFilesDir(null);
+                            dir = new File(dir,"Download");
+                            name = getSupportActionBar().getTitle() + FILENAME_COVER.substring(FILENAME_COVER.lastIndexOf("."));
+                        }
+                        Log.d(getClass().getSimpleName(),"Cache dir: " + dir.getAbsolutePath());
+                        if(dir.isDirectory()){
+                            try
                             {
-                                dir = new File(getExternalCacheDir(),"covers");
-                                dir.mkdir();
-                                name = FILENAME_COVER;
+                                OutputStream os;
+                                File file = new File(dir,name);
+                                os = new FileOutputStream(file);
+                                image.compress(Bitmap.CompressFormat.PNG,100,os);
+                                os.flush();
+                                os.close();
+                                if(id == R.id.info_send_cover)
+                                {
+                                    Intent intent = new Intent(Intent.ACTION_SEND);
+                                    intent.setType("image/png");
+                                    intent.putExtra(Intent.EXTRA_STREAM,FileProvider.getUriForFile(InfoActivity.this,FILE_PROVIDER_AUTHORITY,file));
+                                    startActivity(intent);
+                                }
                             }
-                            else
+                            catch(Exception e)
                             {
-                                dir = getExternalFilesDir(null);
-                                dir = new File(dir,"Download");
-                                name = getSupportActionBar().getTitle() + FILENAME_COVER.substring(FILENAME_COVER.lastIndexOf("."));
-                            }
-                            Log.d(TAG_LOGS,"Cache dir: " + dir.getAbsolutePath());
-                            if(dir.isDirectory()){
-                                try
-                                {
-                                    OutputStream os;
-                                    File file = new File(dir,name);
-                                    os = new FileOutputStream(file);
-                                    albumArt.compress(Bitmap.CompressFormat.PNG,100,os);
-                                    os.flush();
-                                    os.close();
-                                    if(id == R.id.info_send_cover)
-                                    {
-                                        Intent intent = new Intent(Intent.ACTION_SEND);
-                                        intent.setType("image/png");
-                                        intent.putExtra(Intent.EXTRA_STREAM,FileProvider.getUriForFile(InfoActivity.this,FILE_PROVIDER_AUTHORITY,file));
-                                        startActivity(intent);
-                                    }
-                                }
-                                catch(Exception e)
-                                {
-                                    e.printStackTrace();
-                                    Toast.makeText(InfoActivity.this,R.string.error,Toast.LENGTH_SHORT).show();
-                                }
+                                e.printStackTrace();
+                                Toast.makeText(InfoActivity.this,R.string.error,Toast.LENGTH_SHORT).show();
                             }
                         }
                     }

@@ -26,8 +26,6 @@ import it.developing.ico2k2.luckyplayer.MediaBrowserDependent;
 import it.developing.ico2k2.luckyplayer.fragments.SmallPlayerFragment;
 import it.developing.ico2k2.luckyplayer.services.PlayService;
 
-import static it.developing.ico2k2.luckyplayer.Utils.TAG_LOGS;
-
 public abstract class BasePlayingActivity extends BaseActivity implements MediaBrowserDependent
 {
     private static final int ID_FRAME_LAYOUT = 0xFADE;
@@ -44,7 +42,7 @@ public abstract class BasePlayingActivity extends BaseActivity implements MediaB
 
     protected void requestPlayer()
     {
-        Log.d(TAG_LOGS,"Player requested, showing? " + isPlayerShowing());
+        Log.d(getClass().getSimpleName(),"Player requested, showing? " + isPlayerShowing());
         if(!isPlayerShowing())
         {
             if(playerFragment == null)
@@ -127,14 +125,14 @@ public abstract class BasePlayingActivity extends BaseActivity implements MediaB
             @Override
             public void onConnected()
             {
-                Log.d(TAG_LOGS,"MediaBrowser connected");
+                Log.d(getClass().getSimpleName(),"MediaBrowser connected");
                 connected = true;
                 try
                 {
                     MediaSessionCompat.Token token = browser.getSessionToken();
                     MediaControllerCompat mediaController = new MediaControllerCompat(BasePlayingActivity.this,token);
                     MediaControllerCompat.setMediaController(BasePlayingActivity.this, mediaController);
-                    Log.d(TAG_LOGS,"MediaController created");
+                    Log.d(getClass().getSimpleName(),"MediaController created");
 
                     mediaController.registerCallback(controllerCallback = new MediaControllerCompat.Callback()
                     {
@@ -170,7 +168,7 @@ public abstract class BasePlayingActivity extends BaseActivity implements MediaB
                         @Override
                         public void onMetadataChanged(MediaMetadataCompat metadata)
                         {
-                            Log.d(TAG_LOGS,"Metadata changed");
+                            Log.d(getClass().getSimpleName(),"Metadata changed");
                             requestPlayer();
                             playerFragment.setTimeTotal(metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION));
                             playerFragment.setTitleSubtitle(metadata.getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE),
@@ -194,61 +192,18 @@ public abstract class BasePlayingActivity extends BaseActivity implements MediaB
             @Override
             public void onConnectionSuspended()
             {
-                Log.d(TAG_LOGS,"MediaBrowser connection suspended");
+                Log.d(getClass().getSimpleName(),"MediaBrowser connection suspended");
                 connected = false;
             }
 
             @Override
             public void onConnectionFailed()
             {
-                Log.d(TAG_LOGS,"MediaBrowser connection failed");
+                Log.d(getClass().getSimpleName(),"MediaBrowser connection failed");
                 connected = false;
             }
         },null);
     }
-
-    /*public void requestScan()
-    {
-        if(ActivityCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE) !=  PackageManager.PERMISSION_GRANTED)
-            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUEST_SCAN);
-        else
-            MediaControllerCompat.getMediaController(this).getTransportControls().sendCustomAction(MESSAGE_SCAN_REQUESTED,null);
-    }*/
-
-    /*public void requestSongs(String requestCode)
-    {
-        if(ActivityCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE) !=  PackageManager.PERMISSION_GRANTED)
-        {
-            bundle.putString(Integer.toString(REQUEST_SONGS),requestCode);
-            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUEST_SONGS);
-        }
-        else
-        {
-            LuckyPlayer.LocalMail mail = new LuckyPlayer.LocalMail();
-            mail.setTag(MESSAGE_SONG_REQUEST);
-            Bundle extra = new Bundle();
-            extra.putString(KEY_REQUEST_CODE,requestCode);
-            mail.attach(extra);
-            sendMessageToService(mail);
-        }
-    }*/
-
-    /*@Override
-    public void onRequestPermissionsResult(int requestCode,@NonNull String[] permissions,@NonNull int[] grantResults)
-    {
-        if(grantResults.length > 0)
-        {
-            switch(requestCode)
-            {
-                case REQUEST_SCAN:
-                {
-                    if(grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                        requestScan();
-                    break;
-                }
-            }
-        }
-    }*/
 
     @Override
     public void onStart()

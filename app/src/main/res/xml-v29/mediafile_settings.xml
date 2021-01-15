@@ -8,37 +8,37 @@
         <SwitchPreference
             android:title="@string/settings_include_music"
             android:summary="@string/settings_include_music_sub"
-            android:key="@string/settings_include_music_key"/>
+            android:key="@string/key_include_music"/>
 
         <SwitchPreference
             android:title="@string/settings_include_podcast"
             android:summary="@string/settings_include_music_sub"
-            android:key="@string/settings_include_podcast_key"/>
+            android:key="@string/key_include_podcast"/>
 
         <SwitchPreference
             android:title="@string/settings_include_audiobook"
             android:summary="@string/settings_include_audiobook_sub"
-            android:key="@string/settings_include_audiobook_key"/>
+            android:key="@string/settings_include_audiobook"/>
 
         <SwitchPreference
             android:title="@string/settings_include_notification"
             android:summary="@string/settings_include_notification_sub"
-            android:key="@string/settings_include_notification_key"/>
+            android:key="@string/settings_include_notification"/>
 
         <SwitchPreference
             android:title="@string/settings_include_alarm"
             android:summary="@string/settings_include_alarm_sub"
-            android:key="@string/settings_include_alarm_key"/>
+            android:key="@string/settings_include_alarm"/>
 
         <SwitchPreference
             android:title="@string/settings_include_ringtone"
             android:summary="@string/settings_include_ringtone_sub"
-            android:key="@string/settings_include_ringtone_key"/>
+            android:key="@string/settings_include_ringtone"/>
 
         <SwitchPreference
             android:title="@string/settings_include_other"
             android:summary="@string/settings_include_other_sub"
-            android:key="@string/settings_include_other_key"/>
+            android:key="@string/settings_include_other"/>
 
     </PreferenceCategory>
 

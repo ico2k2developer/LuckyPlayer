@@ -10,8 +10,6 @@ import androidx.annotation.StyleRes;
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.base.BaseActivity;
 
-import static it.developing.ico2k2.luckyplayer.Utils.TAG_LOGS;
-
 public class MainActivity extends BaseActivity
 {
     public static final int REQUEST_CODE_INIT = 0x10;
@@ -22,7 +20,7 @@ public class MainActivity extends BaseActivity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        go = !getMainSharedPreferences().getBoolean(getString(R.string.settings_show_init_every_time_key),false);
+        go = !getMainSharedPreferences().getBoolean(getString(R.string.key_show_init_every_time),false);
     }
 
     @Override
@@ -31,7 +29,7 @@ public class MainActivity extends BaseActivity
         super.onResume();
         if(go)
         {
-            Log.d(TAG_LOGS,"Launching " + TabsActivity.class.getSimpleName());
+            Log.d(getClass().getSimpleName(),"Launching " + TabsActivity.class.getSimpleName());
             startActivity(new Intent(this,TabsActivity.class));
             finish();
         }
@@ -44,15 +42,15 @@ public class MainActivity extends BaseActivity
     public void setup()
     {
         SharedPreferences prefs = getMainSharedPreferences();
-        if(!prefs.getBoolean(getString(R.string.settings_initialized_key),false))
+        if(!prefs.getBoolean(getString(R.string.key_initialized),false))
         {
             SharedPreferences.Editor edit = prefs.edit();
-            edit.putBoolean(getString(R.string.settings_include_music_key),true);
-            edit.putBoolean(getString(R.string.settings_include_podcast_key),true);
-            edit.putInt(getString(R.string.settings_theme_key),THEME_DEFAULT);
-            edit.putInt(getString(R.string.settings_notification_tint_key),getColorPrimary());
-            edit.putInt(getString(R.string.settings_songlist_packet_size_key),250);
-            edit.putBoolean(getString(R.string.settings_initialized_key),true);
+            edit.putBoolean(getString(R.string.key_include_music),true);
+            edit.putBoolean(getString(R.string.key_include_podcast),true);
+            edit.putInt(getString(R.string.key_theme),THEME_DEFAULT);
+            edit.putInt(getString(R.string.key_notification_tint),getColorPrimary());
+            edit.putInt(getString(R.string.key_songlist_packet_size),250);
+            edit.putBoolean(getString(R.string.key_initialized),true);
             edit.apply();
         }
     }

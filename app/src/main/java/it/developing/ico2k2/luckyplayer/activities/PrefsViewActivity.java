@@ -25,8 +25,6 @@ import it.developing.ico2k2.luckyplayer.activities.base.BaseActivity;
 import it.developing.ico2k2.luckyplayer.adapters.base.BaseAdapter;
 import it.developing.ico2k2.luckyplayer.adapters.lib.ViewHandle;
 
-import static it.developing.ico2k2.luckyplayer.Utils.TAG_LOGS;
-
 public class PrefsViewActivity extends BaseActivity
 {
     PrefsViewAdapter adapter;
@@ -55,7 +53,7 @@ public class PrefsViewActivity extends BaseActivity
 
         PrefsViewAdapter(SharedPreferences preferences)
         {
-            Log.d(TAG_LOGS,"Creating adapter");
+            Log.d(getClass().getSimpleName(),"Creating adapter");
             prefs = preferences;
             data = new ArrayList<>(prefs.getAll().size());
             update();
@@ -90,7 +88,7 @@ public class PrefsViewActivity extends BaseActivity
 
         void update()
         {
-            Log.d(TAG_LOGS,"Updating adapter");
+            Log.d(getClass().getSimpleName(),"Updating adapter");
             Map<String,?> rawData = prefs.getAll();
             data.clear();
             data.ensureCapacity(rawData.size());
@@ -122,7 +120,7 @@ public class PrefsViewActivity extends BaseActivity
         @Override
         public int getItemCount()
         {
-            Log.d(TAG_LOGS,"Data size is " + data.size());
+            Log.d(getClass().getSimpleName(),"Data size is " + data.size());
             return data.size();
         }
 
@@ -130,17 +128,17 @@ public class PrefsViewActivity extends BaseActivity
         @NonNull
         public PrefHandle onCreateViewHolder(@NonNull ViewGroup parent,int viewType)
         {
-            Log.d(TAG_LOGS,"Creating view");
+            Log.d(getClass().getSimpleName(),"Creating view");
             LinearLayout layout = new LinearLayout(parent.getContext());
             layout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT));
-            Log.d(TAG_LOGS,"Created view");
+            Log.d(getClass().getSimpleName(),"Created view");
             return new PrefHandle(layout);
         }
 
         @Override
         public void onBindViewHolder(@NonNull PrefHandle holder,int position)
         {
-            Log.d(TAG_LOGS,"Binding view");
+            Log.d(getClass().getSimpleName(),"Binding view");
             super.onBindViewHolder(holder,position);
             Data d = data.get(position);
             holder.title.setText(d.title);
@@ -151,7 +149,7 @@ public class PrefsViewActivity extends BaseActivity
                 holder.text.setText(d.text);
                 holder.text.setVisibility(View.VISIBLE);
             }
-            Log.d(TAG_LOGS,"Bound view");
+            Log.d(getClass().getSimpleName(),"Bound view");
         }
     }
 }

@@ -2,16 +2,6 @@ apply plugin: 'com.android.application'
 
 android
 {
-    signingConfigs
-    {
-        release
-        {
-            keyAlias 'ico2k2'
-            keyPassword 'androiddeveloper'
-            storeFile file('C:/keystore.jks')
-            storePassword 'icolino2002'
-        }
-    }
     compileSdkVersion 30
     defaultConfig
     {
@@ -46,5 +36,8 @@ dependencies
     implementation 'com.readystatesoftware.systembartint:systembartint:1.0.4'
     implementation files('libs/jaudiotagger-2.2.4-SNAPSHOT.jar')
     implementation "androidx.media:media:1.2.1"
+    implementation 'androidx.work:work-runtime:2.4.0'
     implementation 'org.jetbrains:annotations:15.0'
+    implementation "androidx.room:room-runtime:2.2.6"
+    annotationProcessor "androidx.room:room-compiler:2.2.6"
 }

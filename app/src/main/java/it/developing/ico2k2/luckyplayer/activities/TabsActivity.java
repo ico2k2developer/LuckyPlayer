@@ -29,7 +29,6 @@ import it.developing.ico2k2.luckyplayer.services.PlayService;
 import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
 import static it.developing.ico2k2.luckyplayer.Utils.MESSAGE_DESTROY;
 import static it.developing.ico2k2.luckyplayer.Utils.REQUEST_CODE_PERMISSIONS;
-import static it.developing.ico2k2.luckyplayer.Utils.TAG_LOGS;
 import static it.developing.ico2k2.luckyplayer.Utils.permissionDialog;
 
 public class TabsActivity extends BasePlayingActivity
@@ -39,8 +38,8 @@ public class TabsActivity extends BasePlayingActivity
 
     public class PagerAdapter extends FragmentStatePagerAdapter
     {
-        private String[] tabs;
-        private String[] ids =
+        private final String[] tabs;
+        private final String[] ids =
         {
             PlayService.ID_SONGS,
             PlayService.ID_ALBUMS,
@@ -60,7 +59,7 @@ public class TabsActivity extends BasePlayingActivity
         @NonNull
         public Fragment getItem(int i)
         {
-            Log.d(TAG_LOGS,"Loading fragment " + i);
+            Log.d(getClass().getSimpleName(),"Loading fragment " + i);
             return SongListFragment.create(ids[i]);
         }
 
@@ -94,7 +93,7 @@ public class TabsActivity extends BasePlayingActivity
 
     void buildTransportControls()
     {
-        Log.d(TAG_LOGS,"Building controls");
+        Log.d(getClass().getSimpleName(),"Building controls");
         requestPlayer();
         // Grab the view for the play/pause button
         /*playPause = (ImageView) findViewById(R.id.play_pause);
@@ -129,13 +128,13 @@ public class TabsActivity extends BasePlayingActivity
                 @Override
                 public void onMetadataChanged(MediaMetadataCompat metadata)
                 {
-                    Log.d(TAG_LOGS,"MediaController metadata changed");
+                    Log.d(getClass().getSimpleName(),"MediaController metadata changed");
                 }
 
                 @Override
                 public void onPlaybackStateChanged(PlaybackStateCompat state)
                 {
-                    Log.d(TAG_LOGS,"MediaController playback state changed");
+                    Log.d(getClass().getSimpleName(),"MediaController playback state changed");
                 }
             };
 
@@ -168,7 +167,7 @@ public class TabsActivity extends BasePlayingActivity
                                 Manifest.permission.READ_EXTERNAL_STORAGE,
                                 REQUEST_CODE_PERMISSIONS,
                                 getString(R.string.permission_reason_data),
-                                getString(R.string.settings_permission_data_no_more_key));
+                                getString(R.string.key_permission_data_no_more));
 
                     break;
                 }

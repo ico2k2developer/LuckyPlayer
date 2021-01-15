@@ -49,19 +49,19 @@
     <string name="google_play_store_package" formatted="false" translatable="false">com.android.vending</string>
     <string name="google_play_store_url" formatted="false" translatable="false">http://play.google.com/store/apps/details?id=it.developing.ico2k2.luckyplayer</string>
     <string name="app_about" formatted="false">%s is a great music player. It has many features that you\'ll enjoy</string>
-    <string name="settings_about" formatted="false">About</string>
+    <string name="key_about" formatted="false">About</string>
     <string name="continue_" formatted="false">Continue</string>
     <string name="delete" formatted="false">Delete</string>
-    <string name="settings_advanced" formatted="false">Advanced settings</string>
+    <string name="key_advanced" formatted="false">Advanced settings</string>
     <string name="restore_formats" formatted="false">Restore default formats</string>
-    <string name="settings_theme" formatted="false">Theme</string>
-    <string name="settings_category_data" formatted="false">Data</string>
-    <string name="settings_delete_all" formatted="false">Delete all data</string>
-    <string name="settings_delete_all_sub" formatted="false">Delete all application\'s own data</string>
-    <string name="settings_prefs_data" formatted="false">Settings registry</string>
-    <string name="settings_prefs_data_sub" formatted="false">View all the settings values</string>
+    <string name="key_theme" formatted="false">Theme</string>
+    <string name="key_category_data" formatted="false">Data</string>
+    <string name="key_delete_all" formatted="false">Delete all data</string>
+    <string name="key_delete_all_sub" formatted="false">Delete all application\'s own data</string>
+    <string name="key_prefs_data" formatted="false">Settings registry</string>
+    <string name="key_prefs_data_sub" formatted="false">View all the settings values</string>
     <string name="dialog_confirm_message_default" formatted="false">Do you confirm?</string>
-    <string name="settings_theme_hint" formatted="false">Here you can choose which theme the app will use. It will be applied at the next app launch</string>
+    <string name="key_theme_hint" formatted="false">Here you can choose which theme the app will use. It will be applied at the next app launch</string>
     <string name="app_about_version" formatted="false">Version name: %s\nVersion code: %s</string>
     <string name="info_notification_channel" formatted="false">Service notifications</string>
     <string name="status_notification_channel" formatted="false">Status notification</string>
@@ -71,22 +71,22 @@
     <string name="player_notification_title" formatted="false">%s is active</string>
     <string name="player_notification_text" formatted="false">%s is running background</string>
     <string name="song_show_details" formatted="false">Show details</string>
-    <string name="settings_mediafile" formatted="false">Media files</string>
-    <string name="settings_mediafile_category" formatted="false">Media files</string>
-    <string name="settings_include_alarm" formatted="false">Include alarms</string>
-    <string name="settings_include_alarm_sub" formatted="false">Include alarms in media scan</string>
-    <string name="settings_include_audiobook" formatted="false">Include audiobooks</string>
-    <string name="settings_include_audiobook_sub" formatted="false">Include audiobooks in media scan</string>
-    <string name="settings_include_music" formatted="false">Include music</string>
-    <string name="settings_include_music_sub" formatted="false">Include music in media scan</string>
-    <string name="settings_include_notification" formatted="false">Include notifications</string>
-    <string name="settings_include_notification_sub" formatted="false">Include notifications in media scan</string>
-    <string name="settings_include_podcast" formatted="false">Include podcast</string>
-    <string name="settings_include_podcast_sub" formatted="false">Include podcast in media scan</string>
-    <string name="settings_include_ringtone" formatted="false">Include ringtones</string>
-    <string name="settings_include_ringtone_sub" formatted="false">Include ringtones in media scan</string>
-    <string name="settings_include_other" formatted="false">Include other kinds of media files</string>
-    <string name="settings_include_other_sub" formatted="false">Include other kinds of media files in media scan</string>
+    <string name="key_mediafile" formatted="false">Media files</string>
+    <string name="key_mediafile_category" formatted="false">Media files</string>
+    <string name="key_include_alarm" formatted="false">Include alarms</string>
+    <string name="key_include_alarm_sub" formatted="false">Include alarms in media scan</string>
+    <string name="key_include_audiobook" formatted="false">Include audiobooks</string>
+    <string name="key_include_audiobook_sub" formatted="false">Include audiobooks in media scan</string>
+    <string name="key_include_music" formatted="false">Include music</string>
+    <string name="key_include_music_sub" formatted="false">Include music in media scan</string>
+    <string name="key_include_notification" formatted="false">Include notifications</string>
+    <string name="key_include_notification_sub" formatted="false">Include notifications in media scan</string>
+    <string name="key_include_podcast" formatted="false">Include podcast</string>
+    <string name="key_include_podcast_sub" formatted="false">Include podcast in media scan</string>
+    <string name="key_include_ringtone" formatted="false">Include ringtones</string>
+    <string name="key_include_ringtone_sub" formatted="false">Include ringtones in media scan</string>
+    <string name="key_include_other" formatted="false">Include other kinds of media files</string>
+    <string name="key_include_other_sub" formatted="false">Include other kinds of media files in media scan</string>
     <string name="systemMediaPath" formatted="false" translatable="false">system/media/audio</string>
     <string name="refresh_songlist" formatted="false">Refresh song list</string>
     <string name="show_every_time" formatted="false">Show this every time</string>
@@ -101,7 +101,7 @@
     <string name="play" formatted="false">Play</string>
     <string name="play_media" formatted="false">Play media</string>
     <string name="pause" formatted="false">Pause</string>
-    <string name="settings_licenses" formatted="false">Licenses</string>
+    <string name="key_licenses" formatted="false">Licenses</string>
     <string name="stream" formatted="false">Media stream</string>
     <string name="stream_url" formatted="false">Stream URL</string>
     <string name="search_song" formatted="false">Search a song</string>
@@ -134,9 +134,9 @@
     <string name="song_play_background" formatted="false">Play in background</string>
     <string name="wait_end_enable" formatted="false">Stop at song end</string>
     <string name="wait_end_disable" formatted="false">Don\'t stop at song end</string>
-    <string name="settings_category_debug" formatted="false">Debug</string>
-    <string name="settings_compatibility_mode" formatted="false">Compatibility mode</string>
-    <string name="settings_compatibility_mode_sub" formatted="false">Enable this in case of crashes or other type of issues</string>
+    <string name="key_category_debug" formatted="false">Debug</string>
+    <string name="key_compatibility_mode" formatted="false">Compatibility mode</string>
+    <string name="key_compatibility_mode_sub" formatted="false">Enable this in case of crashes or other type of issues</string>
     <string name="info_details_tag" formatted="false">Tag</string>
     <string name="info_details_file" formatted="false">File</string>
     <string name="theme_current" formatted="false">Current theme</string>
@@ -148,34 +148,6 @@
     <string name="description_album">%s1, %s2 songs</string>
     <string name="description_artist">%s1 albums, %s2 songs</string>
     <string name="description_year">%s1 artists, %s2 albums, %s3 songs</string>
-
-    <!-- Preference Keys -->
-
-    <string name="settings_include_music_key" formatted="false" translatable="false">include music</string>
-    <string name="settings_include_podcast_key" formatted="false" translatable="false">include podcast</string>
-    <string name="settings_include_alarm_key" formatted="false" translatable="false">include alarm</string>
-    <string name="settings_include_notification_key" formatted="false" translatable="false">include notification</string>
-    <string name="settings_include_audiobook_key" formatted="false" translatable="false">include audiobook</string>
-    <string name="settings_include_ringtone_key" formatted="false" translatable="false">include ringtone</string>
-    <string name="settings_include_other_key" formatted="false" translatable="false">include other</string>
-    <string name="settings_prefs_data_key" formatted="false" translatable="false">prefs data</string>
-    <string name="settings_delete_all_key" formatted="false" translatable="false">delete all</string>
-    <string name="settings_initialized_key" formatted="false" translatable="false">initialized</string>
-    <string name="settings_data_initialized_key" formatted="false" translatable="false">data initialized</string>
-    <string name="settings_theme_key" formatted="false" translatable="false">theme</string>
-    <string name="settings_notification_tint_key" formatted="false" translatable="false">notification tint</string>
-    <string name="settings_songlist_packet_size_key" formatted="false" translatable="false">songlist packet size</string>
-    <string name="settings_show_init_every_time_key" formatted="false" translatable="false">show init every time</string>
-    <string name="settings_permission_data_no_more_key" formatted="false" translatable="false">no more data permission</string>
-
-    <!--
-        public static final String KEY_INITIALIZED = "initialized";
-    public static final String KEY_DATA_INITIALIZED = "data initialized";
-    public static final String KEY_SYSTEM_MEDIA = "system media";
-    public static final String KEY_THEME = "theme";
-    public static final String KEY_NOTIFICATION_TINT = "notification tint";
-    public static final String KEY_SONGLIST_PACKET_SIZE = "songlist packet size";
-    -->
 
     <string-array name="info_details_tag_titles">
         <item>Acoustic fingerprint</item>

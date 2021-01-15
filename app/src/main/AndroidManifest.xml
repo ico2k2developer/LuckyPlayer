@@ -117,8 +117,7 @@
         -->
         <service
             android:name=".services.PlayService"
-            android:exported="true"
-            android:process=":playProcess">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService" />
                 <action android:name="android.intent.action.MEDIA_BUTTON" />

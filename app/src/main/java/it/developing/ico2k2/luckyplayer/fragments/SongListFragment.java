@@ -48,7 +48,6 @@ import static android.support.v4.media.MediaBrowserCompat.EXTRA_PAGE;
 import static android.support.v4.media.MediaBrowserCompat.EXTRA_PAGE_SIZE;
 import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
 import static it.developing.ico2k2.luckyplayer.Utils.REQUEST_CODE_PERMISSIONS;
-import static it.developing.ico2k2.luckyplayer.Utils.TAG_LOGS;
 import static it.developing.ico2k2.luckyplayer.Utils.goToAppSettingsPageForPermission;
 import static it.developing.ico2k2.luckyplayer.services.PlayService.ARG_LUCKY;
 import static it.developing.ico2k2.luckyplayer.services.PlayService.ID_ALBUMS;
@@ -74,7 +73,7 @@ public class SongListFragment extends BaseFragment
 
     public static SongListFragment create(String root)
     {
-        Log.d(TAG_LOGS,"Creating new fragment, root: " + root);
+        Log.d(SongListFragment.class.getSimpleName(),"Creating new fragment, root: " + root);
         SongListFragment fragment = new SongListFragment();
         Bundle args = new Bundle();
         args.putString(ARG_ROOT,root);
@@ -109,7 +108,7 @@ public class SongListFragment extends BaseFragment
                 contextClickPosition = position;
             }
         });
-        Log.d(TAG_LOGS,"Fragment created, root: " + root);
+        Log.d(getClass().getSimpleName(),"Fragment created, root: " + root);
     }
 
     @Override
@@ -149,7 +148,7 @@ public class SongListFragment extends BaseFragment
         layout.setOrientation(LinearLayoutCompat.VERTICAL);
         layout.setGravity(Gravity.CENTER);
         layout.addView(list);
-        Log.d(TAG_LOGS,"Creating fragment's views, root: " + root + ", is list null? " + (list == null));
+        Log.d(getClass().getSimpleName(),"Creating fragment's views, root: " + root + ", is list null? " + (list == null));
         return layout;
     }
 
@@ -165,13 +164,13 @@ public class SongListFragment extends BaseFragment
         {
             e.printStackTrace();
         }
-        Log.d(TAG_LOGS,"Fragment's views created, root: " + root);
+        Log.d(getClass().getSimpleName(),"Fragment's views created, root: " + root);
     }
 
     public void requestItems() throws JSONException{
         JSONObject json = new JSONObject();
         json.put(EXTRA_PAGE,0);
-        json.put(EXTRA_PAGE_SIZE,PreferenceManager.getDefaultSharedPreferences(getContext()).getInt(getString(R.string.settings_songlist_packet_size_key),250));
+        json.put(EXTRA_PAGE_SIZE,PreferenceManager.getDefaultSharedPreferences(getContext()).getInt(getString(R.string.key_songlist_packet_size),250));
         JSONArray a = new JSONArray();
         JSONArray b = new JSONArray();
         Class c = null;
@@ -217,7 +216,7 @@ public class SongListFragment extends BaseFragment
         json.put(PlayService.EXTRA_COLUMNS,a);
         json.put(PlayService.EXTRA_TYPES,b);
         String id = ARG_LUCKY + root + json.toString();
-        Log.d(TAG_LOGS,"Subscribing to " + id + ", page: " + json.getInt(EXTRA_PAGE));
+        Log.d(getClass().getSimpleName(),"Subscribing to " + id + ", page: " + json.getInt(EXTRA_PAGE));
         final MediaBrowserCompat mediaBrowser = ((MediaBrowserDependent)getActivity()).getMediaBrowser();
         adapter.clear();
         mediaBrowser.subscribe(id,new MediaBrowserCompat.SubscriptionCallback(){
@@ -225,7 +224,7 @@ public class SongListFragment extends BaseFragment
             public void onChildrenLoaded(@NonNull String parentId,@NonNull List<MediaBrowserCompat.MediaItem> children,@NonNull Bundle oldOptions){
                 try
                 {
-                    Log.d(TAG_LOGS,"Loading " + children.size() + " children from fragment, id: " + parentId);
+                    Log.d(getClass().getSimpleName(),"Loading " + children.size() + " children from fragment, id: " + parentId);
                     JSONObject json = new JSONObject(parentId.substring((ARG_LUCKY + root).length()));
                     int page = json.getInt(EXTRA_PAGE);
                     int size = json.getInt(EXTRA_PAGE_SIZE);
@@ -246,12 +245,12 @@ public class SongListFragment extends BaseFragment
                     if(children.size() == size)
                     {
                         json.put(EXTRA_PAGE,page + 1);
-                        Log.d(TAG_LOGS,"Subscribing again to " + parentId + ", page: " + json.getInt(EXTRA_PAGE));
+                        Log.d(getClass().getSimpleName(),"Subscribing again to " + parentId + ", page: " + json.getInt(EXTRA_PAGE));
                         mediaBrowser.subscribe(ARG_LUCKY + root + json.toString(),this);
                     }
                     else
                     {
-                        Log.d(TAG_LOGS,"Children load ended");
+                        Log.d(getClass().getSimpleName(),"Children load ended");
                         mediaBrowser.unsubscribe(parentId,this);
                         updateList();
                     }
@@ -264,7 +263,7 @@ public class SongListFragment extends BaseFragment
 
             @Override
             public void onError(@NonNull String parentId,@NonNull Bundle options){
-                Log.d(TAG_LOGS,"Error occurred when trying to load children at id: " +
+                Log.d(getClass().getSimpleName(),"Error occurred when trying to load children at id: " +
                         parentId + ", page " + options.getInt(EXTRA_PAGE));
                 mediaBrowser.unsubscribe(parentId,this);
                 updateList();
@@ -312,7 +311,7 @@ public class SongListFragment extends BaseFragment
             if(ContextCompat.checkSelfPermission(getContext(),Manifest.permission.READ_EXTERNAL_STORAGE) == PERMISSION_GRANTED)
             {
                 label.setText(R.string.no_songs_found);
-                button.setText(getString(R.string.no_songs_found_button).replace("%s",getString(R.string.settings_mediafile)));
+                button.setText(getString(R.string.no_songs_found_button).replace("%s",getString(R.string.key_mediafile)));
             }
             else
             {

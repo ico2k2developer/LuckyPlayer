@@ -1,153 +1,154 @@
 <resources>
 
+    <string name="info_activity_title" formatted="false" translatable="false">%s - %s</string>
+    <string name="app_about" formatted="false">%s is a great music player. It has many features that you\'ll enjoy</string>
+    <string name="app_about_share" formatted="false">Try %s! It\'s a great music player!\n%s</string>
+    <string name="app_about_version" formatted="false">Version name: %s\nVersion code: %s</string>
     <string name="app_name" formatted="false" translatable="false">Lucky Player 2.0</string>
+    <string name="beta_pick" formatted="false">Pick file</string>
+    <string name="close" formatted="false">Close</string>
+    <string name="color_accent" formatted="false">Accent color</string>
+    <string name="color_primary" formatted="false">Primary color</string>
+    <string name="color_primary_dark" formatted="false">Primary dark color</string>
+    <string name="continue_" formatted="false">Continue</string>
+    <string name="copied" formatted="false">Copied</string>
+    <string name="copy" formatted="false">Copy</string>
+    <string name="delete" formatted="false">Delete</string>
+    <string name="description_album">%s1, %s2 songs</string>
+    <string name="description_artist">%s1 albums, %s2 songs</string>
+    <string name="description_year">%s1 artists, %s2 albums, %s3 songs</string>
+    <string name="dialog_confirm_message_default" formatted="false">Do you confirm?</string>
+    <string name="duration_format_long" formatted="false">%d2:%d1 (%d0 milliseconds)</string>
+    <string name="elements" formatted="false">Elements</string>
+    <string name="error" formatted="false">An error occurred</string>
     <string name="exit" formatted="false">Exit</string>
-    <string name="info_notavailable" formatted="false">Unavailable info</string>
-    <string name="song_info" formatted="false">View details</string>
-    <string name="song_play" formatted="false">Play</string>
-    <string name="activity_info_title" formatted="false" translatable="false">%s - %s</string>
-    <string name="info_tag_category" formatted="false">Tag</string>
-    <string name="info_quality_category" formatted="false">Quality</string>
-    <string name="info_other_info_category" formatted="false">Other info</string>
-    <string name="info_nocover" formatted="false">No album cover</string>
-    <string name="info_title" formatted="false">Title</string>
     <string name="info_album" formatted="false">Album</string>
     <string name="info_albumartist" formatted="false">Album artist</string>
     <string name="info_artist" formatted="false">Artist</string>
     <string name="info_author" formatted="false">Author</string>
+    <string name="info_bitrate" formatted="false">Bitrate</string>
     <string name="info_cd_track" formatted="false">Track number</string>
     <string name="info_compilation" formatted="false">Part of a compilation</string>
     <string name="info_composer" formatted="false">Composer</string>
     <string name="info_date" formatted="false">Release date</string>
+    <string name="info_details_file" formatted="false">File</string>
+    <string name="info_details_tag" formatted="false">Tag</string>
     <string name="info_disc_number" formatted="false">Disk number</string>
     <string name="info_duration" formatted="false">Duration</string>
+    <string name="info_format" formatted="false">File format</string>
     <string name="info_genre" formatted="false">Genre</string>
+    <string name="info_mime" formatted="false">Mime type</string>
+    <string name="info_nocover" formatted="false">No album cover</string>
+    <string name="info_notavailable" formatted="false">Unavailable info</string>
+    <string name="info_notification_channel" formatted="false">Service notifications</string>
+    <string name="info_other_info_category" formatted="false">Other info</string>
+    <string name="info_quality_category" formatted="false">Quality</string>
+    <string name="info_tag_category" formatted="false">Tag</string>
+    <string name="info_title" formatted="false">Title</string>
+    <string name="info_uri" formatted="false">File uri</string>
     <string name="info_writer" formatted="false">Writer</string>
     <string name="info_year" formatted="false">Release year</string>
-    <string name="info_bitrate" formatted="false">Bitrate</string>
-    <string name="info_bitrate_sub" formatted="false" translatable="false">%d1 kbps</string>
-    <string name="share" formatted="false">Share</string>
-    <string name="saved" formatted="false">Saved</string>
-    <string name="save_cover" formatted="false">Save cover to Download</string>
-    <string name="send_cover" formatted="false">Share cover</string>
-    <string name="duration_format" formatted="false" translatable="false">%d2:%d1</string>
-    <string name="duration_format_hour" formatted="false" translatable="false">%d3:%d2:%d1</string>
-    <string name="duration_format_ms" formatted="false" translatable="false">%d1 ms</string>
-    <string name="duration_format_long" formatted="false">%d2:%d1 (%d0 milliseconds)</string>
-    <string name="beta_pick" formatted="false">Pick file</string>
-    <string name="error" formatted="false">An error occurred</string>
-    <string name="info_uri" formatted="false">File uri</string>
-    <string name="info_mime" formatted="false">Mime type</string>
-    <string name="info_format" formatted="false">File format</string>
-    <string name="copied" formatted="false">Copied</string>
-    <string name="copy" formatted="false">Copy</string>
-    <string name="yes" formatted="false">Yes</string>
-    <string name="no" formatted="false">No</string>
-    <string name="settings" formatted="false">Settings</string>
-    <string name="close" formatted="false">Close</string>
-    <string name="app_about_share" formatted="false">Try %s! It\'s a great music player!\n%s</string>
-    <string name="google_play_store_package" formatted="false" translatable="false">com.android.vending</string>
-    <string name="google_play_store_url" formatted="false" translatable="false">http://play.google.com/store/apps/details?id=it.developing.ico2k2.luckyplayer</string>
-    <string name="app_about" formatted="false">%s is a great music player. It has many features that you\'ll enjoy</string>
-    <string name="key_about" formatted="false">About</string>
-    <string name="continue_" formatted="false">Continue</string>
-    <string name="delete" formatted="false">Delete</string>
-    <string name="key_advanced" formatted="false">Advanced settings</string>
-    <string name="restore_formats" formatted="false">Restore default formats</string>
-    <string name="key_theme" formatted="false">Theme</string>
-    <string name="key_category_data" formatted="false">Data</string>
-    <string name="key_delete_all" formatted="false">Delete all data</string>
-    <string name="key_delete_all_sub" formatted="false">Delete all application\'s own data</string>
-    <string name="key_prefs_data" formatted="false">Settings registry</string>
-    <string name="key_prefs_data_sub" formatted="false">View all the settings values</string>
-    <string name="dialog_confirm_message_default" formatted="false">Do you confirm?</string>
-    <string name="key_theme_hint" formatted="false">Here you can choose which theme the app will use. It will be applied at the next app launch</string>
-    <string name="app_about_version" formatted="false">Version name: %s\nVersion code: %s</string>
-    <string name="info_notification_channel" formatted="false">Service notifications</string>
-    <string name="status_notification_channel" formatted="false">Status notification</string>
+    <string name="invalid" formatted="false">Invalid!</string>
+    <string name="logs" formatted="false">Logs</string>
+    <string name="logs_clear" formatted="false">Clear logs</string>
     <string name="main_notification_channel" formatted="false">Most important notifications</string>
-    <string name="scan_notification_title" formatted="false">Searching&#8230;</string>
-    <string name="scan_notification_text" formatted="false">Looking for audio files</string>
-    <string name="player_notification_title" formatted="false">%s is active</string>
-    <string name="player_notification_text" formatted="false">%s is running background</string>
-    <string name="song_show_details" formatted="false">Show details</string>
-    <string name="key_mediafile" formatted="false">Media files</string>
-    <string name="key_mediafile_category" formatted="false">Media files</string>
-    <string name="key_include_alarm" formatted="false">Include alarms</string>
-    <string name="key_include_alarm_sub" formatted="false">Include alarms in media scan</string>
-    <string name="key_include_audiobook" formatted="false">Include audiobooks</string>
-    <string name="key_include_audiobook_sub" formatted="false">Include audiobooks in media scan</string>
-    <string name="key_include_music" formatted="false">Include music</string>
-    <string name="key_include_music_sub" formatted="false">Include music in media scan</string>
-    <string name="key_include_notification" formatted="false">Include notifications</string>
-    <string name="key_include_notification_sub" formatted="false">Include notifications in media scan</string>
-    <string name="key_include_podcast" formatted="false">Include podcast</string>
-    <string name="key_include_podcast_sub" formatted="false">Include podcast in media scan</string>
-    <string name="key_include_ringtone" formatted="false">Include ringtones</string>
-    <string name="key_include_ringtone_sub" formatted="false">Include ringtones in media scan</string>
-    <string name="key_include_other" formatted="false">Include other kinds of media files</string>
-    <string name="key_include_other_sub" formatted="false">Include other kinds of media files in media scan</string>
-    <string name="systemMediaPath" formatted="false" translatable="false">system/media/audio</string>
-    <string name="refresh_songlist" formatted="false">Refresh song list</string>
-    <string name="show_every_time" formatted="false">Show this every time</string>
-    <string name="songs_count" formatted="false">%d1 songs</string>
-    <string name="songs_sum" formatted="false">Total time: %s</string>
-    <string name="saving" formatted="false">Saving&#8230;\n\nBig images may take long time to save</string>
+    <string name="no" formatted="false">No</string>
     <string name="no_songs_found" formatted="false">No media files found! Maybe changing media scan settings helps</string>
     <string name="no_songs_found_button" formatted="false">Go to %s</string>
     <string name="no_songs_permission" formatted="false">Local data access permission has not been granted!</string>
     <string name="no_songs_permission_button" formatted="false">Grant permission</string>
-    <string name="stop_play_service" formatted="false">Stop</string>
-    <string name="play" formatted="false">Play</string>
-    <string name="play_media" formatted="false">Play media</string>
     <string name="pause" formatted="false">Pause</string>
-    <string name="key_licenses" formatted="false">Licenses</string>
-    <string name="stream" formatted="false">Media stream</string>
-    <string name="stream_url" formatted="false">Stream URL</string>
-    <string name="search_song" formatted="false">Search a song</string>
-    <string name="search_song_hint" formatted="false">Type song\'s name</string>
-    <string name="search_category" formatted="false">Songs</string>
-    <string name="tab_songs" formatted="false">Songs</string>
-    <string name="tab_albums" formatted="false">Albums</string>
-    <string name="tab_artists" formatted="false">Artists</string>
-    <string name="tab_years" formatted="false">Years</string>
-    <string name="invalid" formatted="false">Invalid!</string>
-    <string name="playlist" formatted="false">Play queue</string>
-    <string name="tools" formatted="false">Tools</string>
-    <string name="elements" formatted="false">Elements</string>
-    <string name="theme_message" formatted="false">New theme will be applied when you exit the settings page</string>
-    <string name="theme_apply" formatted="false">Apply</string>
-    <string name="logs" formatted="false">Logs</string>
-    <string name="logs_clear" formatted="false">Clear logs</string>
-    <string name="share_songlist" formatted="false">Share songs list</string>
-    <string name="share_albumlist" formatted="false">Share albums list</string>
-    <string name="share_artistlist" formatted="false">Share artists list</string>
-    <string name="repeat_playlist" formatted="false">Loop</string>
-    <string name="random_playlist" formatted="false">Shuffle</string>
-    <string name="repeat_single_playlist" formatted="false">Repeat</string>
-    <string name="shuffle_on" formatted="false">Shuffle enabled</string>
-    <string name="shuffle_off" formatted="false">Shuffle disabled</string>
-    <string name="repeat_on" formatted="false">Loop enabled</string>
-    <string name="repeat_off" formatted="false">Loop disabled</string>
-    <string name="repeat_single_on" formatted="false">Repeat enabled</string>
-    <string name="repeat_single_off" formatted="false">Repeat disabled</string>
-    <string name="song_play_background" formatted="false">Play in background</string>
-    <string name="wait_end_enable" formatted="false">Stop at song end</string>
-    <string name="wait_end_disable" formatted="false">Don\'t stop at song end</string>
-    <string name="key_category_debug" formatted="false">Debug</string>
-    <string name="key_compatibility_mode" formatted="false">Compatibility mode</string>
-    <string name="key_compatibility_mode_sub" formatted="false">Enable this in case of crashes or other type of issues</string>
-    <string name="info_details_tag" formatted="false">Tag</string>
-    <string name="info_details_file" formatted="false">File</string>
-    <string name="theme_current" formatted="false">Current theme</string>
-    <string name="color_primary" formatted="false">Primary color</string>
-    <string name="color_primary_dark" formatted="false">Primary dark color</string>
-    <string name="color_accent" formatted="false">Accent color</string>
     <string name="permission_reason" formatted="false">The permission you denied is needed in order to make the app work properly. Would you like to grant it now?</string>
     <string name="permission_reason_data" formatted="false">Data access permission makes it possible to play local music</string>
-    <string name="description_album">%s1, %s2 songs</string>
-    <string name="description_artist">%s1 albums, %s2 songs</string>
-    <string name="description_year">%s1 artists, %s2 albums, %s3 songs</string>
+    <string name="play" formatted="false">Play</string>
+    <string name="player_notification_text" formatted="false">%s is running background</string>
+    <string name="player_notification_title" formatted="false">%s is active</string>
+    <string name="playlist" formatted="false">Play queue</string>
+    <string name="play_media" formatted="false">Play media</string>
+    <string name="random_playlist" formatted="false">Shuffle</string>
+    <string name="refresh_songlist" formatted="false">Refresh song list</string>
+    <string name="repeat_off" formatted="false">Loop disabled</string>
+    <string name="repeat_on" formatted="false">Loop enabled</string>
+    <string name="repeat_playlist" formatted="false">Loop</string>
+    <string name="repeat_single_off" formatted="false">Repeat disabled</string>
+    <string name="repeat_single_on" formatted="false">Repeat enabled</string>
+    <string name="repeat_single_playlist" formatted="false">Repeat</string>
+    <string name="restore_formats" formatted="false">Restore default formats</string>
+    <string name="saved" formatted="false">Saved</string>
+    <string name="save_cover" formatted="false">Save cover to Download</string>
+    <string name="saving" formatted="false">Saving&#8230;\n\nBig images may take long time to save</string>
+    <string name="scan_notification_text" formatted="false">Looking for audio files</string>
+    <string name="scan_notification_title" formatted="false">Searching&#8230;</string>
+    <string name="search_category" formatted="false">Songs</string>
+    <string name="search_song" formatted="false">Search a song</string>
+    <string name="search_song_hint" formatted="false">Type song\'s name</string>
+    <string name="send_cover" formatted="false">Share cover</string>
+    <string name="settings" formatted="false">Settings</string>
+    <string name="settings_about" formatted="false">About</string>
+    <string name="settings_advanced" formatted="false">Advanced settings</string>
+    <string name="settings_category_data" formatted="false">Data</string>
+    <string name="settings_category_debug" formatted="false">Debug</string>
+    <string name="settings_compatibility_mode" formatted="false">Compatibility mode</string>
+    <string name="settings_compatibility_mode_sub" formatted="false">Enable this in case of crashes or other type of issues</string>
+    <string name="settings_delete_all" formatted="false">Delete all data</string>
+    <string name="settings_delete_all_sub" formatted="false">Delete all application\'s own data</string>
+    <string name="settings_include_alarm" formatted="false">Include alarms</string>
+    <string name="settings_include_alarm_sub" formatted="false">Include alarms in media scan</string>
+    <string name="settings_include_audiobook" formatted="false">Include audiobooks</string>
+    <string name="settings_include_audiobook_sub" formatted="false">Include audiobook in media scan</string>
+    <string name="settings_include_music" formatted="false">Include music</string>
+    <string name="settings_include_music_sub" formatted="false">Include music in media scan</string>
+    <string name="settings_include_notification" formatted="false">Include notifications</string>
+    <string name="settings_include_notification_sub" formatted="false">Include notifications in media scan</string>
+    <string name="settings_include_other" formatted="false">Include other types of media files</string>
+    <string name="settings_include_other_sub" formatted="false">Include other types of media files in media scan</string>
+    <string name="settings_include_podcast" formatted="false">Include podcasts</string>
+    <string name="settings_include_podcast_sub" formatted="false">Include podcasts in media scan</string>
+    <string name="settings_include_ringtone" formatted="false">Include ringtones</string>
+    <string name="settings_include_ringtone_sub" formatted="false">Include ringtones in media scan</string>
+    <string name="settings_licenses" formatted="false">Licenses</string>
+    <string name="settings_mediafile" formatted="false">Media files</string>
+    <string name="settings_mediafile_category" formatted="false">@string/settings_mediafile</string>
+    <string name="settings_prefs_data" formatted="false">Settings registry</string>
+    <string name="settings_prefs_data_sub" formatted="false">View all the settings values</string>
+    <string name="settings_theme" formatted="false">Theme</string>
+    <string name="settings_theme_hint" formatted="false">Here you can choose which theme the app will use. It will be applied at the next app launch</string>
+    <string name="share" formatted="false">Share</string>
+    <string name="share_albumlist" formatted="false">Share albums list</string>
+    <string name="share_artistlist" formatted="false">Share artists list</string>
+    <string name="share_songlist" formatted="false">Share songs list</string>
+    <string name="show_every_time" formatted="false">Show this every time</string>
+    <string name="shuffle_off" formatted="false">Shuffle disabled</string>
+    <string name="shuffle_on" formatted="false">Shuffle enabled</string>
+    <string name="songs_count" formatted="false">%d1 songs</string>
+    <string name="songs_sum" formatted="false">Total time: %s</string>
+    <string name="song_info" formatted="false">View details</string>
+    <string name="song_play" formatted="false">Play</string>
+    <string name="song_play_background" formatted="false">Play in background</string>
+    <string name="song_show_details" formatted="false">Show details</string>
+    <string name="status_notification_channel" formatted="false">Status notification</string>
+    <string name="stop_play_service" formatted="false">Stop</string>
+    <string name="stream" formatted="false">Media stream</string>
+    <string name="stream_url" formatted="false">Stream URL</string>
+    <string name="tab_albums" formatted="false">Albums</string>
+    <string name="tab_artists" formatted="false">Artists</string>
+    <string name="tab_songs" formatted="false">Songs</string>
+    <string name="tab_years" formatted="false">Years</string>
+    <string name="theme_apply" formatted="false">Apply</string>
+    <string name="theme_current" formatted="false">Current theme</string>
+    <string name="theme_message" formatted="false">New theme will be applied when you exit the settings page</string>
+    <string name="tools" formatted="false">Tools</string>
+    <string name="wait_end_disable" formatted="false">Don\'t stop at song end</string>
+    <string name="wait_end_enable" formatted="false">Stop at song end</string>
+    <string name="yes" formatted="false">Yes</string>
+
+    <string name="duration_format" formatted="false" translatable="false">%d2:%d1</string>
+    <string name="duration_format_hour" formatted="false" translatable="false">%d3:%d2:%d1</string>
+    <string name="duration_format_ms" formatted="false" translatable="false">%d1 ms</string>
+    <string name="google_play_store_package" formatted="false" translatable="false">com.android.vending</string>
+    <string name="google_play_store_url" formatted="false" translatable="false">http://play.google.com/store/apps/details?id=it.developing.ico2k2.luckyplayer</string>
+    <string name="info_bitrate_sub" formatted="false" translatable="false">%d1 kbps</string>
+    <string name="systemMediaPath" formatted="false" translatable="false">system/media/audio</string>
 
     <string-array name="info_details_tag_titles">
         <item>Acoustic fingerprint</item>
@@ -247,13 +248,13 @@
         <item>Variable bitrate</item>
     </string-array>
 
-    <string-array name="preference_headers">
+    <!--<string-array name="preference_headers">
         <item>@string/settings_mediafile</item>
         <item>@string/settings_theme</item>
         <item>@string/settings_advanced</item>
         <item>@string/settings_licenses</item>
         <item>@string/settings_about</item>
-    </string-array>
+    </string-array>-->
 
     <string-array name="tools" formatted="false">
         <item>@string/share_songlist</item>
@@ -311,7 +312,7 @@
         2. Grant of Copyright License. Subject to the terms and conditions of this License, each Contributor hereby grants to You a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable copyright license to reproduce, prepare Derivative Works of, publicly display, publicly perform, sublicense, and distribute the Work and such Derivative Works in Source or Object form.\n\n
         3. Grant of Patent License. Subject to the terms and conditions of this License, each Contributor hereby grants to You a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable (except as stated in this section) patent license to make, have made, use, offer to sell, sell, import, and otherwise transfer the Work, where such license applies only to those patent claims licensable by such Contributor that are necessarily infringed by their Contribution(s) alone or by combination of their Contribution(s) with the Work to which such Contribution(s) was submitted. If You institute patent litigation against any entity (including a cross-claim or counterclaim in a lawsuit) alleging that the Work or a Contribution incorporated within the Work constitutes direct or contributory patent infringement, then any patent licenses granted to You under this License for that Work shall terminate as of the date such litigation is filed.\n\n
         4. Redistribution. You may reproduce and distribute copies of the Work or Derivative Works thereof in any medium, with or without modifications, and in Source or Object form, provided that You meet the following conditions:\n\n
-        You must give any other recipients of the Work or Derivative Works a copy of this License; andààààààààYou must cause any modified files to carry prominent notices stating that You changed the files; andààààààààYou must retain, in the Source form of any Derivative Works that You distribute, all copyright, patent, trademark, and attribution notices from the Source form of the Work, excluding those notices that do not pertain to any part of the Derivative Works; andààààààààIf the Work includes a "NOTICE" text file as part of its distribution, then any Derivative Works that You distribute must include a readable copy of the attribution notices contained within such NOTICE file, excluding those notices that do not pertain to any part of the Derivative Works, in at least one of the following places: within a NOTICE text file distributed as part of the Derivative Works; within the Source form or documentation, if provided along with the Derivative Works; or, within a display generated by the Derivative Works, if and wherever such third-party notices normally appear. The contents of the NOTICE file are for informational purposes only and do not modify the License. You may add Your own attribution notices within Derivative Works that You distribute, alongside or as an addendum to the NOTICE text from the Work, provided that such additional attribution notices cannot be construed as modifying the License.\n\n
+        You must give any other recipients of the Work or Derivative Works a copy of this License; and You must cause any modified files to carry prominent notices stating that You changed the files; and You must retain, in the Source form of any Derivative Works that You distribute, all copyright, patent, trademark, and attribution notices from the Source form of the Work, excluding those notices that do not pertain to any part of the Derivative Works; and If the Work includes a "NOTICE" text file as part of its distribution, then any Derivative Works that You distribute must include a readable copy of the attribution notices contained within such NOTICE file, excluding those notices that do not pertain to any part of the Derivative Works, in at least one of the following places: within a NOTICE text file distributed as part of the Derivative Works; within the Source form or documentation, if provided along with the Derivative Works; or, within a display generated by the Derivative Works, if and wherever such third-party notices normally appear. The contents of the NOTICE file are for informational purposes only and do not modify the License. You may add Your own attribution notices within Derivative Works that You distribute, alongside or as an addendum to the NOTICE text from the Work, provided that such additional attribution notices cannot be construed as modifying the License.\n\n
         You may add Your own copyright statement to Your modifications and may provide additional or different license terms and conditions for use, reproduction, or distribution of Your modifications, or for any such Derivative Works as a whole, provided Your use, reproduction, and distribution of the Work otherwise complies with the conditions stated in this License.àààààààà5. Submission of Contributions. Unless You explicitly state otherwise, any Contribution intentionally submitted for inclusion in the Work by You to the Licensor shall be under the terms and conditions of this License, without any additional terms or conditions. Notwithstanding the above, nothing herein shall supersede or modify the terms of any separate license agreement you may have executed with Licensor regarding such Contributions.\n\n
         6. Trademarks. This License does not grant permission to use the trade names, trademarks, service marks, or product names of the Licensor, except as required for reasonable and customary use in describing the origin of the Work and reproducing the content of the NOTICE file.\n\n
         7. Disclaimer of Warranty. Unless required by applicable law or agreed to in writing, Licensor provides the Work (and each Contributor provides its Contributions) on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied, including, without limitation, any warranties or conditions of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A PARTICULAR PURPOSE. You are solely responsible for determining the appropriateness of using or redistributing the Work and assume any risks associated with Your exercise of permissions under this License.\n\n

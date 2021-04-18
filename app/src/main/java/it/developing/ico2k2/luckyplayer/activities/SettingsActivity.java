@@ -52,18 +52,18 @@ public class SettingsActivity extends BaseActivity
 
     private final PreferenceHeader[] headers =
     {
-        new PreferenceHeader(R.string.key_mediafile,R.attr.ic_file,true,R.drawable.ic_file_material_dark,false),
-        new PreferenceHeader(R.string.key_theme,R.attr.ic_image,true,R.drawable.ic_image_material_dark,false),
-        new PreferenceHeader(R.string.key_advanced,R.attr.ic_settings,true,R.drawable.ic_settings_material_dark,false),
-        new PreferenceHeader(R.string.key_licenses,R.attr.ic_license,true,R.drawable.ic_license_material_dark,false),
-        new PreferenceHeader(R.string.key_about,R.attr.ic_info,true,R.drawable.ic_info_material_dark,false),
+            new PreferenceHeader(R.string.settings_mediafile,R.attr.ic_file,true,R.drawable.ic_file_material_dark,false),
+            new PreferenceHeader(R.string.settings_theme,R.attr.ic_image,true,R.drawable.ic_image_material_dark,false),
+            new PreferenceHeader(R.string.settings_advanced,R.attr.ic_settings,true,R.drawable.ic_settings_material_dark,false),
+            new PreferenceHeader(R.string.settings_licenses,R.attr.ic_license,true,R.drawable.ic_license_material_dark,false),
+            new PreferenceHeader(R.string.settings_about,R.attr.ic_info,true,R.drawable.ic_info_material_dark,false),
     };
 
 
     private RecyclerView list;
     private PreferenceAdapter adapter;
 
-    protected class PreferenceHeader
+    protected static class PreferenceHeader
     {
         int icon1,icon2,title;
         boolean attr1,attr2;
@@ -179,9 +179,9 @@ public class SettingsActivity extends BaseActivity
         String className;
         switch(headerTitle)
         {
-            case R.string.key_mediafile:
-            case R.string.key_advanced:
-            case R.string.key_licenses:
+            case R.string.settings_mediafile:
+            case R.string.settings_advanced:
+            case R.string.settings_licenses:
             {
                 className = SettingsPreferenceFragment.class.getName();
                 break;
@@ -461,12 +461,12 @@ public class SettingsActivity extends BaseActivity
             int layout = 0;
             switch(preference)
             {
-                case R.string.key_theme:
+                case R.string.settings_theme:
                 {
                     layout = R.layout.preference_theme;
                     break;
                 }
-                case R.string.key_about:
+                case R.string.settings_about:
                 {
                     layout = R.layout.preference_about;
                     break;
@@ -541,7 +541,7 @@ public class SettingsActivity extends BaseActivity
                     });
                     break;
                 }
-                case R.string.key_about:
+                case R.string.settings_about:
                 {
                     Button playStore = view.findViewById(R.id.about_play_store);
                     Button share = view.findViewById(R.id.about_share);
@@ -608,17 +608,17 @@ public class SettingsActivity extends BaseActivity
             }
             switch(preference)
             {
-                case R.string.key_mediafile:
+                case R.string.settings_mediafile:
                 {
                     addPreferencesFromResource(R.xml.mediafile_settings);
                     break;
                 }
-                case R.string.key_advanced:
+                case R.string.settings_advanced:
                 {
                     addPreferencesFromResource(R.xml.advanced_settings);
                     break;
                 }
-                case R.string.key_licenses:
+                case R.string.settings_licenses:
                 {
                     addPreferencesFromResource(R.xml.preference_licenses);
                     break;
@@ -633,7 +633,7 @@ public class SettingsActivity extends BaseActivity
         {
             switch(preference)
             {
-                case R.string.key_advanced:
+                case R.string.settings_advanced:
                 {
                     getPreferenceScreen().findPreference(getString(R.string.key_delete_all))
                             .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
@@ -668,7 +668,7 @@ public class SettingsActivity extends BaseActivity
                     });
                     break;
                 }
-                case R.string.key_licenses:
+                case R.string.settings_licenses:
                 {
                     int a;
                     for(a = 0; a < getPreferenceScreen().getPreferenceCount(); a++)

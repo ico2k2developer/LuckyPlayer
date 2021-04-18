@@ -38,24 +38,28 @@
     <string name="yes" formatted="false">Sì</string>
     <string name="no" formatted="false">No</string>
     <string name="settings" formatted="false">Impostazioni</string>
-    <string name="key_theme_hint" formatted="false">Qui puoi scegliere quale tema l\'app userà. Sarà applicato al prossimo avvio dell\'app</string>
     <string name="close" formatted="false">Chiudi</string>
-    <string name="key_about" formatted="false">A proposito di</string>
     <string name="app_about_share" formatted="false">Prova %s! E\' un lettore musicale ben fatto!\n%s</string>
     <string name="app_about" formatted="false">%s è un lettore musicale ben fatto. Ha molte funzionalità che apprezzerai</string>
     <string name="app_about_version" formatted="false">Nome versione: %s\nCodice versione: %s</string>
     <string name="delete" formatted="false">Elimina</string>
     <string name="continue_" formatted="false">Continua</string>
     <string name="invalid" formatted="false">Invalido!</string>
-    <string name="key_advanced" formatted="false">Impostazioni avanzate</string>
     <string name="restore_formats" formatted="false">Ripristina formati standard</string>
-    <string name="key_category_data" formatted="false">Dati</string>
-    <string name="key_delete_all" formatted="false">Cancella tutti i dati</string>
-    <string name="key_delete_all_sub" formatted="false">Cancella tutti i dati dell\'app</string>
-    <string name="key_prefs_data" formatted="false">Registro impostazioni</string>
-    <string name="key_prefs_data_sub" formatted="false">Mostra tutti i valori delle impostazioni</string>
+    <string name="settings_theme_hint" formatted="false">Qui puoi scegliere quale tema l\'app userà. Sarà applicato al prossimo avvio dell\'app</string>
+    <string name="settings_about" formatted="false">A proposito di</string>
+    <string name="settings_advanced" formatted="false">Impostazioni avanzate</string>
+    <string name="settings_category_data" formatted="false">Dati</string>
+    <string name="settings_delete_all" formatted="false">Cancella tutti i dati</string>
+    <string name="settings_delete_all_sub" formatted="false">Cancella tutti i dati dell\'app</string>
+    <string name="settings_prefs_data" formatted="false">Registro impostazioni</string>
+    <string name="settings_prefs_data_sub" formatted="false">Mostra tutti i valori delle impostazioni</string>
+    <string name="settings_licenses" formatted="false">Licenze</string>
+    <string name="settings_category_debug" formatted="false">Debug</string>
+    <string name="settings_compatibility_mode" formatted="false">Modalità compatibilità</string>
+    <string name="settings_compatibility_mode_sub" formatted="false">Attiva questa modalità in caso di interruzioni impreviste o altri tipi di problemi</string>
+    <string name="settings_theme" formatted="false">Tema</string>
     <string name="dialog_confirm_message_default" formatted="false">Confermi?</string>
-    <string name="key_theme" formatted="false">Tema</string>
     <string name="info_notification_channel" formatted="false">Notifiche di servizio</string>
     <string name="status_notification_channel" formatted="false">Notifica di stato</string>
     <string name="main_notification_channel" formatted="false">Notifiche più importanti</string>
@@ -64,22 +68,6 @@
     <string name="player_notification_title" formatted="false">%s è attivo</string>
     <string name="player_notification_text" formatted="false">%s è attivo in background</string>
     <string name="song_show_details" formatted="false">Mostra dettagli</string>
-    <string name="key_mediafile" formatted="false">File multimediali</string>
-    <string name="key_mediafile_category" formatted="false">File multimediali</string>
-    <string name="key_include_alarm" formatted="false">Includi suonerie sveglie</string>
-    <string name="key_include_alarm_sub" formatted="false">Includi suonerie sveglie nella scansione multimediale</string>
-    <string name="key_include_audiobook" formatted="false">Includi audiolibri</string>
-    <string name="key_include_audiobook_sub" formatted="false">Includi audiolibri nella scansione multimediale</string>
-    <string name="key_include_music" formatted="false">Includi file musicali</string>
-    <string name="key_include_music_sub" formatted="false">Includi file musicali nella scansione multimediale</string>
-    <string name="key_include_notification" formatted="false">Includi suonerie notifiche</string>
-    <string name="key_include_notification_sub" formatted="false">Includi suonerie notifiche nella scansione multimediale</string>
-    <string name="key_include_podcast" formatted="false">Includi podcast</string>
-    <string name="key_include_podcast_sub" formatted="false">Includi podcast nella scansione multimediale</string>
-    <string name="key_include_ringtone" formatted="false">Includi suonerie telefono</string>
-    <string name="key_include_ringtone_sub" formatted="false">Includi suonerie telefono nella scansione multimediale</string>
-    <string name="key_include_other" formatted="false">Includi altri tipi di file multimediali</string>
-    <string name="key_include_other_sub" formatted="false">Includi altri tipi di file multimediali nella scansione multimediale</string>
     <string name="refresh_songlist" formatted="false">Aggiorna lista canzoni</string>
     <string name="songs_count" formatted="false">%d1 canzoni</string>
     <string name="songs_sum" formatted="false">Tempo totale: %s</string>
@@ -92,7 +80,6 @@
     <string name="play" formatted="false">Play</string>
     <string name="pause" formatted="false">Pausa</string>
     <string name="play_media" formatted="false">Riproduci</string>
-    <string name="key_licenses" formatted="false">Licenze</string>
     <string name="stream" formatted="false">Stream audio</string>
     <string name="stream_url" formatted="false">URL stream</string>
     <string name="search_song" formatted="false">Cerca una canzone</string>
@@ -122,9 +109,6 @@
     <string name="wait_end_enable" formatted="false">Ferma al termine</string>
     <string name="wait_end_disable" formatted="false">Non fermare al termine</string>
     <string name="missing_license" formatted="true">Licenza non trovata</string>
-    <string name="key_category_debug" formatted="false">Debug</string>
-    <string name="key_compatibility_mode" formatted="false">Modalità compatibilità</string>
-    <string name="key_compatibility_mode_sub" formatted="false">Attiva questa modalità in caso di interruzioni impreviste o altri tipi di problemi</string>
     <string name="logs">Log</string>
     <string name="logs_clear">Svuota log</string>
     <string name="theme_message">Il nuovo tema verrà applicato quando uscirai dalle impostazioni</string>
@@ -140,6 +124,22 @@
     <string name="description_album">%s1, %s2 canzoni</string>
     <string name="description_artist">%s1 album, %s2 canzoni</string>
     <string name="description_year">%s1 artisti, %s2 album, %s3 canzoni</string>
+    <string name="settings_mediafile" formatted="false">File multimediali</string>
+    <string name="settings_mediafile_category" formatted="false">@string/settings_mediafile</string>
+    <string name="settings_include_alarm" formatted="false">Includi suonerie delle sveglie</string>
+    <string name="settings_include_alarm_sub" formatted="false">Includi suonerie delle sveglie nella scansione multimediale</string>
+    <string name="settings_include_audiobook" formatted="false">Includi audiolibri</string>
+    <string name="settings_include_audiobook_sub" formatted="false">Includi audiolibri nella scansione multimediale</string>
+    <string name="settings_include_music" formatted="false">Includi file musicali</string>
+    <string name="settings_include_music_sub" formatted="false">Includi file musicali nella scansione multimediale</string>
+    <string name="settings_include_notification" formatted="false">Includi suonerie notifiche</string>
+    <string name="settings_include_notification_sub" formatted="false">Includi suonerie notifiche nella scansione multimediale</string>
+    <string name="settings_include_podcast" formatted="false">Includi podcast</string>
+    <string name="settings_include_podcast_sub" formatted="false">Includi podcast nella scansione multimediale</string>
+    <string name="settings_include_ringtone" formatted="false">Includi suonerie telefono</string>
+    <string name="settings_include_ringtone_sub" formatted="false">Includi suonerie telefono nella scansione multimediale</string>
+    <string name="settings_include_other" formatted="false">Includi altri tipi di file multimediali</string>
+    <string name="settings_include_other_sub" formatted="false">Includi altri tipi di file multimediali nella scansione multimediale</string>
 
     <string-array name="info_details_tag_titles">
         <item>Impronta acustica</item>

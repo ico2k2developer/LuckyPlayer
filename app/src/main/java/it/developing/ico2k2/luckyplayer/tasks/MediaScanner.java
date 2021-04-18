@@ -26,11 +26,11 @@ public class MediaScanner
     public static class QuerySettings
     {
         private final boolean music,ringtone,notification,podcast,alarm,other;
-        private final Boolean audiobook;
+        private final Boolean audiobook,recording;
 
         @RequiresApi(29)
         public QuerySettings(boolean music,boolean ringtone,boolean notification,boolean podcast,
-                             boolean alarm,boolean audiobook,boolean other)
+                             boolean alarm,boolean audiobook,boolean recording,boolean other)
         {
             this.music = music;
             this.ringtone = ringtone;
@@ -39,6 +39,7 @@ public class MediaScanner
             this.alarm = alarm;
             this.other = other;
             this.audiobook = audiobook;
+            this.recording = recording;
         }
 
         public QuerySettings(boolean music,boolean ringtone,boolean notification,boolean podcast,
@@ -51,6 +52,7 @@ public class MediaScanner
             this.alarm = alarm;
             this.other = other;
             this.audiobook = null;
+            this.recording = null;
         }
 
         public QuerySettings()
@@ -60,12 +62,16 @@ public class MediaScanner
 
         private boolean areAllTrue()
         {
-            return music && ringtone && notification && podcast && alarm && (audiobook == null ? true : audiobook) && other;
+            return music && ringtone && notification && podcast && alarm &&
+                    (audiobook == null ? true : audiobook) &&
+                    (recording == null ? true : recording) && other;
         }
 
         private boolean areAllFalse()
         {
-            return !(music || ringtone || notification || podcast || alarm || (audiobook == null ? false : audiobook) || other);
+            return !(music || ringtone || notification || podcast || alarm ||
+                    (audiobook == null ? false : audiobook) ||
+                    (recording == null ? false : recording) || other);
         }
 
         public boolean getMusic(){
@@ -91,6 +97,11 @@ public class MediaScanner
         @RequiresApi(29)
         public boolean getAudiobook(){
             return audiobook == null ? false : audiobook;
+        }
+
+        @RequiresApi(31)
+        public boolean getRecording(){
+            return recording == null ? false : recording;
         }
 
         public boolean getOther(){
@@ -166,7 +177,6 @@ public class MediaScanner
             Log.d(getClass().getSimpleName(),"Cursor contains " + cursor.getCount() + " elements");
             while(cursor.moveToNext())
             {
-                dao.insertAll(new Song(cursor.get));
                 result.data.add(processFile(i,id,cursor));
             }
             Log.d(getClass().getSimpleName(),"Jumping to the next uri");

@@ -21,12 +21,12 @@ public class Song
     {
         MediaStore.MediaColumns._ID,
         MediaStore.MediaColumns.TITLE,
-        MediaStore.MediaColumns.ALBUM,
-        MediaStore.MediaColumns.ALBUM_ARTIST,
-        MediaStore.MediaColumns.CD_TRACK_NUMBER,
-        MediaStore.MediaColumns.DURATION,
-        MediaStore.MediaColumns.YEAR,
-        MediaStore.MediaColumns.GENRE,
+        MediaStore.Audio.AudioColumns.ALBUM_ARTIST,
+        MediaStore.Audio.AudioColumns.ARTIST,
+        MediaStore.Audio.AudioColumns.TRACK,
+        MediaStore.Audio.AudioColumns.DURATION,
+        MediaStore.Audio.AudioColumns.YEAR,
+        MediaStore.Audio.AudioColumns.GENRE,
     };
 
     @PrimaryKey
@@ -95,19 +95,19 @@ public class Song
 
         public Date()
         {
-            java.util.Date date = Calendar.getInstance().getTime();
-            day = (byte)date.getDay();
-            month = (byte)date.getMonth();
-            year = (short)date.getYear();
-            hour = (byte)date.getHours();
-            minute = (byte)date.getMinutes();
+            Calendar c = Calendar.getInstance();
+            day = (byte)c.get(Calendar.DAY_OF_MONTH);
+            month = (byte)c.get(Calendar.MONTH);
+            year = (short)c.get(Calendar.YEAR);
+            hour = (byte)c.get(Calendar.HOUR_OF_DAY);
+            minute = (byte)c.get(Calendar.MINUTE);
         }
 
-        public java.util.Date toDate()
+        public Calendar toDate()
         {
             Calendar c = Calendar.getInstance();
             c.set(year,month,day,hour,minute);
-            return c.getTime();
+            return c;
         }
 
         public byte getDay(){
@@ -137,7 +137,7 @@ public class Song
         }
     }
 
-    public Song(String id,String title,String album,String albumArtist,byte trackN,int playsCount,byte lastPlayDay,byte lastPlayMonth,short lastPlayYear,byte lastPlayHour,byte lastPlayMinute,int length,short year,String genre,String lyrics)
+    public Song(@NotNull String id, String title, String album, String albumArtist, byte trackN, int playsCount, byte lastPlayDay, byte lastPlayMonth, short lastPlayYear, byte lastPlayHour, byte lastPlayMinute, int length, short year, String genre, String lyrics)
     {
         this.id = id;
         this.title = title;
@@ -287,7 +287,7 @@ public class Song
     }
 
     @Override
-    public String toString()
+    public @NotNull String toString()
     {
         return String.format(Locale.getDefault(),"%s from %s by %s, length: %s; played %d times, last time was %s",
                 title,album,albumArtist,getTextualLength(),playsCount,getLastPlay().toString());

@@ -1,154 +1,169 @@
 <resources>
 
-    <string name="info_activity_title" formatted="false" translatable="false">%s - %s</string>
-    <string name="app_about" formatted="false">%s is a great music player. It has many features that you\'ll enjoy</string>
-    <string name="app_about_share" formatted="false">Try %s! It\'s a great music player!\n%s</string>
-    <string name="app_about_version" formatted="false">Version name: %s\nVersion code: %s</string>
-    <string name="app_name" formatted="false" translatable="false">Lucky Player 2.0</string>
-    <string name="beta_pick" formatted="false">Pick file</string>
-    <string name="close" formatted="false">Close</string>
-    <string name="color_accent" formatted="false">Accent color</string>
-    <string name="color_primary" formatted="false">Primary color</string>
-    <string name="color_primary_dark" formatted="false">Primary dark color</string>
-    <string name="continue_" formatted="false">Continue</string>
-    <string name="copied" formatted="false">Copied</string>
-    <string name="copy" formatted="false">Copy</string>
-    <string name="delete" formatted="false">Delete</string>
+    <string name="info_activity_title" translatable="false">%s - %s</string>
+    <string name="app_about">%s is a great music player. It has many features that you\'ll enjoy</string>
+    <string name="app_about_share">Try %s! It\'s a great music player!\n%s</string>
+    <string name="app_about_version">Version name: %s\nVersion code: %s</string>
+    <string name="app_name" translatable="false">Lucky Player 2.0</string>
+    <string name="beta_pick">Pick file</string>
+    <string name="close">Close</string>
+    <string name="color_accent">Accent color</string>
+    <string name="color_primary">Primary color</string>
+    <string name="color_primary_dark">Primary dark color</string>
+    <string name="continue_">Continue</string>
+    <string name="copied">Copied</string>
+    <string name="copy">Copy</string>
+    <string name="delete">Delete</string>
     <string name="description_album">%s1, %s2 songs</string>
     <string name="description_artist">%s1 albums, %s2 songs</string>
     <string name="description_year">%s1 artists, %s2 albums, %s3 songs</string>
-    <string name="dialog_confirm_message_default" formatted="false">Do you confirm?</string>
-    <string name="duration_format_long" formatted="false">%d2:%d1 (%d0 milliseconds)</string>
-    <string name="elements" formatted="false">Elements</string>
-    <string name="error" formatted="false">An error occurred</string>
-    <string name="exit" formatted="false">Exit</string>
-    <string name="info_album" formatted="false">Album</string>
-    <string name="info_albumartist" formatted="false">Album artist</string>
-    <string name="info_artist" formatted="false">Artist</string>
-    <string name="info_author" formatted="false">Author</string>
-    <string name="info_bitrate" formatted="false">Bitrate</string>
-    <string name="info_cd_track" formatted="false">Track number</string>
-    <string name="info_compilation" formatted="false">Part of a compilation</string>
-    <string name="info_composer" formatted="false">Composer</string>
-    <string name="info_date" formatted="false">Release date</string>
-    <string name="info_details_file" formatted="false">File</string>
-    <string name="info_details_tag" formatted="false">Tag</string>
-    <string name="info_disc_number" formatted="false">Disk number</string>
-    <string name="info_duration" formatted="false">Duration</string>
-    <string name="info_format" formatted="false">File format</string>
-    <string name="info_genre" formatted="false">Genre</string>
-    <string name="info_mime" formatted="false">Mime type</string>
-    <string name="info_nocover" formatted="false">No album cover</string>
-    <string name="info_notavailable" formatted="false">Unavailable info</string>
-    <string name="info_notification_channel" formatted="false">Service notifications</string>
-    <string name="info_other_info_category" formatted="false">Other info</string>
-    <string name="info_quality_category" formatted="false">Quality</string>
-    <string name="info_tag_category" formatted="false">Tag</string>
-    <string name="info_title" formatted="false">Title</string>
-    <string name="info_uri" formatted="false">File uri</string>
-    <string name="info_writer" formatted="false">Writer</string>
-    <string name="info_year" formatted="false">Release year</string>
-    <string name="invalid" formatted="false">Invalid!</string>
-    <string name="logs" formatted="false">Logs</string>
-    <string name="logs_clear" formatted="false">Clear logs</string>
-    <string name="main_notification_channel" formatted="false">Most important notifications</string>
-    <string name="no" formatted="false">No</string>
-    <string name="no_songs_found" formatted="false">No media files found! Maybe changing media scan settings helps</string>
-    <string name="no_songs_found_button" formatted="false">Go to %s</string>
-    <string name="no_songs_permission" formatted="false">Local data access permission has not been granted!</string>
-    <string name="no_songs_permission_button" formatted="false">Grant permission</string>
-    <string name="pause" formatted="false">Pause</string>
-    <string name="permission_reason" formatted="false">The permission you denied is needed in order to make the app work properly. Would you like to grant it now?</string>
-    <string name="permission_reason_data" formatted="false">Data access permission makes it possible to play local music</string>
-    <string name="play" formatted="false">Play</string>
-    <string name="player_notification_text" formatted="false">%s is running background</string>
-    <string name="player_notification_title" formatted="false">%s is active</string>
-    <string name="playlist" formatted="false">Play queue</string>
-    <string name="play_media" formatted="false">Play media</string>
-    <string name="random_playlist" formatted="false">Shuffle</string>
-    <string name="refresh_songlist" formatted="false">Refresh song list</string>
-    <string name="repeat_off" formatted="false">Loop disabled</string>
-    <string name="repeat_on" formatted="false">Loop enabled</string>
-    <string name="repeat_playlist" formatted="false">Loop</string>
-    <string name="repeat_single_off" formatted="false">Repeat disabled</string>
-    <string name="repeat_single_on" formatted="false">Repeat enabled</string>
-    <string name="repeat_single_playlist" formatted="false">Repeat</string>
-    <string name="restore_formats" formatted="false">Restore default formats</string>
-    <string name="saved" formatted="false">Saved</string>
-    <string name="save_cover" formatted="false">Save cover to Download</string>
-    <string name="saving" formatted="false">Saving&#8230;\n\nBig images may take long time to save</string>
-    <string name="scan_notification_text" formatted="false">Looking for audio files</string>
-    <string name="scan_notification_title" formatted="false">Searching&#8230;</string>
-    <string name="search_category" formatted="false">Songs</string>
-    <string name="search_song" formatted="false">Search a song</string>
-    <string name="search_song_hint" formatted="false">Type song\'s name</string>
-    <string name="send_cover" formatted="false">Share cover</string>
-    <string name="settings" formatted="false">Settings</string>
-    <string name="settings_about" formatted="false">About</string>
-    <string name="settings_advanced" formatted="false">Advanced settings</string>
-    <string name="settings_category_data" formatted="false">Data</string>
-    <string name="settings_category_debug" formatted="false">Debug</string>
-    <string name="settings_compatibility_mode" formatted="false">Compatibility mode</string>
-    <string name="settings_compatibility_mode_sub" formatted="false">Enable this in case of crashes or other type of issues</string>
-    <string name="settings_delete_all" formatted="false">Delete all data</string>
-    <string name="settings_delete_all_sub" formatted="false">Delete all application\'s own data</string>
-    <string name="settings_include_alarm" formatted="false">Include alarms</string>
-    <string name="settings_include_alarm_sub" formatted="false">Include alarms in media scan</string>
-    <string name="settings_include_audiobook" formatted="false">Include audiobooks</string>
-    <string name="settings_include_audiobook_sub" formatted="false">Include audiobook in media scan</string>
-    <string name="settings_include_music" formatted="false">Include music</string>
-    <string name="settings_include_music_sub" formatted="false">Include music in media scan</string>
-    <string name="settings_include_notification" formatted="false">Include notifications</string>
-    <string name="settings_include_notification_sub" formatted="false">Include notifications in media scan</string>
-    <string name="settings_include_other" formatted="false">Include other types of media files</string>
-    <string name="settings_include_other_sub" formatted="false">Include other types of media files in media scan</string>
-    <string name="settings_include_podcast" formatted="false">Include podcasts</string>
-    <string name="settings_include_podcast_sub" formatted="false">Include podcasts in media scan</string>
-    <string name="settings_include_ringtone" formatted="false">Include ringtones</string>
-    <string name="settings_include_ringtone_sub" formatted="false">Include ringtones in media scan</string>
-    <string name="settings_licenses" formatted="false">Licenses</string>
-    <string name="settings_mediafile" formatted="false">Media files</string>
-    <string name="settings_mediafile_category" formatted="false">@string/settings_mediafile</string>
-    <string name="settings_prefs_data" formatted="false">Settings registry</string>
-    <string name="settings_prefs_data_sub" formatted="false">View all the settings values</string>
-    <string name="settings_theme" formatted="false">Theme</string>
-    <string name="settings_theme_hint" formatted="false">Here you can choose which theme the app will use. It will be applied at the next app launch</string>
-    <string name="share" formatted="false">Share</string>
-    <string name="share_albumlist" formatted="false">Share albums list</string>
-    <string name="share_artistlist" formatted="false">Share artists list</string>
-    <string name="share_songlist" formatted="false">Share songs list</string>
-    <string name="show_every_time" formatted="false">Show this every time</string>
-    <string name="shuffle_off" formatted="false">Shuffle disabled</string>
-    <string name="shuffle_on" formatted="false">Shuffle enabled</string>
-    <string name="songs_count" formatted="false">%d1 songs</string>
-    <string name="songs_sum" formatted="false">Total time: %s</string>
-    <string name="song_info" formatted="false">View details</string>
-    <string name="song_play" formatted="false">Play</string>
-    <string name="song_play_background" formatted="false">Play in background</string>
-    <string name="song_show_details" formatted="false">Show details</string>
-    <string name="status_notification_channel" formatted="false">Status notification</string>
-    <string name="stop_play_service" formatted="false">Stop</string>
-    <string name="stream" formatted="false">Media stream</string>
-    <string name="stream_url" formatted="false">Stream URL</string>
-    <string name="tab_albums" formatted="false">Albums</string>
-    <string name="tab_artists" formatted="false">Artists</string>
-    <string name="tab_songs" formatted="false">Songs</string>
-    <string name="tab_years" formatted="false">Years</string>
-    <string name="theme_apply" formatted="false">Apply</string>
-    <string name="theme_current" formatted="false">Current theme</string>
-    <string name="theme_message" formatted="false">New theme will be applied when you exit the settings page</string>
-    <string name="tools" formatted="false">Tools</string>
-    <string name="wait_end_disable" formatted="false">Don\'t stop at song end</string>
-    <string name="wait_end_enable" formatted="false">Stop at song end</string>
-    <string name="yes" formatted="false">Yes</string>
+    <string name="dialog_confirm_message_default">Do you confirm?</string>
+    <string name="duration_format_long">%d2:%d1 (%d0 milliseconds)</string>
+    <string name="elements">Elements</string>
+    <string name="error">An error occurred</string>
+    <string name="exit">Exit</string>
+    <string name="info_album">Album</string>
+    <string name="info_albumartist">Album artist</string>
+    <string name="info_artist">Artist</string>
+    <string name="info_author">Author</string>
+    <string name="info_bitrate">Bitrate</string>
+    <string name="info_cd_track">Track number</string>
+    <string name="info_compilation">Part of a compilation</string>
+    <string name="info_composer">Composer</string>
+    <string name="info_date">Release date</string>
+    <string name="info_details_file">File</string>
+    <string name="info_details_tag">Tag</string>
+    <string name="info_disc_number">Disk number</string>
+    <string name="info_duration">Duration</string>
+    <string name="info_format">File format</string>
+    <string name="info_genre">Genre</string>
+    <string name="info_mime">Mime type</string>
+    <string name="info_nocover">No album cover</string>
+    <string name="info_notavailable">Unavailable info</string>
+    <string name="info_notification_channel">Service notifications</string>
+    <string name="info_other_info_category">Other info</string>
+    <string name="info_quality_category">Quality</string>
+    <string name="info_tag_category">Tag</string>
+    <string name="info_title">Title</string>
+    <string name="info_uri">File uri</string>
+    <string name="info_writer">Writer</string>
+    <string name="info_year">Release year</string>
+    <string name="invalid">Invalid!</string>
+    <string name="logs">Logs</string>
+    <string name="logs_clear">Clear logs</string>
+    <string name="main_notification_channel">Most important notifications</string>
+    <string name="no">No</string>
+    <string name="no_songs_found">No media files found! Maybe changing media scan settings helps</string>
+    <string name="no_songs_found_button">Go to %s</string>
+    <string name="no_songs_permission">Local data access permission has not been granted!</string>
+    <string name="no_songs_permission_button">Grant permission</string>
+    <string name="pause">Pause</string>
+    <string name="permission_reason">The permission you denied is needed in order to make the app work properly. Would you like to grant it now?</string>
+    <string name="permission_reason_data">Data access permission makes it possible to play local music</string>
+    <string name="play">Play</string>
+    <string name="player_notification_text">%s is running background</string>
+    <string name="player_notification_title">%s is active</string>
+    <string name="playlist">Play queue</string>
+    <string name="play_media">Play media</string>
+    <string name="random_playlist">Shuffle</string>
+    <string name="refresh_songlist">Refresh song list</string>
+    <string name="repeat_off">Loop disabled</string>
+    <string name="repeat_on">Loop enabled</string>
+    <string name="repeat_playlist">Loop</string>
+    <string name="repeat_single_off">Repeat disabled</string>
+    <string name="repeat_single_on">Repeat enabled</string>
+    <string name="repeat_single_playlist">Repeat</string>
+    <string name="restore_formats">Restore default formats</string>
+    <string name="saved">Saved</string>
+    <string name="save_cover">Save cover to Download</string>
+    <string name="saving">Saving&#8230;\n\nBig images may take long time to save</string>
+    <string name="scan_notification_text">Looking for audio files</string>
+    <string name="scan_notification_title">Searching&#8230;</string>
+    <string name="search_category">Songs</string>
+    <string name="search_song">Search a song</string>
+    <string name="search_song_hint">Type song\'s name</string>
+    <string name="send_cover">Share cover</string>
+    <string name="settings">Settings</string>
+    <string name="settings_about">About</string>
+    <string name="settings_advanced">Advanced settings</string>
+    <string name="settings_category_data">Data</string>
+    <string name="settings_category_debug">Debug</string>
+    <string name="settings_compatibility_mode">Compatibility mode</string>
+    <string name="settings_compatibility_mode_sub">Enable this in case of crashes or other type of issues</string>
+    <string name="settings_delete_all">Delete all data</string>
+    <string name="settings_delete_all_sub">Delete all application\'s own data</string>
+    <string name="settings_include_alarm">Include alarms</string>
+    <string name="settings_include_alarm_sub">Include alarms in media scan</string>
+    <string name="settings_include_audiobook">Include audiobooks</string>
+    <string name="settings_include_audiobook_sub">Include audiobook in media scan</string>
+    <string name="settings_include_music">Include music</string>
+    <string name="settings_include_music_sub">Include music in media scan</string>
+    <string name="settings_include_notification">Include notifications</string>
+    <string name="settings_include_notification_sub">Include notifications in media scan</string>
+    <string name="settings_include_other">Include other types of media files</string>
+    <string name="settings_include_other_sub">Include other types of media files in media scan</string>
+    <string name="settings_include_podcast">Include podcasts</string>
+    <string name="settings_include_podcast_sub">Include podcasts in media scan</string>
+    <string name="settings_include_ringtone">Include ringtones</string>
+    <string name="settings_include_ringtone_sub">Include ringtones in media scan</string>
+    <string name="settings_licenses">Licenses</string>
+    <string name="settings_mediafile">Media files</string>
+    <string name="settings_mediafile_category">@string/settings_mediafile</string>
+    <string name="settings_prefs_data">Settings registry</string>
+    <string name="settings_prefs_data_sub">View all the settings values</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_hint">Here you can choose which theme the app will use. It will be applied at the next app launch</string>
+    <string name="share">Share</string>
+    <string name="share_albumlist">Share albums list</string>
+    <string name="share_artistlist">Share artists list</string>
+    <string name="share_songlist">Share songs list</string>
+    <string name="show_every_time">Show this every time</string>
+    <string name="shuffle_off">Shuffle disabled</string>
+    <string name="shuffle_on">Shuffle enabled</string>
+    <string name="songs_count">%d1 songs</string>
+    <string name="songs_sum">Total time: %s</string>
+    <string name="song_info">View details</string>
+    <string name="song_play">Play</string>
+    <string name="song_play_background">Play in background</string>
+    <string name="song_show_details">Show details</string>
+    <string name="status_notification_channel">Status notification</string>
+    <string name="stop_play_service">Stop</string>
+    <string name="stream">Media stream</string>
+    <string name="stream_url">Stream URL</string>
+    <string name="tab_albums">Albums</string>
+    <string name="tab_artists">Artists</string>
+    <string name="tab_songs">Songs</string>
+    <string name="tab_years">Years</string>
+    <string name="theme_apply">Apply</string>
+    <string name="theme_current">Current theme</string>
+    <string name="theme_message">New theme will be applied when you exit the settings page</string>
+    <string name="tools">Tools</string>
+    <string name="wait_end_disable">Don\'t stop at song end</string>
+    <string name="wait_end_enable">Stop at song end</string>
+    <string name="yes">Yes</string>
 
-    <string name="duration_format" formatted="false" translatable="false">%d2:%d1</string>
-    <string name="duration_format_hour" formatted="false" translatable="false">%d3:%d2:%d1</string>
-    <string name="duration_format_ms" formatted="false" translatable="false">%d1 ms</string>
-    <string name="google_play_store_package" formatted="false" translatable="false">com.android.vending</string>
-    <string name="google_play_store_url" formatted="false" translatable="false">http://play.google.com/store/apps/details?id=it.developing.ico2k2.luckyplayer</string>
-    <string name="info_bitrate_sub" formatted="false" translatable="false">%d1 kbps</string>
-    <string name="systemMediaPath" formatted="false" translatable="false">system/media/audio</string>
+    <string name="post_date">%02d/%02d/%04d %02d:%02d</string>
+    <string name="post_date_relative_past">%d %s ago</string>
+    <string name="post_date_relative_future">in %d %s</string>
+
+    <string name="week">week</string>
+    <string name="weeks">weeks</string>
+    <string name="day">day</string>
+    <string name="days">days</string>
+    <string name="hour">hour</string>
+    <string name="hours">hours</string>
+    <string name="minute">minute</string>
+    <string name="minutes">minutes</string>
+    <string name="second">second</string>
+    <string name="seconds">seconds</string>
+
+    <string name="duration_format" translatable="false">%d2:%d1</string>
+    <string name="duration_format_hour" translatable="false">%d3:%d2:%d1</string>
+    <string name="duration_format_ms" translatable="false">%d1 ms</string>
+    <string name="google_play_store_package" translatable="false">com.android.vending</string>
+    <string name="google_play_store_url" translatable="false">http://play.google.com/store/apps/details?id=it.developing.ico2k2.luckyplayer</string>
+    <string name="info_bitrate_sub" translatable="false">%d1 kbps</string>
+    <string name="systemMediaPath" translatable="false">system/media/audio</string>
 
     <string-array name="info_details_tag_titles">
         <item>Acoustic fingerprint</item>
@@ -256,20 +271,20 @@
         <item>@string/settings_about</item>
     </string-array>-->
 
-    <string-array name="tools" formatted="false">
+    <string-array name="tools">
         <item>@string/share_songlist</item>
         <item>@string/share_albumlist</item>
         <item>@string/share_artistlist</item>
     </string-array>
 
-    <string-array name="tabs" formatted="false">
+    <string-array name="tabs">
         <item>@string/tab_songs</item>
         <item>@string/tab_albums</item>
         <item>@string/tab_artists</item>
         <item>@string/tab_years</item>
     </string-array>
 
-    <string-array name="themes" formatted="false" translatable="false">
+    <string-array name="themes" translatable="false">
 
         <item>Theme Dark</item>
         <item>Theme Light</item>
@@ -292,8 +307,8 @@
 
     </string-array>
 
-    <string name="missing_license" formatted="true">Missing license</string>
-    <string name="apache_2_0_license" formatted="false" translatable="false">
+    <string name="missing_license">Missing license</string>
+    <string name="apache_2_0_license" translatable="false">
         Apache License\n\n
         Version 2.0, January 2004\n\n
         http://www.apache.org/licenses/\n\n

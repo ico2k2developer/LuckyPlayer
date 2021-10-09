@@ -28,6 +28,8 @@ import it.developing.ico2k2.luckyplayer.services.PlayService;
 
 public abstract class BasePlayingActivity extends BaseActivity implements MediaBrowserDependent
 {
+    private static final String TAG = BasePlayingActivity.class.getSimpleName();
+
     private static final int ID_FRAME_LAYOUT = 0xFADE;
 
     private SmallPlayerFragment playerFragment;
@@ -42,7 +44,7 @@ public abstract class BasePlayingActivity extends BaseActivity implements MediaB
 
     protected void requestPlayer()
     {
-        Log.d(getClass().getSimpleName(),"Player requested, showing? " + isPlayerShowing());
+        Log.d(TAG,"Player requested, showing? " + isPlayerShowing());
         if(!isPlayerShowing())
         {
             if(playerFragment == null)
@@ -125,14 +127,14 @@ public abstract class BasePlayingActivity extends BaseActivity implements MediaB
             @Override
             public void onConnected()
             {
-                Log.d(getClass().getSimpleName(),"MediaBrowser connected");
+                Log.d(TAG,"MediaBrowser connected");
                 connected = true;
                 try
                 {
                     MediaSessionCompat.Token token = browser.getSessionToken();
                     MediaControllerCompat mediaController = new MediaControllerCompat(BasePlayingActivity.this,token);
                     MediaControllerCompat.setMediaController(BasePlayingActivity.this, mediaController);
-                    Log.d(getClass().getSimpleName(),"MediaController created");
+                    Log.d(TAG,"MediaController created");
 
                     mediaController.registerCallback(controllerCallback = new MediaControllerCompat.Callback()
                     {
@@ -168,7 +170,7 @@ public abstract class BasePlayingActivity extends BaseActivity implements MediaB
                         @Override
                         public void onMetadataChanged(MediaMetadataCompat metadata)
                         {
-                            Log.d(getClass().getSimpleName(),"Metadata changed");
+                            Log.d(TAG,"Metadata changed");
                             requestPlayer();
                             playerFragment.setTimeTotal(metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION));
                             playerFragment.setTitleSubtitle(metadata.getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE),
@@ -192,14 +194,14 @@ public abstract class BasePlayingActivity extends BaseActivity implements MediaB
             @Override
             public void onConnectionSuspended()
             {
-                Log.d(getClass().getSimpleName(),"MediaBrowser connection suspended");
+                Log.d(TAG,"MediaBrowser connection suspended");
                 connected = false;
             }
 
             @Override
             public void onConnectionFailed()
             {
-                Log.d(getClass().getSimpleName(),"MediaBrowser connection failed");
+                Log.d(TAG,"MediaBrowser connection failed");
                 connected = false;
             }
         },null);

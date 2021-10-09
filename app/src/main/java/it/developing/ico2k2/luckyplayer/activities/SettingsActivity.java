@@ -1,5 +1,7 @@
 package it.developing.ico2k2.luckyplayer.activities;
 
+import static it.developing.ico2k2.luckyplayer.Resources.adapterMapsFromAdapterList;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,7 +25,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatSpinner;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentFactory;
@@ -37,12 +38,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import it.developing.ico2k2.luckyplayer.R;
-import it.developing.ico2k2.luckyplayer.Utils;
+import it.developing.ico2k2.luckyplayer.Resources;
 import it.developing.ico2k2.luckyplayer.activities.base.BaseActivity;
 import it.developing.ico2k2.luckyplayer.dialogs.ConfirmDialog;
 import it.developing.ico2k2.luckyplayer.dialogs.DefaultDialog;
-
-import static it.developing.ico2k2.luckyplayer.Utils.adapterMapsFromAdapterList;
 
 public class SettingsActivity extends BaseActivity
 {
@@ -88,7 +87,7 @@ public class SettingsActivity extends BaseActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar));
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         list = findViewById(android.R.id.list);
@@ -127,7 +126,7 @@ public class SettingsActivity extends BaseActivity
                     index = extras.getInt(ARGUMENT_INDEX);
                 }
             }
-            Log.d(getClass().getSimpleName(),"Settings: " + index);
+            Log.d(TAG,"Settings: " + index);
             View v = list.getChildAt(index);
             if(v == null)
             {
@@ -385,7 +384,7 @@ public class SettingsActivity extends BaseActivity
         {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_settings_secondary);
-            setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
+            setSupportActionBar(findViewById(R.id.toolbar));
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             handleIntent(getIntent());
@@ -500,7 +499,7 @@ public class SettingsActivity extends BaseActivity
                         String item = items.get(a);
                         try
                         {
-                            themes.add(a,Utils.getThemeFromName(item));
+                            themes.add(a, Resources.getThemeFromName(item));
                         }
                         catch(Exception e)
                         {

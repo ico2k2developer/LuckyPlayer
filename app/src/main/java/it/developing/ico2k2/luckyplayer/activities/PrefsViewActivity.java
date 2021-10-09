@@ -1,6 +1,5 @@
 package it.developing.ico2k2.luckyplayer.activities;
 
-import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,7 +32,7 @@ public class PrefsViewActivity extends BaseActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prefs_view);
-        setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar));
         getSupportActionBar().setHomeButtonEnabled(true);
         //getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
         RecyclerView list = findViewById(R.id.list);
@@ -48,12 +46,12 @@ public class PrefsViewActivity extends BaseActivity
 
     class PrefsViewAdapter extends BaseAdapter<PrefsViewAdapter.PrefHandle>
     {
-        SharedPreferences prefs;
+        Prefs prefs;
         ArrayList<Data> data;
 
-        PrefsViewAdapter(SharedPreferences preferences)
+        PrefsViewAdapter(Prefs preferences)
         {
-            Log.d(getClass().getSimpleName(),"Creating adapter");
+            Log.d(TAG,"Creating adapter");
             prefs = preferences;
             data = new ArrayList<>(prefs.getAll().size());
             update();
@@ -88,7 +86,7 @@ public class PrefsViewActivity extends BaseActivity
 
         void update()
         {
-            Log.d(getClass().getSimpleName(),"Updating adapter");
+            Log.d(TAG,"Updating adapter");
             Map<String,?> rawData = prefs.getAll();
             data.clear();
             data.ensureCapacity(rawData.size());
@@ -120,7 +118,7 @@ public class PrefsViewActivity extends BaseActivity
         @Override
         public int getItemCount()
         {
-            Log.d(getClass().getSimpleName(),"Data size is " + data.size());
+            Log.d(TAG,"Data size is " + data.size());
             return data.size();
         }
 
@@ -128,17 +126,17 @@ public class PrefsViewActivity extends BaseActivity
         @NonNull
         public PrefHandle onCreateViewHolder(@NonNull ViewGroup parent,int viewType)
         {
-            Log.d(getClass().getSimpleName(),"Creating view");
+            Log.d(TAG,"Creating view");
             LinearLayout layout = new LinearLayout(parent.getContext());
             layout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT));
-            Log.d(getClass().getSimpleName(),"Created view");
+            Log.d(TAG,"Created view");
             return new PrefHandle(layout);
         }
 
         @Override
         public void onBindViewHolder(@NonNull PrefHandle holder,int position)
         {
-            Log.d(getClass().getSimpleName(),"Binding view");
+            Log.d(TAG,"Binding view");
             super.onBindViewHolder(holder,position);
             Data d = data.get(position);
             holder.title.setText(d.title);
@@ -149,7 +147,7 @@ public class PrefsViewActivity extends BaseActivity
                 holder.text.setText(d.text);
                 holder.text.setVisibility(View.VISIBLE);
             }
-            Log.d(getClass().getSimpleName(),"Bound view");
+            Log.d(TAG,"Bound view");
         }
     }
 }

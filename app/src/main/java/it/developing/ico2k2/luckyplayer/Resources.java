@@ -1,5 +1,7 @@
 package it.developing.ico2k2.luckyplayer;
 
+import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -27,10 +29,11 @@ import java.util.Set;
 
 import it.developing.ico2k2.luckyplayer.activities.base.BaseActivity;
 
-import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
-
-public final class Utils
+public final class Resources
 {
+    public static final int THEME_DEFAULT = R.style.Theme_Dark_Red;
+
+
     public static final String KEY_REQUEST = "request";
 
     public static final String EXTRA_URI = "intent uri";

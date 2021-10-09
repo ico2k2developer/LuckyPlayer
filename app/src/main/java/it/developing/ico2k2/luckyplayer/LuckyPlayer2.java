@@ -1,13 +1,13 @@
 package it.developing.ico2k2.luckyplayer;
 
+import static it.developing.ico2k2.luckyplayer.Resources.CHANNEL_ID_INFO;
+import static it.developing.ico2k2.luckyplayer.Resources.CHANNEL_ID_MAIN;
+import static it.developing.ico2k2.luckyplayer.Resources.CHANNEL_ID_STATUS;
+
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
-
-import static it.developing.ico2k2.luckyplayer.Utils.CHANNEL_ID_INFO;
-import static it.developing.ico2k2.luckyplayer.Utils.CHANNEL_ID_MAIN;
-import static it.developing.ico2k2.luckyplayer.Utils.CHANNEL_ID_STATUS;
 
 public class LuckyPlayer2 extends Application
 {

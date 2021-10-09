@@ -1,5 +1,10 @@
 package it.developing.ico2k2.luckyplayer.activities;
 
+import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
+import static it.developing.ico2k2.luckyplayer.Resources.MESSAGE_DESTROY;
+import static it.developing.ico2k2.luckyplayer.Resources.REQUEST_CODE_PERMISSIONS;
+import static it.developing.ico2k2.luckyplayer.Resources.permissionDialog;
+
 import android.Manifest;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -12,7 +17,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
@@ -21,15 +25,10 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.tabs.TabLayout;
 
 import it.developing.ico2k2.luckyplayer.R;
-import it.developing.ico2k2.luckyplayer.Utils;
+import it.developing.ico2k2.luckyplayer.Resources;
 import it.developing.ico2k2.luckyplayer.activities.base.BasePlayingActivity;
 import it.developing.ico2k2.luckyplayer.fragments.SongListFragment;
 import it.developing.ico2k2.luckyplayer.services.PlayService;
-
-import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
-import static it.developing.ico2k2.luckyplayer.Utils.MESSAGE_DESTROY;
-import static it.developing.ico2k2.luckyplayer.Utils.REQUEST_CODE_PERMISSIONS;
-import static it.developing.ico2k2.luckyplayer.Utils.permissionDialog;
 
 public class TabsActivity extends BasePlayingActivity
 {
@@ -59,7 +58,7 @@ public class TabsActivity extends BasePlayingActivity
         @NonNull
         public Fragment getItem(int i)
         {
-            Log.d(getClass().getSimpleName(),"Loading fragment " + i);
+            Log.d(TAG,"Loading fragment " + i);
             return SongListFragment.create(ids[i]);
         }
 
@@ -79,7 +78,7 @@ public class TabsActivity extends BasePlayingActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabs);
-        setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar));
 
         PagerAdapter adapter;
         TabLayout tabLayout = findViewById(R.id.tabs_tab_layout);
@@ -93,7 +92,7 @@ public class TabsActivity extends BasePlayingActivity
 
     void buildTransportControls()
     {
-        Log.d(getClass().getSimpleName(),"Building controls");
+        Log.d(TAG,"Building controls");
         requestPlayer();
         // Grab the view for the play/pause button
         /*playPause = (ImageView) findViewById(R.id.play_pause);
@@ -128,20 +127,20 @@ public class TabsActivity extends BasePlayingActivity
                 @Override
                 public void onMetadataChanged(MediaMetadataCompat metadata)
                 {
-                    Log.d(getClass().getSimpleName(),"MediaController metadata changed");
+                    Log.d(TAG,"MediaController metadata changed");
                 }
 
                 @Override
                 public void onPlaybackStateChanged(PlaybackStateCompat state)
                 {
-                    Log.d(getClass().getSimpleName(),"MediaController playback state changed");
+                    Log.d(TAG,"MediaController playback state changed");
                 }
             };
 
     @Override
     public void onStart() {
         super.onStart();
-        Utils.askForPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE,REQUEST_CODE_PERMISSIONS);
+        Resources.askForPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE,REQUEST_CODE_PERMISSIONS);
     }
 
     @Override

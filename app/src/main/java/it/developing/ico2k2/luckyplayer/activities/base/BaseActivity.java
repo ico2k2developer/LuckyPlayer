@@ -3,7 +3,6 @@ package it.developing.ico2k2.luckyplayer.activities.base;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,27 +17,28 @@ import androidx.annotation.RequiresApi;
 import androidx.annotation.StyleRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.preference.PreferenceManager;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import org.jetbrains.annotations.Nullable;
 
+import it.developing.ico2k2.luckyplayer.Prefs;
 import it.developing.ico2k2.luckyplayer.R;
+import it.developing.ico2k2.luckyplayer.Resources;
 import it.developing.ico2k2.luckyplayer.activities.MainActivity;
 
 public abstract class BaseActivity extends AppCompatActivity
 {
-    protected static final int THEME_DEFAULT = R.style.Theme_Dark_Red;
+    private static final String TAG = BaseActivity.class.getSimpleName();
 
-    private SharedPreferences prefs;
+    private Prefs prefs;
     private int currentTheme;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-        prefs = getMainSharedPreferences();
-        currentTheme = prefs.getInt(getString(R.string.key_theme),THEME_DEFAULT);
+        prefs = Prefs.getInstance(this,Prefs.PREFS_SETTINGS);
+        currentTheme = prefs.getInt(getString(R.string.key_theme), Resources.THEME_DEFAULT);
         setTheme(currentTheme);
         super.onCreate(savedInstanceState);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
@@ -51,42 +51,47 @@ public abstract class BaseActivity extends AppCompatActivity
             else
                 setKitKatStatusBarColor(getColorPrimaryDark());
         }
-        Log.d(getClass().getSimpleName(),getClass().getSimpleName() + ": created");
+        Log.d(TAG,getClass().getSimpleName() + ": created");
+    }
+
+    protected Prefs getSettings()
+    {
+        return prefs;
     }
 
     @Override
     public void onPause()
     {
         super.onPause();
-        Log.d(getClass().getSimpleName(),getClass().getSimpleName() + ": paused");
+        Log.d(TAG,getClass().getSimpleName() + ": paused");
     }
 
     @Override
     public void onStop()
     {
         super.onStop();
-        Log.d(getClass().getSimpleName(),getClass().getSimpleName() + ": stopped");
+        Log.d(TAG,getClass().getSimpleName() + ": stopped");
     }
 
     @Override
     public void onStart()
     {
         super.onStart();
-        Log.d(getClass().getSimpleName(),getClass().getSimpleName() + ": started");
+        Log.d(TAG,getClass().getSimpleName() + ": started");
     }
 
     @Override
     public void onResume()
     {
         super.onResume();
-        if(prefs.getBoolean(getString(R.string.key_initialized),false))
+        if(getSettings().getBoolean(getString(R.string.key_initialized),false))
         {
-            int theme = prefs.getInt(getString(R.string.key_theme),THEME_DEFAULT);
+            int theme = getSettings().getInt(getString(R.string.key_theme),Resources.THEME_DEFAULT);
             if(theme != currentTheme)
             {
                 if(onThemeChanged(currentTheme,theme))
                 {
-                    Log.d(getClass().getSimpleName(),"Restarting " + getClass().getName() + " because of theme change");
+                    Log.d(TAG,"Restarting " + getClass().getName() + " because of theme change");
                     finish();
                     startActivity(getIntent());
                 }
@@ -100,18 +105,18 @@ public abstract class BaseActivity extends AppCompatActivity
                 finish();
             }
         }
-        Log.d(getClass().getSimpleName(),getClass().getSimpleName() + ": resumed");
+        Log.d(TAG,getClass().getSimpleName() + ": resumed");
     }
 
     public boolean onThemeChanged(@StyleRes int oldTheme,@StyleRes int newTheme)
     {
-        Log.d(getClass().getSimpleName(),getClass().getSimpleName() + ": theme has changed! " + oldTheme + " to " + newTheme);
+        Log.d(TAG,getClass().getSimpleName() + ": theme has changed! " + oldTheme + " to " + newTheme);
         return true;
     }
 
     public boolean onNoDataFound()
     {
-        Log.d(getClass().getSimpleName(),getClass().getSimpleName() + ": no data found!");
+        Log.d(TAG,getClass().getSimpleName() + ": no data found!");
         return true;
     }
 
@@ -122,11 +127,6 @@ public abstract class BaseActivity extends AppCompatActivity
         if(result == null)
             result = getWindow().getDecorView().findViewById(android.R.id.content);
         return ((ViewGroup)result).getChildAt(0);
-    }
-
-    public SharedPreferences getMainSharedPreferences()
-    {
-        return PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     protected int setTheme(@StyleRes int theme,@StyleRes int exceptionTheme)

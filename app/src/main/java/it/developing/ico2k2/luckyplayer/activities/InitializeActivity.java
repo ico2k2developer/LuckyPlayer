@@ -7,7 +7,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.StyleRes;
-import androidx.appcompat.widget.Toolbar;
 
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.base.BaseActivity;
@@ -19,7 +18,7 @@ public class InitializeActivity extends BaseActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initialize);
-        setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar));
         findViewById(R.id.initialize_fab).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v)
@@ -33,7 +32,7 @@ public class InitializeActivity extends BaseActivity
 
     public boolean onThemeChanged(@StyleRes int oldTheme,@StyleRes int newTheme)
     {
-        return getMainSharedPreferences().getBoolean(getString(R.string.key_initialized),false);
+        return getSettings().getBoolean(getString(R.string.key_initialized),false);
     }
 
     public boolean onNoDataFound()
@@ -45,7 +44,7 @@ public class InitializeActivity extends BaseActivity
     public boolean onCreateOptionsMenu(Menu menu)
     {
         getMenuInflater().inflate(R.menu.menu_initialize,menu);
-        menu.findItem(R.id.menuShowEveryTime).setChecked(getMainSharedPreferences().getBoolean(getString(R.string.key_show_init_every_time),false));
+        menu.findItem(R.id.menuShowEveryTime).setChecked(getSettings().getBoolean(getString(R.string.key_show_init_every_time),false));
         return true;
     }
 
@@ -63,7 +62,7 @@ public class InitializeActivity extends BaseActivity
             case R.id.menuShowEveryTime:
             {
                 item.setChecked(!item.isChecked());
-                getMainSharedPreferences().edit()
+                getSettings().edit()
                         .putBoolean(getString(R.string.key_show_init_every_time),item.isChecked())
                         .apply();
                 break;

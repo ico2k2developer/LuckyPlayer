@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="key_include_music" formatted="false" translatable="false">include music</string>
-    <string name="key_include_podcast" formatted="false" translatable="false">include podcast</string>
-    <string name="key_include_alarm" formatted="false" translatable="false">include alarm</string>
-    <string name="key_include_notification" formatted="false" translatable="false">include notification</string>
-    <string name="key_include_audiobook" formatted="false" translatable="false">include audiobook</string>
-    <string name="key_include_ringtone" formatted="false" translatable="false">include ringtone</string>
-    <string name="key_include_other" formatted="false" translatable="false">include other</string>
-    <string name="key_prefs_data" formatted="false" translatable="false">prefs data</string>
-    <string name="key_delete_all" formatted="false" translatable="false">delete all</string>
-    <string name="key_initialized" formatted="false" translatable="false">initialized</string>
-    <string name="key_data_initialized" formatted="false" translatable="false">data initialized</string>
-    <string name="key_theme" formatted="false" translatable="false">theme</string>
-    <string name="key_notification_tint" formatted="false" translatable="false">notification tint</string>
-    <string name="key_songlist_packet_size" formatted="false" translatable="false">songlist packet size</string>
-    <string name="key_show_init_every_time" formatted="false" translatable="false">show init every time</string>
-    <string name="key_permission_data_no_more" formatted="false" translatable="false">no more data permission</string>
+    <string name="key_include_music" translatable="false">include music</string>
+    <string name="key_include_podcast" translatable="false">include podcast</string>
+    <string name="key_include_alarm" translatable="false">include alarm</string>
+    <string name="key_include_notification" translatable="false">include notification</string>
+    <string name="key_include_audiobook" translatable="false">include audiobook</string>
+    <string name="key_include_recording" translatable="false">include recording</string>
+    <string name="key_include_ringtone" translatable="false">include ringtone</string>
+    <string name="key_include_other" translatable="false">include other</string>
+    <string name="key_prefs_data" translatable="false">prefs data</string>
+    <string name="key_delete_all" translatable="false">delete all</string>
+    <string name="key_initialized" translatable="false">initialized</string>
+    <string name="key_data_initialized" translatable="false">data initialized</string>
+    <string name="key_theme" translatable="false">theme</string>
+    <string name="key_notification_tint" translatable="false">notification tint</string>
+    <string name="key_songlist_packet_size" translatable="false">songlist packet size</string>
+    <string name="key_show_init_every_time" translatable="false">show init every time</string>
+    <string name="key_permission_data_no_more" translatable="false">no more data permission</string>
 
 </resources>

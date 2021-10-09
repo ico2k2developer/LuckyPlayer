@@ -1,5 +1,8 @@
 package it.developing.ico2k2.luckyplayer.activities;
 
+import static it.developing.ico2k2.luckyplayer.Resources.EXTRA_URI;
+import static it.developing.ico2k2.luckyplayer.Resources.FILE_PROVIDER_AUTHORITY;
+
 import android.app.ActivityManager;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -54,9 +57,6 @@ import it.developing.ico2k2.luckyplayer.dialogs.DefaultDialog;
 import it.developing.ico2k2.luckyplayer.fragments.DetailsFragment;
 import it.developing.ico2k2.luckyplayer.tasks.AlbumArtLoadWorker;
 
-import static it.developing.ico2k2.luckyplayer.Utils.EXTRA_URI;
-import static it.developing.ico2k2.luckyplayer.Utils.FILE_PROVIDER_AUTHORITY;
-
 public class InfoActivity extends BaseActivity
 {
     private CollapsingToolbarLayout toolbarLayout;
@@ -102,7 +102,7 @@ public class InfoActivity extends BaseActivity
         if(contentPath != null)
         {
             result = contentPath.toString();
-            Log.d(getClass().getSimpleName(),"Original path: " + result);
+            Log.d(TAG,"Original path: " + result);
             result = contentPath.getPath();
             if(!new File(result).exists())
             {
@@ -122,7 +122,7 @@ public class InfoActivity extends BaseActivity
 
             }
         }
-        Log.d(getClass().getSimpleName(),"Real path: " + result);
+        Log.d(TAG,"Real path: " + result);
         return result;
     }
 
@@ -276,10 +276,10 @@ public class InfoActivity extends BaseActivity
     {
         path = intent.getStringExtra(EXTRA_URI);
         if(path == null)
-            path = getRealPath((Uri)intent.getParcelableExtra(Intent.EXTRA_STREAM));
+            path = getRealPath(intent.getParcelableExtra(Intent.EXTRA_STREAM));
         if(path == null)
             path = getRealPath(intent.getData());
-        Log.d(getClass().getSimpleName(),"Path is: " + path);
+        Log.d(TAG,"Path is: " + path);
     }
 
     @Override
@@ -292,7 +292,7 @@ public class InfoActivity extends BaseActivity
         if(path == null)
             resolvePath(getIntent());
         Uri uri = FileProvider.getUriForFile(this,FILE_PROVIDER_AUTHORITY,new File(path));
-        Log.d(getClass().getSimpleName(),"Path: " + uri);
+        Log.d(TAG,"Path: " + uri);
         intent.putExtra(Intent.EXTRA_STREAM,uri);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         sap.setShareIntent(intent);
@@ -339,7 +339,7 @@ public class InfoActivity extends BaseActivity
                             dir = new File(dir,"Download");
                             name = getSupportActionBar().getTitle() + FILENAME_COVER.substring(FILENAME_COVER.lastIndexOf("."));
                         }
-                        Log.d(getClass().getSimpleName(),"Cache dir: " + dir.getAbsolutePath());
+                        Log.d(TAG,"Cache dir: " + dir.getAbsolutePath());
                         if(dir.isDirectory()){
                             try
                             {

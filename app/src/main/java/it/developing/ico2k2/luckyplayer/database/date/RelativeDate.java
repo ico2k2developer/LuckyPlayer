@@ -26,11 +26,11 @@ public class RelativeDate extends GeneralDate
     }
 
     public RelativeDate(short count, Type type,boolean future) {
-        this(new Date(), count, type,future);
+        this(new AbsoluteDate(), count, type,future);
     }
 
     public RelativeDate(short count, Type type) {
-        this(new Date(), count, type);
+        this(new AbsoluteDate(), count, type);
     }
 
     public boolean isFuture()
@@ -45,7 +45,7 @@ public class RelativeDate extends GeneralDate
 
     public Date getAbsoluteDate()
     {
-        return new Date(getCalendar());
+        return new AbsoluteDate(getCalendar());
     }
 
     @Override

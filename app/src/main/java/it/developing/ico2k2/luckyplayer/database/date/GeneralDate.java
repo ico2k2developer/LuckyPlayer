@@ -39,7 +39,7 @@ public abstract class GeneralDate {
 
     public RelativeDate getRelativeDateFromNow()
     {
-        return getRelativeDate(new Date());
+        return getRelativeDate(new AbsoluteDate());
     }
 
     public long getMsFrom1970() {

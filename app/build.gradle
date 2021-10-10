@@ -45,7 +45,8 @@ dependencies
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
     implementation 'com.readystatesoftware.systembartint:systembartint:1.0.4'
-    implementation files('libs/jaudiotagger-2.2.6-SNAPSHOT.jar')
+    //implementation files('libs/jaudiotagger-2.2.6-SNAPSHOT.jar')
+    implementation 'net.jthink:jaudiotagger:3.0.0'
     implementation "androidx.media:media:1.4.2"
     implementation 'androidx.work:work-runtime:2.6.0'
     implementation 'org.jetbrains:annotations:15.0'

@@ -355,7 +355,7 @@ public final class Resources
     {
         boolean shouldShow = true;
         if(noMorePreferenceKey != null)
-            shouldShow = !context.getMainSharedPreferences().getBoolean(noMorePreferenceKey,false);
+            shouldShow = !Prefs.getInstance(context,Prefs.PREFS_SETTINGS).getBoolean(noMorePreferenceKey,false);
         if(shouldShow)
         {
             androidx.appcompat.app.AlertDialog.Builder dialog = new androidx.appcompat.app.AlertDialog.Builder(context);
@@ -376,7 +376,7 @@ public final class Resources
                 @Override
                 public void onClick(DialogInterface dialog,int which){
                     if(noMorePreferenceKey != null)
-                        context.getMainSharedPreferences().edit().putBoolean(noMorePreferenceKey,true).apply();
+                        Prefs.getInstance(context,Prefs.PREFS_SETTINGS).edit().putBoolean(noMorePreferenceKey,true).apply();
                 }
             });
             if(permissionReason == null)

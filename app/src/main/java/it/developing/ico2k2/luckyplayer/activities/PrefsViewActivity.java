@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
 
+import it.developing.ico2k2.luckyplayer.Prefs;
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.base.BaseActivity;
 import it.developing.ico2k2.luckyplayer.adapters.base.BaseAdapter;
@@ -25,6 +26,8 @@ import it.developing.ico2k2.luckyplayer.adapters.lib.ViewHandle;
 
 public class PrefsViewActivity extends BaseActivity
 {
+    private static final String TAG = PrefsViewActivity.class.getSimpleName();
+
     PrefsViewAdapter adapter;
 
     @Override
@@ -39,7 +42,7 @@ public class PrefsViewActivity extends BaseActivity
         list.setHasFixedSize(false);
         list.setNestedScrollingEnabled(true);
         list.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new PrefsViewAdapter(getMainSharedPreferences());
+        adapter = new PrefsViewAdapter(Prefs.getInstance(this,Prefs.PREFS_SETTINGS));
         list.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }

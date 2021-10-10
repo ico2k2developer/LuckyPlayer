@@ -1,270 +1,12 @@
 package it.developing.ico2k2.luckyplayer.database.data;
 
-import android.net.Uri;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.Ignore;
-import androidx.room.PrimaryKey;
-
-import org.jaudiotagger.audio.AudioFile;
-import org.jaudiotagger.audio.AudioFileIO;
-import org.jaudiotagger.tag.FieldKey;
-import org.jaudiotagger.tag.Tag;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.util.Locale;
-
-@Entity
 public abstract class BaseSong
 {
-    @PrimaryKey
-    @NonNull
-    @ColumnInfo(name = "id")
-    private final String id;
+    private static final char SEPARATOR = '\f';
 
-    @ColumnInfo(name = "title")
-    private final String title;
-
-    @ColumnInfo(name = "album_artist")
-    private final String albumArtist;
-
-    @ColumnInfo(name = "length")
-    private final int length;
-
-    @ColumnInfo(name = "genre")
-    private String genre;
-
-    @ColumnInfo(name = "year")
-    private final short year;
-
-    @ColumnInfo(name = "lyrics")
-    private String lyrics;
-
-    @Nullable
-    public static BaseSong loadFromUri(Uri uri)
-    {
-        BaseSong result;
-        AudioFile file;
-        try
-        {
-            file = AudioFileIO.read(new File(uri.getPath()));
-        }
-        catch (Exception e)
-        {
-            file = null;
-        }
-        if(file != null)
-        {
-            Tag tag = file.getTag();
-            result = new BaseSong(
-                    retrieveField(tag,FieldKey.TITLE,null),
-                    retrieveField(tag,FieldKey.ALBUM,null),
-                    retrieveField(tag,FieldKey.ALBUM_ARTIST,null),
-                    Byte.parseByte(retrieveField(tag,FieldKey.TRACK,"0")),
-                    file.getAudioHeader().getTrackLength(),
-                    Short.parseShort(retrieveField(tag,FieldKey.ORIGINAL_YEAR,retrieveField(tag,FieldKey.YEAR,"0"))),
-                    tag.getFirst(retrieveField(tag,FieldKey.GENRE,null)),
-                    tag.getFirst(retrieveField(tag,FieldKey.LYRICS,null)));
-        }
-        else
-            result = null;
-        return result;
-    }
-
-    private static String retrieveField(Tag tag,FieldKey key,String defaultValue)
-    {
-        String result;
-        try
-        {
-            result = tag.getFirst(key);
-        }
-        catch (Exception e)
-        {
-            result = defaultValue;
-        }
-        return result;
-    }
-
-    /*public static class Date
-    {
-        private final byte day;
-        private final byte month;
-        private final short year;
-        private final byte hour;
-        private final byte minute;
-
-        public Date(byte day,byte month,short year,byte hour,byte minute)
-        {
-            this.day = day;
-            this.month = month;
-            this.year = year;
-            this.hour = hour;
-            this.minute = minute;
-        }
-
-        public Date()
-        {
-            Calendar c = Calendar.getInstance();
-            day = (byte)c.get(Calendar.DAY_OF_MONTH);
-            month = (byte)c.get(Calendar.MONTH);
-            year = (short)c.get(Calendar.YEAR);
-            hour = (byte)c.get(Calendar.HOUR_OF_DAY);
-            minute = (byte)c.get(Calendar.MINUTE);
-        }
-
-        public Calendar toDate()
-        {
-            Calendar c = Calendar.getInstance();
-            c.set(year,month,day,hour,minute);
-            return c;
-        }
-
-        public byte getDay(){
-            return day;
-        }
-
-        public byte getMonth(){
-            return month;
-        }
-
-        public short getYear(){
-            return year;
-        }
-
-        public byte getHour(){
-            return hour;
-        }
-
-        public byte getMinute(){
-            return minute;
-        }
-
-        @Override
-        public @NotNull String toString()
-        {
-            return day + "/" + (month + 1) + "/" + year + " " + hour + ":" + minute;
-        }
-    }*/
-
-    private static final String separator = ";";
-
-    public static String generateId(String title,String artist)
-    {
-        return title + separator + artist;
-    }
-
-    //public Song(@NotNull String id, String title, String album, String albumArtist, byte trackN, int playsCount, byte lastPlayDay, byte lastPlayMonth, short lastPlayYear, byte lastPlayHour, byte lastPlayMinute, int length, short year, String genre, String lyrics)
-    public BaseSong(@NotNull String id, String title, String album, String albumArtist, byte trackN, int length, short year, String genre, String lyrics)
-    {
-        this.id = id;
-        this.title = title;
-        this.album = album;
-        this.albumArtist = albumArtist;
-        this.trackN = trackN;
-        /*this.playsCount = playsCount;
-        this.lastPlayDay = lastPlayDay;
-        this.lastPlayMonth = lastPlayMonth;
-        this.lastPlayYear = lastPlayYear;
-        this.lastPlayHour = lastPlayHour;
-        this.lastPlayMinute = lastPlayMinute;*/
-        this.length = length;
-        this.year = year;
-        this.genre = genre;
-        this.lyrics = lyrics;
-    }
-
-    @Ignore
-    public BaseSong(String title, String album, String albumArtist, byte trackN, int length, short year, @Nullable String genre, @Nullable String lyrics)
-    {
-        this(generateId(title,albumArtist),title,album,albumArtist,trackN,length,year,genre,lyrics);
-    }
-
-    @Ignore
-    public BaseSong(String title, String album, String albumArtist, byte trackN, int length, short year)
-    {
-        this(title,album,albumArtist,trackN,length,year,null,null);
-    }
-
-    @Ignore
-    public BaseSong(String title, String album, String albumArtist, byte trackN, int length)
-    {
-        this(title,album,albumArtist,trackN,length,(short)0);
-    }
-
-    @Ignore
-    public BaseSong(String title, String album, String albumArtist, int length)
-    {
-        this(title,album,albumArtist,(byte)0,length,(short)0);
-    }
-
-    @NotNull
-    public String getId()
-    {
-        return id;
-    }
-
-    public String getTitle()
-    {
-        return title;
-    }
-
-    public String getAlbum()
-    {
-        return album;
-    }
-
-    public String getAlbumArtist()
-    {
-        return albumArtist;
-    }
-
-    /*public int getPlaysCount()
-    {
-        return playsCount;
-    }
-
-    public void setPlaysCount(int count)
-    {
-        playsCount = count;
-    }
-
-    public byte getLastPlayDay(){
-        return lastPlayDay;
-    }
-
-    public byte getLastPlayMonth(){
-        return lastPlayMonth;
-    }
-
-    public short getLastPlayYear(){
-        return lastPlayYear;
-    }
-
-    public byte getLastPlayHour(){
-        return lastPlayHour;
-    }
-
-    public byte getLastPlayMinute(){
-        return lastPlayMinute;
-    }*/
-
-    public byte getTrackN(){
-        return trackN;
-    }
-
-    public short getYear(){
-        return year;
-    }
-
-    public int getLength(){
-        return length;
-    }
-
-    public String getTextualLength()
+    protected static String getTextualLength(int length)
     {
         short hours = (short)(length / 1000 / 60 / 60);
         byte minutes = (byte)(length / 1000 / 60 - hours * 60);
@@ -272,52 +14,20 @@ public abstract class BaseSong
         return hours + ":" + minutes + ":" + seconds;
     }
 
-    public String getGenre(){
-        return genre;
-    }
-
-    public String getLyrics(){
-        return lyrics;
-    }
-
-    public void setGenre(String genre){
-        this.genre = genre;
-    }
-
-    public void setLyrics(String lyrics){
-        this.lyrics = lyrics;
-    }
-
-    /*public Date getLastPlay(){
-        return new Date(lastPlayDay,lastPlayMonth,lastPlayYear,lastPlayHour,lastPlayMinute);
-    }
-
-    public void updateLastPlayDate()
+    @NotNull
+    protected static String generateId(@NotNull String title, @NotNull String albumArtist, int length)
     {
-        setLastPlay(new Date());
+        length /= 1000;
+        short min = (short) (length / 60);
+        return title + SEPARATOR + albumArtist + SEPARATOR + getTextualLength(length);
     }
 
-    private void setLastPlay(@NonNull Date lastPlay)
-    {
-        lastPlayDay = lastPlay.getDay();
-        lastPlayMonth = lastPlay.getMonth();
-        lastPlayYear = lastPlay.getYear();
-        lastPlayHour = lastPlay.getHour();
-        lastPlayMinute = lastPlay.getMinute();
-    }*/
+    @NotNull
+    public abstract String getId();
 
-    @Override
-    public @NotNull String toString()
-    {
-        /*return String.format(Locale.getDefault(),"%s from %s by %s, length: %s; played %d times, last time was %s",
-                title,album,albumArtist,getTextualLength(),playsCount,getLastPlay().toString());*/
-        return String.format(Locale.getDefault(),"%s from %s by %s, length: %s",
-                title,album,albumArtist,getTextualLength());
-    }
+    public abstract String getTitle();
 
-    @Override
-    public boolean equals(Object o)
-    {
-        return id.equals(o instanceof BaseSong ? ((BaseSong)o).id : null);
-    }
+    public abstract String getAlbumArtist();
+
+    public abstract short getLength();
 }

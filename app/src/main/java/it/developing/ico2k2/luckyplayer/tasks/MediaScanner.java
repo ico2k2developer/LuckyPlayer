@@ -19,7 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContentResolverCompat;
 
-import it.developing.ico2k2.luckyplayer.database.data.BaseSong;
+import it.developing.ico2k2.luckyplayer.database.data.plays.Song;
 import it.developing.ico2k2.luckyplayer.database.data.songs.SongDao;
 
 public class MediaScanner
@@ -203,7 +203,7 @@ public class MediaScanner
             columnIndex = cursor.getColumnIndex(COLUMN);
             while(cursor.moveToNext())
             {
-                dao.insertAll(BaseSong.loadFromUri(ContentUris.withAppendedId(uri,cursor.getLong(columnIndex))));
+                dao.insertAll(Song.loadFromUri(ContentUris.withAppendedId(uri,cursor.getLong(columnIndex))));
                 count++;
             }
             Log.d(TAG,"Jumping to the next uri");

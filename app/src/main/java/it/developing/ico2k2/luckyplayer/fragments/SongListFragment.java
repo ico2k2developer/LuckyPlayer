@@ -59,6 +59,8 @@ import it.developing.ico2k2.luckyplayer.services.PlayService;
 
 public class SongListFragment extends BaseFragment
 {
+    private static final String TAG = SongListFragment.class.getSimpleName();
+
     private static final int ID_MENU_INFO = 0x10;
 
     private static final int VIEW_LIST = 0x10;

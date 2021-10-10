@@ -32,6 +32,7 @@ import it.developing.ico2k2.luckyplayer.services.PlayService;
 
 public class TabsActivity extends BasePlayingActivity
 {
+    private static final String TAG = TabsActivity.class.getSimpleName();
 
     private ViewPager pager;
 

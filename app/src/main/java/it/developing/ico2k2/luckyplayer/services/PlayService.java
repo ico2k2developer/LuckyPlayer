@@ -48,6 +48,8 @@ import java.util.List;
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.MainActivity;
 import it.developing.ico2k2.luckyplayer.adapters.items.Song;
+import it.developing.ico2k2.luckyplayer.database.Client;
+import it.developing.ico2k2.luckyplayer.database.data.songs.SongsDatabase;
 import it.developing.ico2k2.luckyplayer.tasks.MediaScanner;
 
 public class PlayService extends MediaBrowserServiceCompat
@@ -236,8 +238,9 @@ public class PlayService extends MediaBrowserServiceCompat
                         prefs.getBoolean(getString(R.string.key_include_alarm),false),
                         prefs.getBoolean(getString(R.string.key_include_other),false));
             }
-            MediaScanner scanner = new MediaScanner(settings,getContentResolver(),);
-            MediaScanner scanner = new MediaScanner(settings,getContentResolver(),);
+            MediaScanner scanner = new MediaScanner(settings,getContentResolver(),
+                    Client.getInstance(this, SongsDatabase.class,Client.DATABASE_SONGS)
+                            .dao());
             Log.d(TAG,"MediaScanner created");
             switch(id)
             {

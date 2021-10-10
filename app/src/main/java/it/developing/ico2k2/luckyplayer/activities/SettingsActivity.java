@@ -4,7 +4,6 @@ import static it.developing.ico2k2.luckyplayer.Resources.adapterMapsFromAdapterL
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
@@ -37,6 +36,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import it.developing.ico2k2.luckyplayer.Prefs;
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.Resources;
 import it.developing.ico2k2.luckyplayer.activities.base.BaseActivity;
@@ -45,6 +45,8 @@ import it.developing.ico2k2.luckyplayer.dialogs.DefaultDialog;
 
 public class SettingsActivity extends BaseActivity
 {
+    private static final String TAG = SettingsActivity.class.getSimpleName();
+
     public static final String ARGUMENT_PREFERENCE = "preference";
     public static final String ARGUMENT_INDEX = "index";
     public static final String LICENSE_APACHE_2_0 = "apache 2.0";
@@ -103,7 +105,7 @@ public class SettingsActivity extends BaseActivity
         });
         list.setAdapter(adapter);
         handleIntent(getIntent());
-        getMainSharedPreferences().edit().putInt(getString(R.string.key_notification_tint),getColorPrimary()).apply();
+        Prefs.getInstance(this, Prefs.PREFS_SETTINGS).edit().putInt(getString(R.string.key_notification_tint),getColorPrimary()).apply();
     }
 
     @Override
@@ -489,7 +491,7 @@ public class SettingsActivity extends BaseActivity
             {
                 case R.string.key_theme:
                 {
-                    final SharedPreferences prefs = ((BaseActivity)getActivity()).getMainSharedPreferences();
+                    final Prefs prefs = Prefs.getInstance(getContext(),Prefs.PREFS_SETTINGS);
                     final AppCompatSpinner themeSpinner = view.findViewById(R.id.theme_spinner);
                     final ArrayList<String> items = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.themes)));
                     final ArrayList<Integer> themes = new ArrayList<>(items.size());
@@ -647,7 +649,7 @@ public class SettingsActivity extends BaseActivity
                             dialog.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    ((BaseActivity)getActivity()).getMainSharedPreferences().edit().clear().apply();
+                                    Prefs.getInstance(getContext(),Prefs.PREFS_SETTINGS).edit().clear().apply();
                                     getActivity().onBackPressed();
                                 }
                             });

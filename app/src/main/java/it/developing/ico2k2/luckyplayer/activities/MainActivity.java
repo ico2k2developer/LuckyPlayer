@@ -24,7 +24,7 @@ public class MainActivity extends BaseActivity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        go = !getMainSharedPreferences().getBoolean(getString(R.string.key_show_init_every_time),false);
+        go = !Prefs.getInstance(this,Prefs.PREFS_SETTINGS).getBoolean(getString(R.string.key_show_init_every_time),false);
     }
 
     @Override

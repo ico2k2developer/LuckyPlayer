@@ -1,7 +1,6 @@
 package it.developing.ico2k2.luckyplayer.database.data.plays;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -12,10 +11,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Locale;
 
 import it.developing.ico2k2.luckyplayer.database.data.BaseSong;
-import it.developing.ico2k2.luckyplayer.database.date.Date;
+import it.developing.ico2k2.luckyplayer.database.date.AbsoluteDate1970To2225;
 
 @Entity
-public class Play
+public class Play extends BaseSong
 {
     @PrimaryKey
     @NonNull
@@ -25,48 +24,124 @@ public class Play
     @ColumnInfo(name = "title")
     private final String title;
 
-    @ColumnInfo(name = "album")
-    private final String album;
-
-    @ColumnInfo(name = "album_artist")
+    @ColumnInfo(name = "albumartist")
     private final String albumArtist;
 
+    @ColumnInfo(name = "length")
+    private final short length;
+
     @ColumnInfo(name = "plays_count")
-    private int playsCount;
+    private final int playsCount;
 
     @ColumnInfo(name = "last_play_day")
-    private byte lastPlayDay;
+    private final byte lastPlayDay;
 
     @ColumnInfo(name = "last_play_month")
-    private byte lastPlayMonth;
+    private final byte lastPlayMonth;
 
     @ColumnInfo(name = "last_play_year")
-    private byte lastPlayYear;
+    private final byte lastPlayMemYear;
 
     @ColumnInfo(name = "last_play_hour")
-    private byte lastPlayHour;
+    private final byte lastPlayHour;
 
     @ColumnInfo(name = "last_play_minute")
-    private byte lastPlayMinute;
+    private final byte lastPlayMinute;
 
-    @ColumnInfo(name = "length")
-    private final int length;
-
-    @ColumnInfo(name = "track_number")
-    private final byte trackN;
-
-    @ColumnInfo(name = "genre")
-    private String genre;
-
-    @ColumnInfo(name = "year")
-    private final byte year;
-
-    /*@ColumnInfo(name = "lyrics")
-    private String lyrics;*/
-
-    public Date getLastPlay()
+    public Play(@NotNull String id,@NotNull String title,@NotNull String albumArtist,short length,
+                int playsCount,byte lastPlayDay, byte lastPlayMonth, byte lastPlayMemYear,
+                byte lastPlayHour, byte lastPlayMinute)
     {
-        return new Date(lastPlayDay,lastPlayMonth,lastPlayYear,lastPlayHour,lastPlayMinute);
+        this.id = id;
+        this.title = title;
+        this.albumArtist = albumArtist;
+        this.length = length;
+        this.playsCount = playsCount;
+        this.lastPlayDay = lastPlayDay;
+        this.lastPlayMonth = lastPlayMonth;
+        this.lastPlayMemYear = lastPlayMemYear;
+        this.lastPlayHour = lastPlayHour;
+        this.lastPlayMinute = lastPlayMinute;
+    }
+
+    @Ignore
+    public Play(@NotNull String title,@NotNull String albumArtist,short length,int playsCount,
+                byte lastPlayDay, byte lastPlayMonth, byte lastPlayMemYear,
+                byte lastPlayHour, byte lastPlayMinute)
+    {
+        this(generateId(title,albumArtist,length),title,albumArtist,length,playsCount,
+                lastPlayDay,lastPlayMonth,lastPlayMemYear,lastPlayHour,lastPlayMinute);
+    }
+
+    @Ignore
+    public Play(@NotNull String title, @NotNull String albumArtist, short length, int playsCount,
+                AbsoluteDate1970To2225 lastPlay)
+    {
+        this(title,albumArtist,length,playsCount,
+                lastPlay.getDay(),lastPlay.getMonth(),lastPlay.getMemYear(),
+                lastPlay.getHour(),lastPlay.getMinute());
+    }
+
+    @Ignore
+    public Play(@NotNull String title,@NotNull String albumArtist,short length,int playsCount)
+    {
+        this(title,albumArtist,length,playsCount,new AbsoluteDate1970To2225());
+    }
+
+    @NotNull
+    public String getId()
+    {
+        return id;
+    }
+
+    public String getTitle()
+    {
+        return title;
+    }
+
+    public String getAlbumArtist()
+    {
+        return albumArtist;
+    }
+
+    public short getLength()
+    {
+        return length;
+    }
+
+    public int getPlaysCount()
+    {
+        return playsCount;
+    }
+
+    public AbsoluteDate1970To2225 getLastPlay()
+    {
+        return new AbsoluteDate1970To2225(lastPlayDay,lastPlayMonth, lastPlayMemYear,lastPlayHour,lastPlayMinute);
+    }
+
+    public byte getLastPlayDay()
+    {
+        return lastPlayDay;
+    }
+
+    public byte getLastPlayMonth() {
+        return lastPlayMonth;
+    }
+
+    public byte getLastPlayMemYear() {
+        return lastPlayMemYear;
+    }
+
+    public short getLastPlayYear() {
+        return AbsoluteDate1970To2225.memYearToActualYear(getLastPlayMemYear());
+    }
+
+    public byte getLastPlayHour() {
+        return lastPlayHour;
+    }
+
+    public byte getLastPlayMinute() {
+        return lastPlayMinute;
     }
 
     /*@Nullable
@@ -118,11 +193,11 @@ public class Play
     {
         private final byte day;
         private final byte month;
-        private final short year;
+        private final byte memYear;
         private final byte hour;
         private final byte minute;
 
-        public Date(byte day,byte month,short year,byte hour,byte minute)
+        public Date(byte day,byte month,byte memYear,byte hour,byte minute)
         {
             this.day = day;
             this.month = month;
@@ -175,78 +250,6 @@ public class Play
         }
     }*/
 
-    private static final String separator = ";";
-
-    public static String generateId(String title,String artist)
-    {
-        return title + separator + artist;
-    }
-
-    //public Song(@NotNull String id, String title, String album, String albumArtist, byte trackN, int playsCount, byte lastPlayDay, byte lastPlayMonth, short lastPlayYear, byte lastPlayHour, byte lastPlayMinute, int length, short year, String genre, String lyrics)
-    public BaseSong(@NotNull String id, String title, String album, String albumArtist, byte trackN, int length, short year, String genre, String lyrics)
-    {
-        this.id = id;
-        this.title = title;
-        this.album = album;
-        this.albumArtist = albumArtist;
-        this.trackN = trackN;
-        /*this.playsCount = playsCount;
-        this.lastPlayDay = lastPlayDay;
-        this.lastPlayMonth = lastPlayMonth;
-        this.lastPlayYear = lastPlayYear;
-        this.lastPlayHour = lastPlayHour;
-        this.lastPlayMinute = lastPlayMinute;*/
-        this.length = length;
-        this.year = year;
-        this.genre = genre;
-        this.lyrics = lyrics;
-    }
-
-    @Ignore
-    public BaseSong(String title, String album, String albumArtist, byte trackN, int length, short year, @Nullable String genre, @Nullable String lyrics)
-    {
-        this(generateId(title,albumArtist),title,album,albumArtist,trackN,length,year,genre,lyrics);
-    }
-
-    @Ignore
-    public BaseSong(String title, String album, String albumArtist, byte trackN, int length, short year)
-    {
-        this(title,album,albumArtist,trackN,length,year,null,null);
-    }
-
-    @Ignore
-    public BaseSong(String title, String album, String albumArtist, byte trackN, int length)
-    {
-        this(title,album,albumArtist,trackN,length,(short)0);
-    }
-
-    @Ignore
-    public BaseSong(String title, String album, String albumArtist, int length)
-    {
-        this(title,album,albumArtist,(byte)0,length,(short)0);
-    }
-
-    @NotNull
-    public String getId()
-    {
-        return id;
-    }
-
-    public String getTitle()
-    {
-        return title;
-    }
-
-    public String getAlbum()
-    {
-        return album;
-    }
-
-    public String getAlbumArtist()
-    {
-        return albumArtist;
-    }
-
     /*public int getPlaysCount()
     {
         return playsCount;
@@ -277,42 +280,6 @@ public class Play
         return lastPlayMinute;
     }*/
 
-    public byte getTrackN(){
-        return trackN;
-    }
-
-    public short getYear(){
-        return Date.memYearToActualYear(year);
-    }
-
-    public int getLength(){
-        return length;
-    }
-
-    public String getTextualLength()
-    {
-        short hours = (short)(length / 1000 / 60 / 60);
-        byte minutes = (byte)(length / 1000 / 60 - hours * 60);
-        byte seconds = (byte)(length / 1000 - hours * 60 * 60 - minutes * 60);
-        return hours + ":" + minutes + ":" + seconds;
-    }
-
-    public String getGenre(){
-        return genre;
-    }
-
-    public String getLyrics(){
-        return lyrics;
-    }
-
-    public void setGenre(String genre){
-        this.genre = genre;
-    }
-
-    public void setLyrics(String lyrics){
-        this.lyrics = lyrics;
-    }
-
     /*public Date getLastPlay(){
         return new Date(lastPlayDay,lastPlayMonth,lastPlayYear,lastPlayHour,lastPlayMinute);
     }
@@ -334,16 +301,22 @@ public class Play
     @Override
     public @NotNull String toString()
     {
-        /*return String.format(Locale.getDefault(),"%s from %s by %s, length: %s; played %d times, last time was %s",
-                title,album,albumArtist,getTextualLength(),playsCount,getLastPlay().toString());*/
-        return String.format(Locale.getDefault(),"%s from %s by %s, length: %s",
-                title,album,albumArtist,getTextualLength());
+        return String.format(Locale.getDefault(),"Song with id %s played %d times, last time was: %s",
+                getId(),getPlaysCount(),getLastPlay());
     }
 
     @Override
     public boolean equals(Object o)
     {
-        return id.equals(o instanceof BaseSong ? ((BaseSong)o).id : null);
+        boolean result = false;
+        if(o != null)
+        {
+            if(o instanceof Play)
+            {
+                result = id.equals(((Play)o).getId());
+            }
+        }
+        return result;
     }
 
 }

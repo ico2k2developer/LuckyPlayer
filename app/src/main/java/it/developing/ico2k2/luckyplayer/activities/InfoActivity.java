@@ -59,6 +59,8 @@ import it.developing.ico2k2.luckyplayer.tasks.AlbumArtLoadWorker;
 
 public class InfoActivity extends BaseActivity
 {
+    private static final String TAG = InfoActivity.class.getSimpleName();
+
     private CollapsingToolbarLayout toolbarLayout;
     private DetailsFragment tagDetails,fileDetails;
     private String path;

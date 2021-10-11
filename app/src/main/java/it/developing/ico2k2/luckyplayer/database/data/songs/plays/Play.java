@@ -1,4 +1,4 @@
-package it.developing.ico2k2.luckyplayer.database.data.plays;
+package it.developing.ico2k2.luckyplayer.database.data.songs.plays;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
+import it.developing.ico2k2.luckyplayer.database.Optimized;
 import it.developing.ico2k2.luckyplayer.database.data.BaseSong;
 import it.developing.ico2k2.luckyplayer.database.date.AbsoluteDate1970To2225;
 
@@ -18,8 +19,8 @@ public class Play extends BaseSong
 {
     @PrimaryKey
     @NonNull
-    @ColumnInfo(name = "id")
-    private final String id;
+    @ColumnInfo(name = "uri")
+    private final String uri;
 
     @ColumnInfo(name = "title")
     private final String title;
@@ -48,11 +49,11 @@ public class Play extends BaseSong
     @ColumnInfo(name = "last_play_minute")
     private final byte lastPlayMinute;
 
-    public Play(@NotNull String id,@NotNull String title,@NotNull String albumArtist,short length,
-                int playsCount,byte lastPlayDay, byte lastPlayMonth, byte lastPlayMemYear,
+    public Play(@NotNull String uri, @NotNull String title, @NotNull String albumArtist, short length,
+                int playsCount, byte lastPlayDay, byte lastPlayMonth, byte lastPlayMemYear,
                 byte lastPlayHour, byte lastPlayMinute)
     {
-        this.id = id;
+        this.uri = uri;
         this.title = title;
         this.albumArtist = albumArtist;
         this.length = length;
@@ -65,33 +66,33 @@ public class Play extends BaseSong
     }
 
     @Ignore
-    public Play(@NotNull String title,@NotNull String albumArtist,short length,int playsCount,
-                byte lastPlayDay, byte lastPlayMonth, byte lastPlayMemYear,
+    public Play(@NotNull String uri, @NotNull String title,@NotNull String albumArtist,short length,int playsCount,
+                byte lastPlayDay, byte lastPlayMonth, short lastPlayYear,
                 byte lastPlayHour, byte lastPlayMinute)
     {
-        this(generateId(title,albumArtist,length),title,albumArtist,length,playsCount,
-                lastPlayDay,lastPlayMonth,lastPlayMemYear,lastPlayHour,lastPlayMinute);
+        this(uri,title,albumArtist,length,playsCount,
+                lastPlayDay,lastPlayMonth, Optimized.byte256(lastPlayYear),lastPlayHour,lastPlayMinute);
     }
 
     @Ignore
-    public Play(@NotNull String title, @NotNull String albumArtist, short length, int playsCount,
+    public Play(@NotNull String uri, @NotNull String title, @NotNull String albumArtist, short length, int playsCount,
                 AbsoluteDate1970To2225 lastPlay)
     {
-        this(title,albumArtist,length,playsCount,
+        this(uri,title,albumArtist,length,playsCount,
                 lastPlay.getDay(),lastPlay.getMonth(),lastPlay.getMemYear(),
                 lastPlay.getHour(),lastPlay.getMinute());
     }
 
     @Ignore
-    public Play(@NotNull String title,@NotNull String albumArtist,short length,int playsCount)
+    public Play(@NotNull String uri,@NotNull String title,@NotNull String albumArtist,short length,int playsCount)
     {
-        this(title,albumArtist,length,playsCount,new AbsoluteDate1970To2225());
+        this(uri,title,albumArtist,length,playsCount,new AbsoluteDate1970To2225());
     }
 
     @NotNull
-    public String getId()
+    public String getUri()
     {
-        return id;
+        return uri;
     }
 
     public String getTitle()
@@ -301,8 +302,9 @@ public class Play extends BaseSong
     @Override
     public @NotNull String toString()
     {
-        return String.format(Locale.getDefault(),"Song with id %s played %d times, last time was: %s",
-                getId(),getPlaysCount(),getLastPlay());
+        return String.format(Locale.getDefault(),"Song with uri %s with title %s by %s," +
+                        "duration: %s, played %d times, last time was: %s",
+                getUri(),getTitle(),getAlbumArtist(),getTextualLength(),getPlaysCount(),getLastPlay());
     }
 
     @Override
@@ -313,7 +315,7 @@ public class Play extends BaseSong
         {
             if(o instanceof Play)
             {
-                result = id.equals(((Play)o).getId());
+                result = uri.equals(((Play)o).getUri());
             }
         }
         return result;

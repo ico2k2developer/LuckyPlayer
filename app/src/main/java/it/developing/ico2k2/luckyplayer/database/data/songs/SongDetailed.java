@@ -1,4 +1,4 @@
-package it.developing.ico2k2.luckyplayer.database.data.plays;
+package it.developing.ico2k2.luckyplayer.database.data.songs;
 
 import android.net.Uri;
 
@@ -22,7 +22,7 @@ import it.developing.ico2k2.luckyplayer.database.Optimized;
 import it.developing.ico2k2.luckyplayer.database.data.BaseSong;
 
 @Entity
-public class Song extends BaseSong
+public class SongDetailed extends BaseSong
 {
     public static final short TRACK_N_MIN = 1;
     public static final short TRACK_N_MAX = Optimized.byte256maxFromMin(TRACK_N_MIN);
@@ -31,8 +31,8 @@ public class Song extends BaseSong
 
     @PrimaryKey
     @NonNull
-    @ColumnInfo(name = "id")
-    private final String id;
+    @ColumnInfo(name = "uri")
+    private final String uri;
 
     @ColumnInfo(name = "title")
     private final String title;
@@ -88,12 +88,12 @@ public class Song extends BaseSong
     @ColumnInfo(name = "lossless")
     private final boolean lossless;
 
-    public Song(@NotNull String id, String title, String album, String albumArtist, String artist,
-                short length, byte memTrackN, byte memTrackTotal, short releaseYear, short originalYear,
-                String genre, String lyrics, byte memBpm, String initKey, short bitrate, String format,
-                byte channels, boolean vbr, boolean lossless)
+    public SongDetailed(@NotNull String uri, String title, String album, String albumArtist, String artist,
+                        short length, byte memTrackN, byte memTrackTotal, short releaseYear, short originalYear,
+                        String genre, String lyrics, byte memBpm, String initKey, short bitrate, String format,
+                        byte channels, boolean vbr, boolean lossless)
     {
-        this.id = id;
+        this.uri = uri;
         this.title = title;
         this.album = album;
         this.albumArtist = albumArtist;
@@ -115,12 +115,12 @@ public class Song extends BaseSong
     }
 
     @Ignore
-    public Song(String title, String album, String albumArtist, String artist,
-                short length, short memTrackN, short memTrackTotal, short releaseYear, short originalYear,
-                String genre, String lyrics, byte memBpm, String initKey, short bitrate, String format,
-                byte channels, boolean vbr, boolean lossless)
+    public SongDetailed(@NotNull String uri, String title, String album, String albumArtist, String artist,
+                        short length, short memTrackN, short memTrackTotal, short releaseYear, short originalYear,
+                        String genre, String lyrics, byte memBpm, String initKey, short bitrate, String format,
+                        byte channels, boolean vbr, boolean lossless)
     {
-        this(generateId(title,albumArtist,length),title,album,albumArtist,artist,length,
+        this(uri,title,album,albumArtist,artist,length,
                 Optimized.byte256((short) (memTrackN - TRACK_N_MIN)),
                 Optimized.byte256((short) (memTrackTotal - TRACK_N_MIN)),releaseYear, originalYear,
                 genre,lyrics,
@@ -129,9 +129,9 @@ public class Song extends BaseSong
     }
 
     @NotNull
-    public String getId()
+    public String getUri()
     {
-        return id;
+        return uri;
     }
 
     public String getTitle()
@@ -225,9 +225,9 @@ public class Song extends BaseSong
         return lossless;
     }
 
-    public static Song loadFromUri(Uri uri)
+    public static SongDetailed loadFromUri(Uri uri)
     {
-        Song result;
+        SongDetailed result;
         AudioFile file;
         try
         {
@@ -241,7 +241,8 @@ public class Song extends BaseSong
         {
             Tag tag = file.getTag();
             AudioHeader header = file.getAudioHeader();
-            result = new Song(
+            result = new SongDetailed(
+                    uri.getPath(),
                     retrieveField(tag, FieldKey.TITLE,null),
                     retrieveField(tag, FieldKey.ALBUM,null),
                     retrieveField(tag, FieldKey.ALBUM_ARTIST,null),
@@ -300,10 +301,8 @@ public class Song extends BaseSong
     @Override
     public @NotNull String toString()
     {
-        /*return String.format(Locale.getDefault(),"%s from %s by %s, length: %s; played %d times, last time was %s",
-                title,album,albumArtist,getTextualLength(),playsCount,getLastPlay().toString());*/
-        return String.format(Locale.getDefault(),"%s from %s by %s, length: %s",
-                title,album,albumArtist, getLengthText());
+        return String.format(Locale.getDefault(),"Song with uri %s with title %s by %s," +
+                        "duration: %s",getUri(),getTitle(),getAlbumArtist(),getTextualLength());
     }
 
     @Override
@@ -312,9 +311,9 @@ public class Song extends BaseSong
         boolean result = false;
         if(o != null)
         {
-            if(o instanceof Song)
+            if(o instanceof SongDetailed)
             {
-                result = id.equals(((Song)o).getId());
+                result = uri.equals(((SongDetailed)o).getUri());
             }
         }
         return result;

@@ -1,4 +1,4 @@
-package it.developing.ico2k2.luckyplayer.database.data.plays;
+package it.developing.ico2k2.luckyplayer.database.data.songs.plays;
 
 import androidx.room.RoomDatabase;
 

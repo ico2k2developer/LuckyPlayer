@@ -11,6 +11,7 @@ import java.util.Map;
 public class Client
 {
     public static final String DATABASE_SONGS = "songs";
+    public static final String DATABASE_SONGS_DETAILED = "songs_detailed";
     public static final String DATABASE_PLAYS = "plays";
 
     private static final Map<String,Client> clients = new HashMap<>();

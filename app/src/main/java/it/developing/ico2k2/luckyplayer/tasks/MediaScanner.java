@@ -19,8 +19,12 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContentResolverCompat;
 
-import it.developing.ico2k2.luckyplayer.database.data.plays.Song;
-import it.developing.ico2k2.luckyplayer.database.data.songs.SongDao;
+import java.io.IOException;
+
+import it.developing.ico2k2.luckyFileer.database.data.FileDao;
+import it.developing.ico2k2.luckyplayer.database.data.File;
+import it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailed;
+import it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailedDao;
 
 public class MediaScanner
 {
@@ -137,13 +141,15 @@ public class MediaScanner
     }
 
     private final ContentResolver resolver;
-    private final SongDao dao;
+    private final SongDetailedDao songsDetailed;
+    private final FileDao songsFiles;
     private final String query;
 
-    public MediaScanner(QuerySettings settings,ContentResolver resolver,SongDao dao)
+    public MediaScanner(QuerySettings settings, ContentResolver resolver,FileDao files,SongDetailedDao songs)
     {
         this.resolver = resolver;
-        this.dao = dao;
+        songsFiles = files;
+        songsDetailed = songs;
         query = buildQuerySelectionString(settings);
     }
 
@@ -195,6 +201,8 @@ public class MediaScanner
         Cursor cursor = null;
         int columnIndex;
         long count = 0;
+        //dao.deleteAll();
+        File file,loaded;
         for(Uri uri : uris)
         {
             Log.d(TAG,"Checking uri: " + uri.toString());
@@ -203,7 +211,23 @@ public class MediaScanner
             columnIndex = cursor.getColumnIndex(COLUMN);
             while(cursor.moveToNext())
             {
-                dao.insertAll(Song.loadFromUri(ContentUris.withAppendedId(uri,cursor.getLong(columnIndex))));
+                try
+                {
+                    file = new File(ContentUris.withAppendedId(uri,cursor.getLong(columnIndex)));
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                    file = null;
+                }
+                if(file != null)
+                {
+                    if(!songsFiles.loadByUri(file.getUri()).equals(file))
+                    {
+                        
+                    }
+                }
+                dao.insertAll(SongDetailed.loadFromUri(ContentUris.withAppendedId(uri,cursor.getLong(columnIndex))));
                 count++;
             }
             Log.d(TAG,"Jumping to the next uri");
@@ -213,7 +237,9 @@ public class MediaScanner
         return count;
     }
 
-    String[] processFile(int uri,int mediaColumn,Cursor cursor)
+    /*
+
+    private static String[] processFile(int uri,int mediaColumn,Cursor cursor)
     {
         String[] results = new String[cursor.getColumnCount()];
         int i;
@@ -223,8 +249,6 @@ public class MediaScanner
         }
         return results;
     }
-
-    /*
     public static class MediaScanResult
     {
         protected Map<String,Integer> keys;

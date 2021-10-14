@@ -1,7 +1,5 @@
 package it.developing.ico2k2.luckyplayer.database.data.songs;
 
-import android.net.Uri;
-
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -15,11 +13,11 @@ import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.util.Locale;
 
 import it.developing.ico2k2.luckyplayer.database.Optimized;
 import it.developing.ico2k2.luckyplayer.database.data.BaseSong;
+import it.developing.ico2k2.luckyplayer.database.data.File;
 
 @Entity
 public class SongDetailed extends BaseSong
@@ -225,13 +223,18 @@ public class SongDetailed extends BaseSong
         return lossless;
     }
 
-    public static SongDetailed loadFromUri(Uri uri)
+    public static SongDetailed loadFromFile(File file)
+    {
+        return loadFromUri(file.getUri());
+    }
+
+    public static SongDetailed loadFromUri(String uri)
     {
         SongDetailed result;
         AudioFile file;
         try
         {
-            file = AudioFileIO.read(new File(uri.getPath()));
+            file = AudioFileIO.read(new java.io.File(uri));
         }
         catch (Exception e)
         {
@@ -242,7 +245,7 @@ public class SongDetailed extends BaseSong
             Tag tag = file.getTag();
             AudioHeader header = file.getAudioHeader();
             result = new SongDetailed(
-                    uri.getPath(),
+                    uri,
                     retrieveField(tag, FieldKey.TITLE,null),
                     retrieveField(tag, FieldKey.ALBUM,null),
                     retrieveField(tag, FieldKey.ALBUM_ARTIST,null),

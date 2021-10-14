@@ -1,4 +1,4 @@
-package it.developing.ico2k2.luckyFileer.database.data;
+package it.developing.ico2k2.luckyplayer.database.data;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -7,8 +7,6 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import java.util.List;
-
-import it.developing.ico2k2.luckyplayer.database.data.File;
 
 @Dao
 public interface FileDao

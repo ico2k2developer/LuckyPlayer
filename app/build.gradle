@@ -5,12 +5,12 @@ plugins
 
 android
 {
-    compileSdkVersion 30
+    compileSdkVersion 31
     defaultConfig
     {
         applicationId "it.developing.ico2k2.luckyplayer"
         minSdkVersion 16
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 29
         versionName "2.0"
         javaCompileOptions
@@ -47,9 +47,10 @@ dependencies
     implementation 'com.readystatesoftware.systembartint:systembartint:1.0.4'
     //implementation files('libs/jaudiotagger-2.2.6-SNAPSHOT.jar')
     implementation 'net.jthink:jaudiotagger:3.0.0'
-    implementation "androidx.media:media:1.4.2"
-    implementation 'androidx.work:work-runtime:2.6.0'
+    implementation "androidx.media:media:1.4.3"
+    implementation 'androidx.work:work-runtime:2.7.0'
     implementation 'org.jetbrains:annotations:15.0'
     implementation "androidx.room:room-runtime:2.3.0"
+    //implementation 'androidx.paging:paging-runtime:3.0.1'
     annotationProcessor "androidx.room:room-compiler:2.3.0"
 }

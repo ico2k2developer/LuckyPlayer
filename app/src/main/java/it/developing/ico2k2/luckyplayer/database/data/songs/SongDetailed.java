@@ -22,6 +22,26 @@ import it.developing.ico2k2.luckyplayer.database.data.File;
 @Entity
 public class SongDetailed extends BaseSong
 {
+    public static final String COLUMN_URI = "uri";
+    public static final String COLUMN_TITLE = "title";
+    public static final String COLUMN_ALBUM = "album";
+    public static final String COLUMN_ALBUM_ARTIST = "album_artist";
+    public static final String COLUMN_ARTIST = "artist";
+    public static final String COLUMN_LENGTH = "length";
+    public static final String COLUMN_TRACK_N = "track_n";
+    public static final String COLUMN_TRACK_TOTAL = "track_total";
+    public static final String COLUMN_YEAR_RELEASE = "release_year";
+    public static final String COLUMN_YEAR_ORIGINAL = "original_year";
+    public static final String COLUMN_GENRE = "genre";
+    public static final String COLUMN_LYRICS = "lyrics";
+    public static final String COLUMN_BPM = "bpm";
+    public static final String COLUMN_KEY_INIT = "init_key";
+    public static final String COLUMN_BITRATE = "bitrate";
+    public static final String COLUMN_FORMAT = "format";
+    public static final String COLUMN_CHANNELS = "channels";
+    public static final String COLUMN_VBR = "vbr";
+    public static final String COLUMN_LOSSLESS = "lossless";
+
     public static final short TRACK_N_MIN = 1;
     public static final short TRACK_N_MAX = Optimized.byte256maxFromMin(TRACK_N_MIN);
     public static final short BPM_MIN = 0;
@@ -29,61 +49,61 @@ public class SongDetailed extends BaseSong
 
     @PrimaryKey
     @NonNull
-    @ColumnInfo(name = "uri")
+    @ColumnInfo(name = COLUMN_URI)
     private final String uri;
 
-    @ColumnInfo(name = "title")
+    @ColumnInfo(name = COLUMN_TITLE)
     private final String title;
 
-    @ColumnInfo(name = "album")
+    @ColumnInfo(name = COLUMN_ALBUM)
     private final String album;
 
-    @ColumnInfo(name = "album_artist")
+    @ColumnInfo(name = COLUMN_ALBUM_ARTIST)
     private final String albumArtist;
 
-    @ColumnInfo(name = "artist")
+    @ColumnInfo(name = COLUMN_ARTIST)
     private final String artist;
 
-    @ColumnInfo(name = "length")
+    @ColumnInfo(name = COLUMN_LENGTH)
     private final short length;
 
-    @ColumnInfo(name = "track_number")
+    @ColumnInfo(name = COLUMN_TRACK_N)
     private final byte memTrackN;
 
-    @ColumnInfo(name = "track_total")
+    @ColumnInfo(name = COLUMN_TRACK_TOTAL)
     private final byte memTrackTotal;
 
-    @ColumnInfo(name = "release_year")
+    @ColumnInfo(name = COLUMN_YEAR_RELEASE)
     private final short releaseYear;
 
-    @ColumnInfo(name = "orig_year")
+    @ColumnInfo(name = COLUMN_YEAR_ORIGINAL)
     private final short originalYear;
 
-    @ColumnInfo(name = "genre")
+    @ColumnInfo(name = COLUMN_GENRE)
     private final String genre;
 
-    @ColumnInfo(name = "lyrics")
+    @ColumnInfo(name = COLUMN_LYRICS)
     private final String lyrics;
 
-    @ColumnInfo(name = "bpm")
+    @ColumnInfo(name = COLUMN_BPM)
     private final byte memBpm;
 
-    @ColumnInfo(name = "init_key")
+    @ColumnInfo(name = COLUMN_KEY_INIT)
     private final String initKey;
 
-    @ColumnInfo(name = "bitrate")
+    @ColumnInfo(name = COLUMN_BITRATE)
     private final short bitrate;
 
-    @ColumnInfo(name = "format")
+    @ColumnInfo(name = COLUMN_FORMAT)
     private final String format;
 
-    @ColumnInfo(name = "channels")
+    @ColumnInfo(name = COLUMN_CHANNELS)
     private final byte channels;
 
-    @ColumnInfo(name = "vbr")
+    @ColumnInfo(name = COLUMN_VBR)
     private final boolean vbr;
 
-    @ColumnInfo(name = "lossless")
+    @ColumnInfo(name = COLUMN_LOSSLESS)
     private final boolean lossless;
 
     public SongDetailed(@NotNull String uri, String title, String album, String albumArtist, String artist,

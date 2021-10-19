@@ -10,8 +10,10 @@ import static it.developing.ico2k2.luckyplayer.services.PlayService.ID_ALBUMS;
 import static it.developing.ico2k2.luckyplayer.services.PlayService.ID_ARTISTS;
 import static it.developing.ico2k2.luckyplayer.services.PlayService.ID_GENRES;
 import static it.developing.ico2k2.luckyplayer.services.PlayService.ID_SONGS;
+import static it.developing.ico2k2.luckyplayer.services.PlayService.TYPE_BYTE;
 import static it.developing.ico2k2.luckyplayer.services.PlayService.TYPE_INT;
 import static it.developing.ico2k2.luckyplayer.services.PlayService.TYPE_LONG;
+import static it.developing.ico2k2.luckyplayer.services.PlayService.TYPE_SHORT;
 
 import android.Manifest;
 import android.os.Bundle;
@@ -54,6 +56,7 @@ import it.developing.ico2k2.luckyplayer.adapters.items.Genre;
 import it.developing.ico2k2.luckyplayer.adapters.items.MusicItem;
 import it.developing.ico2k2.luckyplayer.adapters.items.Song;
 import it.developing.ico2k2.luckyplayer.adapters.lib.ViewHandle;
+import it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailed;
 import it.developing.ico2k2.luckyplayer.fragments.base.BaseFragment;
 import it.developing.ico2k2.luckyplayer.services.PlayService;
 
@@ -180,10 +183,10 @@ public class SongListFragment extends BaseFragment
         {
             case ID_SONGS:
             {
-                a.put(MediaStore.Audio.AudioColumns.DURATION);
-                a.put(MediaStore.Audio.AudioColumns.TRACK);
-                b.put(TYPE_LONG);
-                b.put(TYPE_INT);
+                a.put(SongDetailed.COLUMN_LENGTH);
+                a.put(SongDetailed.COLUMN_TRACK_N);
+                b.put(TYPE_SHORT);
+                b.put(TYPE_BYTE);
                 c = Song.class;
                 break;
             }

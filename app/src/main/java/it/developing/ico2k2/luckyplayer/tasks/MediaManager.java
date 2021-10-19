@@ -20,13 +20,17 @@ import androidx.annotation.RequiresApi;
 import androidx.core.content.ContentResolverCompat;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import it.developing.ico2k2.luckyplayer.database.data.File;
 import it.developing.ico2k2.luckyplayer.database.data.FileDao;
+import it.developing.ico2k2.luckyplayer.database.data.FileDatabase;
 import it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailed;
 import it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailedDao;
+import it.developing.ico2k2.luckyplayer.database.data.songs.SongsDetailedDatabase;
 
 public class MediaManager
 {
@@ -143,12 +147,12 @@ public class MediaManager
     }
 
     private final ContentResolver resolver;
-    private final SongDetailedDao songsDetailed;
-    private final FileDao songsFiles;
+    private final SongsDetailedDatabase songsDetailed;
+    private final FileDatabase songsFiles;
     private final String query;
-    private final boolean scanning;
+    private boolean scanning;
 
-    public MediaManager(QuerySettings settings, ContentResolver resolver, FileDao files, SongDetailedDao songs)
+    public MediaManager(QuerySettings settings, ContentResolver resolver, FileDatabase files, SongsDetailedDatabase songs)
     {
         this.resolver = resolver;
         songsFiles = files;
@@ -202,11 +206,14 @@ public class MediaManager
 
     public long scan(Uri[] uris)
     {
+        scanning = true;
         Cursor cursor = null;
         int columnIndex;
         long count = 0;
         //dao.deleteAll();
         File file,loaded;
+        SongDetailedDao songDao = songsDetailed.dao();
+        FileDao fileDao = songsFiles.dao();
         for(Uri uri : uris)
         {
             Log.d(TAG,"Checking uri: " + uri.toString());
@@ -226,11 +233,11 @@ public class MediaManager
                 }
                 if(file != null)
                 {
-                    loaded = songsFiles.loadByUri(file.getUri());
+                    loaded = fileDao.loadByUri(file.getUri());
                     if(loaded.getCrc32() != file.getCrc32() || loaded.getSize() != file.getSize())
                     {
-                        songsFiles.insertAll(file);
-                        songsDetailed.insertAll(SongDetailed.loadFromFile(file));
+                        fileDao.insertAll(file);
+                        songDao.insertAll(SongDetailed.loadFromFile(file));
                     }
                 }
                 count++;
@@ -239,13 +246,14 @@ public class MediaManager
         }
         if(cursor != null)
             cursor.close();
+        scanning = false;
         return count;
     }
 
     public void wipe()
     {
-        songsFiles.deleteAll();
-        songsDetailed.deleteAll();
+        songsFiles.dao().deleteAll();
+        songsDetailed.dao().deleteAll();
     }
 
     /*
@@ -261,10 +269,73 @@ public class MediaManager
         return results;
     }*/
 
-    public static class MediaScanResult
+    public static class QueryResult
     {
         private final Map<String,Integer> keys;
-        private final List<String[]> data;
+        private final Cursor cursor;
+
+        private QueryResult(Map<String,Integer> keys,Cursor cursor)
+        {
+            this.keys = keys;
+            this.cursor = cursor;
+            Log.d(TAG,"Cursor contains " + cursor.getCount() + " elements");
+        }
+
+        private QueryResult(String[] columns,Cursor cursor)
+        {
+            keys = new HashMap<>(columns.length);
+            int i = 0;
+            for(String column : columns)
+            {
+                keys.put(column,i);
+                i++;
+            }
+            this.cursor = cursor;
+            Log.d(TAG,"Cursor contains " + cursor.getCount() + " elements");
+        }
+
+        private String[] elaborateRow()
+        {
+            String[] row = new String[keys.size()];
+            int i;
+            for(i = 0; i < keys.size(); i++)
+            {
+                row[i] = cursor.getString(i);
+            }
+            return row;
+        }
+
+        private String[] elaborateRow(int row)
+        {
+            cursor.moveToPosition(row);
+            return elaborateRow();
+        }
+
+        private List<String[]> getPage(int count)
+        {
+            ArrayList<String[]> result;
+            if(count > 0)
+            {
+                result = new ArrayList<>(count);
+                String[] row;
+                do
+                {
+                    row = elaborateRow();
+                    result.add(row);
+                    count--;
+                }
+                while(cursor.moveToNext() && count > 0);
+            }
+            else
+                result = null;
+            return result;
+        }
+
+        public List<String[]> getPage(int start,int count)
+        {
+            cursor.moveToPosition(start);
+            return getPage(count);
+        }
 
         public String getCell(String columnName,int rowN)
         {
@@ -273,157 +344,38 @@ public class MediaManager
 
         public String[] getRow(int rowN)
         {
-            return getAll().get(rowN);
+            return elaborateRow(rowN);
         }
 
         public int getIndexFromColumnName(String columnName)
         {
-            return getColumnsIndexesMap().get(columnName);
+            return keys.get(columnName);
         }
 
-        public Map<String,Integer> getColumnsIndexesMap()
-        {
-            return keys;
-        }
-
+        @Deprecated
         public List<String[]> getAll()
         {
-            return data;
+            ArrayList<String[]> result = new ArrayList<>();
+            cursor.moveToFirst();
+            do
+            {
+                result.add(elaborateRow());
+            }
+            while(cursor.moveToNext());
+            return result;
         }
 
         public void release()
         {
             keys.clear();
-            data.clear();
-        }
-    }
-
-    public MediaScanResult subscan(Uri[] uris,int from,int to,List<String> columns,String selection,String[] selectionArgs)
-    {
-        return subscan(uris,from,to,columns.toArray(new String[0]),selection,selectionArgs);
-    }
-
-    public MediaScanResult subscan(Uri[] uris,int from,int to,String[] columns,String selection,String[] selectionArgs)
-    {
-        MediaScanResult result;
-        Log.d(TAG,"Scan asked for range: " + from + " to " + to + ", selection: " + selection);
-        if(from < 0 || to < 0)
-        {
-            result = totalScan(uris,columns,selection,selectionArgs);
-        }
-        else if(from != to)
-        {
-            result = new MediaScanResult();
-            int start = 0,i = 0,id = -1;
-            result.data = new ArrayList<>(to - from);
-            result.keys = new HashMap<>(columns.length);
-            for(String column : columns)
-            {
-                if(column.endsWith(MediaStore.Audio.Media._ID))
-                    id = i;
-                result.keys.put(column,i);
-                i++;
-            }
-            Cursor cursor = null;
-            i = 0;
-            for(Uri uri : uris)
-            {
-                Log.d(TAG,"Query, uri: " + uri.toString() + ", columns: " + Arrays.toString(columns) + ", selection: " + selection + ", selection args: " + selectionArgs);
-                cursor = ContentResolverCompat.query(resolver,uri,columns,selection,selectionArgs,null,null);
-                Log.d(TAG,"Cursor contains " + cursor.getCount() + " elements");
-                if(from < (start + cursor.getCount()))
-                {
-                    Log.d(TAG,"Valid uri: " + uri.toString());
-                    cursor.move(from - start);
-                    while(cursor.moveToNext() && from < to)
-                    {
-                        result.data.add(processFile(i,id,cursor));
-                        from++;
-                    }
-                }
-                start += cursor.getCount();
-                Log.d(TAG,"Jumping to the next uri");
-                i++;
-            }
-            if(cursor != null)
-                cursor.close();
-        }
-        else
-            result = new MediaScanResult();
-        return result;
-    }
-
-    public MediaScanResult totalScan(Uri[] uris,List<String> columns,String selection,String[] selectionArgs)
-    {
-        return totalScan(uris,columns.toArray(new String[0]),selection,selectionArgs);
-    }
-
-    public MediaScanResult totalScan(Uri[] uris,String[] columns,String selection,String[] selectionArgs)
-    {
-        MediaScanResult result = new MediaScanResult();
-        Log.d(TAG,"Total scan asked, selection: " + selection);
-        int start = 0,i = 0,id = -1;
-        result.data = new ArrayList<>();
-        result.keys = new HashMap<>(columns.length);
-        for(String column : columns)
-        {
-            if(column.endsWith(MediaStore.Audio.Media._ID))
-                id = i;
-            result.keys.put(column,i);
-            i++;
-        }
-        Cursor cursor = null;
-        i = 0;
-        for(Uri uri : uris)
-        {
-            Log.d(TAG,"Checking uri: " + uri.toString());
-            cursor = ContentResolverCompat.query(resolver,uri,columns,selection,selectionArgs,null,null);
-            Log.d(TAG,"Cursor contains " + cursor.getCount() + " elements");
-                while(cursor.moveToNext())
-                {
-                    result.data.add(processFile(i,id,cursor));
-                }
-            Log.d(TAG,"Jumping to the next uri");
-            i++;
-        }
-        if(cursor != null)
             cursor.close();
-        return result;
+        }
     }
 
-    public MediaScanResult subscan(Uri[] uris,int count,String[] columns,String selection,String[] selectionArgs)
+    public QueryResult query(String[] columns,String selection,String[] selectionArgs)
     {
-        MediaScanResult result = new MediaScanResult();
-        Log.d(TAG,"Scan asked for " + count + " items, selection: " + selection);
-        if(count > 0)
-        {
-            int i = 0,id = -1;
-            result.data = new ArrayList<>(count);
-            result.keys = new HashMap<>(columns.length);
-            for(String column : columns)
-            {
-                if(column.endsWith(MediaStore.Audio.Media._ID))
-                    id = i;
-                result.keys.put(column,i);
-                i++;
-            }
-            Cursor cursor;
-            i = 0;
-            for(Uri uri : uris)
-            {
-                Log.d(TAG,"Checking uri: " + uri.toString());
-                cursor = ContentResolverCompat.query(resolver,uri,columns,selection,selectionArgs,null,null);
-                Log.d(TAG,"Valid uri: " + uri.toString());
-                while(cursor.moveToNext() && count != 0)
-                {
-                    Log.d(TAG,"Found new item, remaining: " + count);
-                    result.data.add(processFile(i,id,cursor));
-                    count--;
-                }
-                Log.d(TAG,"Jumping to the next uri");
-                i++;
-            }
-        }
-        return result;
-    }*/
+        QueryResult result;
+        Log.d(TAG,"Total scan asked, selection: " + selection);
+        return new QueryResult(columns,songsDetailed.query(selection,selectionArgs));
+    }
 }

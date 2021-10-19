@@ -16,15 +16,19 @@ import java.util.zip.CRC32;
 @Entity
 public class File
 {
+    public static final String COLUMN_URI = "uri";
+    public static final String COLUMN_CHECKSUM = "crc32";
+    public static final String COLUMN_SIZE = "size";
+
     @PrimaryKey
     @NonNull
-    @ColumnInfo(name = "uri")
+    @ColumnInfo(name = COLUMN_URI)
     private final String uri;
 
-    @ColumnInfo(name = "checksum_crc32")
+    @ColumnInfo(name = COLUMN_CHECKSUM)
     private final long crc32;
 
-    @ColumnInfo(name = "size")
+    @ColumnInfo(name = COLUMN_SIZE)
     private final long size;
 
     public File(@NonNull String uri, long crc32, long size)

@@ -50,6 +50,7 @@ import it.developing.ico2k2.luckyplayer.activities.MainActivity;
 import it.developing.ico2k2.luckyplayer.adapters.items.Song;
 import it.developing.ico2k2.luckyplayer.database.Client;
 import it.developing.ico2k2.luckyplayer.database.data.FileDatabase;
+import it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailed;
 import it.developing.ico2k2.luckyplayer.database.data.songs.SongsDetailedDatabase;
 import it.developing.ico2k2.luckyplayer.tasks.MediaManager;
 
@@ -68,6 +69,8 @@ public class PlayService extends MediaBrowserServiceCompat
     public static final int TYPE_INT =  0xA;
     public static final int TYPE_LONG =  0xB;
     public static final int TYPE_STRING =  0xC;
+    public static final int TYPE_BYTE =  0xD;
+    public static final int TYPE_SHORT =  0xE;
 
     public static final String ARG_AUTO = "auto";
     public static final String ARG_LUCKY = "ico2k2";
@@ -270,10 +273,10 @@ public class PlayService extends MediaBrowserServiceCompat
                     {
                         Log.d(TAG,"Processing songs case");
                         List<String> columns = new ArrayList<>(Arrays.asList(
-                                MediaStore.MediaColumns._ID,
-                                MediaStore.MediaColumns.TITLE,
-                                MediaStore.Audio.AlbumColumns.ALBUM,
-                                MediaStore.Audio.AlbumColumns.ARTIST));
+                                SongDetailed.COLUMN_URI,
+                                SongDetailed.COLUMN_TITLE,
+                                SongDetailed.COLUMN_ALBUM,
+                                SongDetailed.COLUMN_ALBUM_ARTIST));
                         String[] requestedColumns = new String[0];
                         int[] requestedTypes = new int[0];
                         if(options.containsKey(EXTRA_COLUMNS))
@@ -283,8 +286,8 @@ public class PlayService extends MediaBrowserServiceCompat
                             requestedTypes = options.getIntArray(EXTRA_TYPES);
                         }
                         Log.d(TAG,"Added " + requestedColumns.length + " columns");
-                        MediaManager.MediaScanResult results = scanner.subscan(SONGS_URI,
-                                pageFrom,pageTo,columns,mediaSelection,null);
+                        MediaManager.QueryResult results = scanner.subscan(SONGS_URI,
+                                                                           pageFrom,pageTo,columns,mediaSelection,null);
                         Log.d(TAG,"Scan ended");
                         for(String[] row : results.getAll())
                         {
@@ -370,8 +373,8 @@ public class PlayService extends MediaBrowserServiceCompat
                         requestedTypes = options.getIntArray(EXTRA_TYPES);
                     }
                     Log.d(TAG,"Added " + requestedColumns.length + " columns");
-                    MediaManager.MediaScanResult results = scanner.subscan(ALBUMS_URI,
-                            pageFrom,pageTo,columns,null,null);
+                    MediaManager.QueryResult results = scanner.subscan(ALBUMS_URI,
+                                                                       pageFrom,pageTo,columns,null,null);
                     Log.d(TAG,"Scan ended");
                     for(String[] row : results.getAll())
                     {
@@ -434,8 +437,8 @@ public class PlayService extends MediaBrowserServiceCompat
                         requestedTypes = options.getIntArray(EXTRA_TYPES);
                     }
                     Log.d(TAG,"Added " + requestedColumns.length + " columns");
-                    MediaManager.MediaScanResult results = scanner.subscan(ARTISTS_URI,
-                            pageFrom,pageTo,columns,null,null);
+                    MediaManager.QueryResult results = scanner.subscan(ARTISTS_URI,
+                                                                       pageFrom,pageTo,columns,null,null);
                     Log.d(TAG,"Scan ended");
                     for(String[] row : results.getAll())
                     {
@@ -575,7 +578,7 @@ public class PlayService extends MediaBrowserServiceCompat
             Log.d(TAG,"Updating metadata");
             MediaManager scanner = new MediaManager(getContentResolver());
             String title,description;
-            MediaManager.MediaScanResult result = scanner.subscan(SONGS_URI,1,new String[]{
+            MediaManager.QueryResult result = scanner.subscan(SONGS_URI,1,new String[]{
                             MediaStore.MediaColumns.TITLE,
                             MediaStore.Audio.AlbumColumns.ALBUM,
                             MediaStore.Audio.AlbumColumns.ARTIST,
@@ -759,7 +762,7 @@ public class PlayService extends MediaBrowserServiceCompat
     {
         super.onCreate();
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        mediaSelection = buildQuerySelectionString();
+        //mediaSelection = buildQuerySelectionString();
         /*if(prefs.contains(KEY_SONGLIST_LAST_SIZE))
             songs = new ArrayList<>(prefs.getInt(KEY_SONGLIST_LAST_SIZE,100));
         else

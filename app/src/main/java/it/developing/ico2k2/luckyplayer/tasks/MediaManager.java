@@ -294,7 +294,7 @@ public class MediaManager
             Log.d(TAG,"Cursor contains " + cursor.getCount() + " elements");
         }
 
-        private String[] elaborateRow()
+        private String[] getRow()
         {
             String[] row = new String[keys.size()];
             int i;
@@ -305,10 +305,10 @@ public class MediaManager
             return row;
         }
 
-        private String[] elaborateRow(int row)
+        public String[] getRow(int row)
         {
             cursor.moveToPosition(row);
-            return elaborateRow();
+            return getRow();
         }
 
         private List<String[]> getPage(int count)
@@ -320,7 +320,7 @@ public class MediaManager
                 String[] row;
                 do
                 {
-                    row = elaborateRow();
+                    row = getRow();
                     result.add(row);
                     count--;
                 }
@@ -342,11 +342,6 @@ public class MediaManager
             return getRow(rowN)[getIndexFromColumnName(columnName)];
         }
 
-        public String[] getRow(int rowN)
-        {
-            return elaborateRow(rowN);
-        }
-
         public int getIndexFromColumnName(String columnName)
         {
             return keys.get(columnName);
@@ -359,7 +354,7 @@ public class MediaManager
             cursor.moveToFirst();
             do
             {
-                result.add(elaborateRow());
+                result.add(getRow());
             }
             while(cursor.moveToNext());
             return result;
@@ -375,7 +370,7 @@ public class MediaManager
     public QueryResult query(String[] columns,String selection,String[] selectionArgs)
     {
         QueryResult result;
-        Log.d(TAG,"Total scan asked, selection: " + selection);
+        Log.d(TAG,"Query asked, selection: " + selection);
         return new QueryResult(columns,songsDetailed.query(selection,selectionArgs));
     }
 }

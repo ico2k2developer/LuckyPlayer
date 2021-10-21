@@ -1,8 +1,5 @@
 package it.developing.ico2k2.luckyplayer.database.data;
 
-import androidx.lifecycle.LiveData;
-import androidx.paging.DataSource;
-import androidx.paging.PagingSource;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -31,4 +28,7 @@ public interface FileDao
 
     @Query("DELETE FROM File")
     void deleteAll();
+
+    @Query("SELECT COUNT(" + File.COLUMN_URI + ") FROM File")
+    int getCount();
 }

@@ -11,13 +11,10 @@ import static it.developing.ico2k2.luckyplayer.services.PlayService.ID_ARTISTS;
 import static it.developing.ico2k2.luckyplayer.services.PlayService.ID_GENRES;
 import static it.developing.ico2k2.luckyplayer.services.PlayService.ID_SONGS;
 import static it.developing.ico2k2.luckyplayer.services.PlayService.TYPE_BYTE;
-import static it.developing.ico2k2.luckyplayer.services.PlayService.TYPE_INT;
-import static it.developing.ico2k2.luckyplayer.services.PlayService.TYPE_LONG;
 import static it.developing.ico2k2.luckyplayer.services.PlayService.TYPE_SHORT;
 
 import android.Manifest;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.util.Log;
@@ -316,7 +313,7 @@ public class SongListFragment extends BaseFragment
             if(ContextCompat.checkSelfPermission(getContext(),Manifest.permission.READ_EXTERNAL_STORAGE) == PERMISSION_GRANTED)
             {
                 label.setText(R.string.no_songs_found);
-                button.setText(getString(R.string.no_songs_found_button).replace("%s",getString(R.string.key_mediafile)));
+                button.setText(getString(R.string.no_songs_found_button));
             }
             else
             {

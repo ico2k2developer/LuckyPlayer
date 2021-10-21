@@ -43,13 +43,15 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.MainActivity;
 import it.developing.ico2k2.luckyplayer.adapters.items.Song;
 import it.developing.ico2k2.luckyplayer.database.Client;
-import it.developing.ico2k2.luckyplayer.database.data.FileDatabase;
+import it.developing.ico2k2.luckyplayer.database.data.FilesDatabase;
 import it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailed;
 import it.developing.ico2k2.luckyplayer.database.data.songs.SongsDetailedDatabase;
 import it.developing.ico2k2.luckyplayer.tasks.MediaManager;
@@ -147,6 +149,46 @@ public class PlayService extends MediaBrowserServiceCompat
         onLoadChildren(parentId,result,new Bundle());
     }
 
+    private final Map<String,Map<String,Integer>> keysCache = new HashMap<>();
+    //private Map<String[],MediaManager.QueryResult> queryCache = new HashMap<>();
+
+    private void loadQuerySettings()
+    {
+        if(Build.VERSION.SDK_INT >= 31)
+        {
+            scanner.setQuerySettings(new MediaManager.QuerySettings(
+                    prefs.getBoolean(getString(R.string.key_include_music),false),
+                    prefs.getBoolean(getString(R.string.key_include_ringtone),false),
+                    prefs.getBoolean(getString(R.string.key_include_notification),false),
+                    prefs.getBoolean(getString(R.string.key_include_podcast),false),
+                    prefs.getBoolean(getString(R.string.key_include_alarm),false),
+                    prefs.getBoolean(getString(R.string.key_include_audiobook),false),
+                    prefs.getBoolean(getString(R.string.key_include_recording),false),
+                    prefs.getBoolean(getString(R.string.key_include_other),false)));
+        }
+        else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+        {
+            scanner.setQuerySettings(new MediaManager.QuerySettings(
+                    prefs.getBoolean(getString(R.string.key_include_music),false),
+                    prefs.getBoolean(getString(R.string.key_include_ringtone),false),
+                    prefs.getBoolean(getString(R.string.key_include_notification),false),
+                    prefs.getBoolean(getString(R.string.key_include_podcast),false),
+                    prefs.getBoolean(getString(R.string.key_include_alarm),false),
+                    prefs.getBoolean(getString(R.string.key_include_audiobook),false),
+                    prefs.getBoolean(getString(R.string.key_include_other),false)));
+        }
+        else
+        {
+            scanner.setQuerySettings(new MediaManager.QuerySettings(
+                    prefs.getBoolean(getString(R.string.key_include_music),false),
+                    prefs.getBoolean(getString(R.string.key_include_ringtone),false),
+                    prefs.getBoolean(getString(R.string.key_include_notification),false),
+                    prefs.getBoolean(getString(R.string.key_include_podcast),false),
+                    prefs.getBoolean(getString(R.string.key_include_alarm),false),
+                    prefs.getBoolean(getString(R.string.key_include_other),false)));
+        }
+    }
+
     @Override
     public void onLoadChildren(@NonNull String parentId,@NonNull Result<List<MediaBrowserCompat.MediaItem>> result,@NonNull Bundle options)
     {
@@ -208,52 +250,14 @@ public class PlayService extends MediaBrowserServiceCompat
                 Log.w(getClass().getSimpleName(),"Running in non paging mode: if too much, songs may be lost during transition!");
                 items = new ArrayList<>();
             }
-            MediaManager.QuerySettings settings;
-            if(Build.VERSION.SDK_INT >= 31)
-            {
-                settings = new MediaManager.QuerySettings(
-                        prefs.getBoolean(getString(R.string.key_include_music),false),
-                        prefs.getBoolean(getString(R.string.key_include_ringtone),false),
-                        prefs.getBoolean(getString(R.string.key_include_notification),false),
-                        prefs.getBoolean(getString(R.string.key_include_podcast),false),
-                        prefs.getBoolean(getString(R.string.key_include_alarm),false),
-                        prefs.getBoolean(getString(R.string.key_include_audiobook),false),
-                        prefs.getBoolean(getString(R.string.key_include_recording),false),
-                        prefs.getBoolean(getString(R.string.key_include_other),false));
-            }
-            else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-            {
-                settings = new MediaManager.QuerySettings(
-                        prefs.getBoolean(getString(R.string.key_include_music),false),
-                        prefs.getBoolean(getString(R.string.key_include_ringtone),false),
-                        prefs.getBoolean(getString(R.string.key_include_notification),false),
-                        prefs.getBoolean(getString(R.string.key_include_podcast),false),
-                        prefs.getBoolean(getString(R.string.key_include_alarm),false),
-                        prefs.getBoolean(getString(R.string.key_include_audiobook),false),
-                        prefs.getBoolean(getString(R.string.key_include_other),false));
-            }
-            else
-            {
-                settings = new MediaManager.QuerySettings(
-                        prefs.getBoolean(getString(R.string.key_include_music),false),
-                        prefs.getBoolean(getString(R.string.key_include_ringtone),false),
-                        prefs.getBoolean(getString(R.string.key_include_notification),false),
-                        prefs.getBoolean(getString(R.string.key_include_podcast),false),
-                        prefs.getBoolean(getString(R.string.key_include_alarm),false),
-                        prefs.getBoolean(getString(R.string.key_include_other),false));
-            }
-            MediaManager scanner = new MediaManager(settings,getContentResolver(),
-                    Client.getInstance(this,
-                            FileDatabase.class,Client.DATABASE_SONGS).dao(),
-                    Client.getInstance(this,
-                            SongsDetailedDatabase.class,Client.DATABASE_SONGS_DETAILED).dao());
+
             Log.d(TAG,"MediaScanner created");
+            String[] extraColumns = options.getStringArray(EXTRA_COLUMNS);
             switch(id)
             {
                 case ID_ROOT:
                 {
                     String[] tabs = getResources().getStringArray(R.array.tabs);
-
                     items.ensureCapacity(tabs.length);
                     int a = 0;
                     for(String tab : tabs)
@@ -272,92 +276,61 @@ public class PlayService extends MediaBrowserServiceCompat
                     if(mediaSelection != null)
                     {
                         Log.d(TAG,"Processing songs case");
-                        List<String> columns = new ArrayList<>(Arrays.asList(
-                                SongDetailed.COLUMN_URI,
-                                SongDetailed.COLUMN_TITLE,
-                                SongDetailed.COLUMN_ALBUM,
-                                SongDetailed.COLUMN_ALBUM_ARTIST));
-                        String[] requestedColumns = new String[0];
-                        int[] requestedTypes = new int[0];
-                        if(options.containsKey(EXTRA_COLUMNS))
+                        MediaManager.QueryResult query = scanner.query(mediaSelection,null);
+                        Map<String,Integer> keys;
+                        if(keysCache.containsKey(id))
                         {
-                            columns.addAll(Arrays.asList(options.getStringArray(EXTRA_COLUMNS)));
-                            requestedColumns = options.getStringArray(EXTRA_COLUMNS);
-                            requestedTypes = options.getIntArray(EXTRA_TYPES);
+                            if(extraColumns == null)
+                            {
+                                keys = keysCache.get(id);
+                            }
+                            else
+                            {
+                                keys = new HashMap<>(keysCache.get(id));
+                                keys.putAll(query.generateKeys(extraColumns));
+                            }
                         }
-                        Log.d(TAG,"Added " + requestedColumns.length + " columns");
-                        MediaManager.QueryResult results = scanner.subscan(SONGS_URI,
-                                                                           pageFrom,pageTo,columns,mediaSelection,null);
-                        Log.d(TAG,"Scan ended");
-                        for(String[] row : results.getAll())
+                        else
+                        {
+                            List<String> columns = new ArrayList<>(Arrays.asList(
+                                    SongDetailed.COLUMN_URI,
+                                    SongDetailed.COLUMN_TITLE,
+                                    SongDetailed.COLUMN_ALBUM,
+                                    SongDetailed.COLUMN_ALBUM_ARTIST));
+                            if(extraColumns == null)
+                            {
+                                columns.addAll(Arrays.asList(extraColumns));
+                            }
+                            keysCache.put(id,keys = query.generateKeys(columns));
+                        }
+                        Log.d(TAG,"Requested " + keys.size() + " columns");
+                        List<Map<String,String>> results;
+                        if(pageFrom >= 0 && pageTo > 0)
+                            results = query.getPage(keys,pageFrom,pageTo - pageFrom);
+                        else
+                        {
+                            results = query.getAll(keys);
+                        }
+                        for(Map<String,String> row : results)
                         {
                             Bundle extras = new Bundle();
-                            if(options.containsKey(EXTRA_COLUMNS))
-                            {
-                                int a = requestedTypes.length == requestedColumns.length ? 0 : -1,b;
-                                String c;
-                                for(String column : requestedColumns)
-                                {
-                                    c = row[results.getIndexFromColumnName(column)];
-                                    if(a > -1)
-                                    {
-                                        b = requestedTypes[a];
-                                    }
-                                    else
-                                        b = TYPE_STRING;
-                                    switch(b)
-                                    {
-                                        case TYPE_INT:
-                                        {
-                                            int n;
-                                            try
-                                            {
-                                                n = Integer.parseInt(c);
-                                            }
-                                            catch(Exception e)
-                                            {
-                                                n = 0;
-                                            }
-                                            extras.putInt(column,n);
-                                            break;
-                                        }
-                                        case TYPE_LONG:
-                                        {
-                                            long n;
-                                            try
-                                            {
-                                                n = Long.parseLong(c);
-                                            }
-                                            catch(Exception e)
-                                            {
-                                                n = 0;
-                                            }
-                                            extras.putLong(column,n);
-                                            break;
-                                        }
-                                        default:
-                                        {
-                                            extras.putString(column,c);
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
+                            for(String key : row.keySet())
+                                extras.putString(key,row.get(key));
                             items.add(new MediaBrowserCompat.MediaItem(new MediaDescriptionCompat.Builder()
-                                    .setMediaId(row[results.getIndexFromColumnName(MediaStore.MediaColumns._ID)])
-                                    .setTitle(row[results.getIndexFromColumnName(MediaStore.MediaColumns.TITLE)])
+                                    .setMediaId(row.get(SongDetailed.COLUMN_URI))
+                                    .setTitle(row.get(SongDetailed.COLUMN_TITLE))
                                     .setSubtitle(Song.getSongDescription(
-                                            row[results.getIndexFromColumnName(MediaStore.Audio.AlbumColumns.ALBUM)],
-                                            row[results.getIndexFromColumnName(MediaStore.Audio.AlbumColumns.ARTIST)]))
+                                            row.get(SongDetailed.COLUMN_ALBUM),
+                                            row.get(SongDetailed.COLUMN_ALBUM_ARTIST)))
                                     .setExtras(extras).build(),
                                     MediaBrowserCompat.MediaItem.FLAG_PLAYABLE));
                         }
-                        results.release();
+                        query.release();
                     }
                     else
                         Log.d(TAG,"Skipped songs query because media selection string is null");
                     break;
-                }
+                }/*
                 case ID_ALBUMS:
                 {
                     Log.d(TAG,"Processing albums case");
@@ -488,7 +461,7 @@ public class PlayService extends MediaBrowserServiceCompat
                 }
                 case ID_GENRES:
                 {
-                    /*Log.d(TAG,"Processing genres case");
+                    Log.d(TAG,"Processing genres case");
                     List<String> columns = new ArrayList<>(Arrays.asList(
                             MediaStore.Audio.Genres._ID,
                             MediaStore.Audio.Genres.NAME));
@@ -545,9 +518,9 @@ public class PlayService extends MediaBrowserServiceCompat
                                 .setExtras(extras).build(),
                                 MediaBrowserCompat.MediaItem.FLAG_BROWSABLE));
                     }
-                    results.release();*/
+                    results.release();
                     break;
-                }
+                }*/
             }
             Log.d(TAG,items.size() + " children found");
             Log.d(TAG,"Packet (items), from " + pageFrom + " to " + pageTo);
@@ -576,27 +549,23 @@ public class PlayService extends MediaBrowserServiceCompat
         private void updateMetadata(String originalMediaId)
         {
             Log.d(TAG,"Updating metadata");
-            MediaManager scanner = new MediaManager(getContentResolver());
-            String title,description;
-            MediaManager.QueryResult result = scanner.subscan(SONGS_URI,1,new String[]{
-                            MediaStore.MediaColumns.TITLE,
-                            MediaStore.Audio.AlbumColumns.ALBUM,
-                            MediaStore.Audio.AlbumColumns.ARTIST,
-                            MediaStore.Audio.AudioColumns.DURATION,},
-                    MediaStore.MediaColumns._ID + "=" + originalMediaId,null);
-            mediaSession.setMetadata(new MediaMetadataCompat.Builder()
-                    .putLong(MediaMetadataCompat.METADATA_KEY_DURATION,
-                            Long.parseLong(result.getCell(
-                                    MediaStore.Audio.AudioColumns.DURATION,0)))
-                    .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE,
-                            title = result.getCell(MediaStore.MediaColumns.TITLE,0))
-                    .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE,
-                            description = Song.getSongDescription(
-                                    result.getCell(MediaStore.Audio.AlbumColumns.ALBUM,0),
-                                    result.getCell(MediaStore.Audio.AlbumColumns.ARTIST,0)))
-                    .build());
-            playNotif.setContentTitle(title);
-            playNotif.setContentText(description);
+            List<SongDetailed> result = scanner.getSongsDatabase().dao().loadAllByUris(new String[]{originalMediaId});
+            if(result.size() > 0)
+            {
+                String description;
+                SongDetailed song = result.get(0);
+                mediaSession.setMetadata(new MediaMetadataCompat.Builder()
+                        .putLong(MediaMetadataCompat.METADATA_KEY_DURATION,
+                                ((long)song.getLength() * 1000L))
+                        .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE,song.getTitle())
+                        .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE,
+                                description = Song.getSongDescription(
+                                        song.getAlbum(),
+                                        song.getArtist()))
+                        .build());
+                playNotif.setContentTitle(song.getTitle());
+                playNotif.setContentText(description);
+            }
         }
 
         @Override
@@ -756,6 +725,7 @@ public class PlayService extends MediaBrowserServiceCompat
     }
 
     private Notification.Action play,pause;
+    private MediaManager scanner;
 
     @Override
     public void onCreate()
@@ -767,6 +737,14 @@ public class PlayService extends MediaBrowserServiceCompat
             songs = new ArrayList<>(prefs.getInt(KEY_SONGLIST_LAST_SIZE,100));
         else
             songs = new ArrayList<>();*/
+
+        scanner = new MediaManager(getContentResolver(),
+                Client.getInstance(this,
+                        FilesDatabase.class,Client.DATABASE_SONGS),
+                Client.getInstance(this,
+                        SongsDetailedDatabase.class,Client.DATABASE_SONGS_DETAILED));
+        loadQuerySettings();
+        scanner.scan(SONGS_URI);
         mediaSession = new MediaSessionCompat(this,getClass().getSimpleName(),new ComponentName(this,Intent.ACTION_MEDIA_BUTTON),null);
         manager = NotificationManagerCompat.from(this);
         stateBuilder = new PlaybackStateCompat.Builder().setActions(

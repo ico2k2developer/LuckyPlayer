@@ -112,7 +112,7 @@ public class InfoActivity extends BaseActivity
                 {
                     Cursor cursor = getContentResolver().query(contentPath,null,null,null,null);
 
-                    int index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                    int index = cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.DATA);
                     cursor.moveToFirst();
                     result = cursor.getString(index);
                     cursor.close();

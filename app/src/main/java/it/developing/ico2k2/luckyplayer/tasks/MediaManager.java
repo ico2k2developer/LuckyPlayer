@@ -15,6 +15,7 @@ import android.os.Build;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContentResolverCompat;
@@ -24,10 +25,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import it.developing.ico2k2.luckyplayer.database.data.File;
 import it.developing.ico2k2.luckyplayer.database.data.FileDao;
-import it.developing.ico2k2.luckyplayer.database.data.FileDatabase;
+import it.developing.ico2k2.luckyplayer.database.data.FilesDatabase;
 import it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailed;
 import it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailedDao;
 import it.developing.ico2k2.luckyplayer.database.data.songs.SongsDetailedDatabase;
@@ -148,17 +150,21 @@ public class MediaManager
 
     private final ContentResolver resolver;
     private final SongsDetailedDatabase songsDetailed;
-    private final FileDatabase songsFiles;
-    private final String query;
+    private final FilesDatabase songsFiles;
+    private String query;
     private boolean scanning;
 
-    public MediaManager(QuerySettings settings, ContentResolver resolver, FileDatabase files, SongsDetailedDatabase songs)
+    public MediaManager(ContentResolver resolver, FilesDatabase files, SongsDetailedDatabase songs)
     {
         this.resolver = resolver;
         songsFiles = files;
         songsDetailed = songs;
-        query = buildQuerySelectionString(settings);
         scanning = false;
+    }
+
+    public void setQuerySettings(QuerySettings settings)
+    {
+        query = buildQuerySelectionString(settings);
     }
 
     @Nullable
@@ -211,7 +217,6 @@ public class MediaManager
         int columnIndex;
         long count = 0;
         //dao.deleteAll();
-        File file,loaded;
         SongDetailedDao songDao = songsDetailed.dao();
         FileDao fileDao = songsFiles.dao();
         for(Uri uri : uris)
@@ -222,9 +227,11 @@ public class MediaManager
             columnIndex = cursor.getColumnIndex(COLUMN);
             while(cursor.moveToNext())
             {
+                File file;
                 try
                 {
-                    file = new File(ContentUris.withAppendedId(uri,cursor.getLong(columnIndex)));
+                    Log.d(TAG,"Uri is " + uri.getPath() + " id is " + cursor.getString(columnIndex));
+                    file = new File(ContentUris.withAppendedId(uri,cursor.getLong(columnIndex)),resolver);
                 }
                 catch (IOException e)
                 {
@@ -233,14 +240,27 @@ public class MediaManager
                 }
                 if(file != null)
                 {
-                    loaded = fileDao.loadByUri(file.getUri());
-                    if(loaded.getCrc32() != file.getCrc32() || loaded.getSize() != file.getSize())
-                    {
-                        fileDao.insertAll(file);
-                        songDao.insertAll(SongDetailed.loadFromFile(file));
-                    }
+                    final File finalFile = file;
+                    new AsyncWork().executeAsync(null,
+                            new Callable<Void>() {
+                                @Override
+                                public Void call() throws Exception {
+                                    File loaded = fileDao.loadByUri(finalFile.getUri());
+                                    boolean write = true;
+                                    if(loaded != null)
+                                    {
+                                        write = loaded.getCrc32() == finalFile.getCrc32() && loaded.getSize() == finalFile.getSize();
+                                    }
+                                    if(write)
+                                    {
+                                        fileDao.insertAll(finalFile);
+                                        songDao.insertAll(SongDetailed.loadFromFile(finalFile));
+                                    }
+                                    return null;
+                                }
+                            },null);
+                    count++;
                 }
-                count++;
             }
             Log.d(TAG,"Jumping to the next uri");
         }
@@ -256,71 +276,73 @@ public class MediaManager
         songsDetailed.dao().deleteAll();
     }
 
-    /*
-
-    private static String[] processFile(int uri,int mediaColumn,Cursor cursor)
+    public SongsDetailedDatabase getSongsDatabase()
     {
-        String[] results = new String[cursor.getColumnCount()];
-        int i;
-        for(i = 0; i < results.length; i++)
-        {
-            results[i] = (mediaColumn == i ? uri + ";" : "") + cursor.getString(i);
-        }
-        return results;
-    }*/
+        return songsDetailed;
+    }
+
+    public FilesDatabase getFilesDatabase()
+    {
+        return songsFiles;
+    }
 
     public static class QueryResult
     {
-        private final Map<String,Integer> keys;
         private final Cursor cursor;
 
-        private QueryResult(Map<String,Integer> keys,Cursor cursor)
+        private QueryResult(Cursor cursor)
         {
-            this.keys = keys;
             this.cursor = cursor;
             Log.d(TAG,"Cursor contains " + cursor.getCount() + " elements");
         }
 
-        private QueryResult(String[] columns,Cursor cursor)
+        public Map<String,Integer> generateKeys(String[] columns)
         {
-            keys = new HashMap<>(columns.length);
-            int i = 0;
+            Map<String,Integer> result = new HashMap<>(columns.length);
             for(String column : columns)
             {
-                keys.put(column,i);
-                i++;
+                result.put(column,cursor.getColumnIndex(column));
             }
-            this.cursor = cursor;
-            Log.d(TAG,"Cursor contains " + cursor.getCount() + " elements");
+            return result;
         }
 
-        private String[] getRow()
+        public Map<String,Integer> generateKeys(List<String> columns)
         {
-            String[] row = new String[keys.size()];
-            int i;
-            for(i = 0; i < keys.size(); i++)
+            Map<String,Integer> result = new HashMap<>(columns.size());
+            for(String column : columns)
             {
-                row[i] = cursor.getString(i);
+                result.put(column,cursor.getColumnIndex(column));
+            }
+            return result;
+        }
+
+        private Map<String,String> getRow(Map<String,Integer> keys)
+        {
+            Map<String,String> row = new HashMap<>(keys.size());
+            int i;
+            for(String key : keys.keySet())
+            {
+                row.put(key,getCell(keys,key));
             }
             return row;
         }
 
-        public String[] getRow(int row)
+        public Map<String,String> getRow(Map<String,Integer> keys,int row)
         {
             cursor.moveToPosition(row);
-            return getRow();
+            return getRow(keys);
         }
 
-        private List<String[]> getPage(int count)
+        private List<Map<String,String>> getPage(Map<String,Integer> keys,int count)
         {
-            ArrayList<String[]> result;
+            ArrayList<Map<String,String>> result;
             if(count > 0)
             {
                 result = new ArrayList<>(count);
-                String[] row;
+                Map<String,String> row;
                 do
                 {
-                    row = getRow();
+                    row = getRow(keys);
                     result.add(row);
                     count--;
                 }
@@ -331,30 +353,31 @@ public class MediaManager
             return result;
         }
 
-        public List<String[]> getPage(int start,int count)
+        public List<Map<String,String>> getPage(Map<String,Integer> keys,int start,int count)
         {
             cursor.moveToPosition(start);
-            return getPage(count);
+            return getPage(keys,count);
         }
 
-        public String getCell(String columnName,int rowN)
+        private String getCell(Map<String,Integer> keys,String columnName)
         {
-            return getRow(rowN)[getIndexFromColumnName(columnName)];
+            return cursor.getString(keys.get(columnName));
         }
 
-        public int getIndexFromColumnName(String columnName)
+        public String getCell(Map<String,Integer> keys,String columnName,int rowN)
         {
-            return keys.get(columnName);
+            cursor.moveToPosition(rowN);
+            return getCell(keys,columnName);
         }
 
         @Deprecated
-        public List<String[]> getAll()
+        public List<Map<String,String>> getAll(Map<String,Integer> keys)
         {
-            ArrayList<String[]> result = new ArrayList<>();
+            ArrayList<Map<String,String>> result = new ArrayList<>();
             cursor.moveToFirst();
             do
             {
-                result.add(getRow());
+                result.add(getRow(keys));
             }
             while(cursor.moveToNext());
             return result;
@@ -362,15 +385,32 @@ public class MediaManager
 
         public void release()
         {
-            keys.clear();
             cursor.close();
+        }
+
+        @Override
+        public boolean equals(Object o)
+        {
+            boolean result = false;
+            if(o != null)
+            {
+                if(o instanceof QueryResult)
+                {
+                    result = cursor.equals(((QueryResult)o).cursor);
+                }
+            }
+            return result;
         }
     }
 
-    public QueryResult query(String[] columns,String selection,String[] selectionArgs)
+    public int getCount()
     {
-        QueryResult result;
+        return songsFiles.dao().getCount();
+    }
+
+    public QueryResult query(@NonNull String selection, @Nullable String[] selectionArgs)
+    {
         Log.d(TAG,"Query asked, selection: " + selection);
-        return new QueryResult(columns,songsDetailed.query(selection,selectionArgs));
+        return new QueryResult(songsDetailed.query(selection,selectionArgs));
     }
 }

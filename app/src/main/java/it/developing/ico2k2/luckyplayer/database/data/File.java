@@ -1,5 +1,6 @@
 package it.developing.ico2k2.luckyplayer.database.data;
 
+import android.content.ContentResolver;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
@@ -10,12 +11,13 @@ import androidx.room.PrimaryKey;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.zip.CRC32;
 
 @Entity
 public class File
 {
+    private static final String TAG = File.class.getSimpleName();
+
     public static final String COLUMN_URI = "uri";
     public static final String COLUMN_CHECKSUM = "crc32";
     public static final String COLUMN_SIZE = "size";
@@ -39,15 +41,15 @@ public class File
     }
 
     @Ignore
-    public File(@NonNull java.io.File file) throws IOException
+    public File(@NonNull Uri uri,FileInputStream stream) throws IOException
     {
-        this(file.getCanonicalPath(),calculateCRC32(file),file.length());
+        this(uri.getPath(),calculateCRC32(stream),calculateSize(stream));
     }
 
     @Ignore
-    public File(@NonNull Uri uri) throws IOException
+    public File(@NonNull Uri uri,ContentResolver resolver) throws IOException
     {
-        this(new java.io.File(uri.getPath()));
+        this(uri,getStream(uri,resolver));
     }
 
     @NonNull
@@ -65,21 +67,25 @@ public class File
 
     public static final byte CRC32_BYTES_AT_ONCE = 16;
 
-    public static long calculateCRC32(File file) throws IOException
+    public static FileInputStream getStream(@NonNull Uri uri,ContentResolver resolver) throws IOException
     {
-        return calculateCRC32(new java.io.File(file.getUri()));
+        return new FileInputStream(resolver.openFileDescriptor(uri,"r").getFileDescriptor());
     }
 
-    public static long calculateCRC32(java.io.File file) throws IOException
+    public static long calculateCRC32(FileInputStream stream) throws IOException
     {
         CRC32 crc = new CRC32();
-        InputStream stream = new FileInputStream(file);
         byte[] buffer = new byte[CRC32_BYTES_AT_ONCE];
         byte bytesRead;
         while((bytesRead = (byte)stream.read(buffer)) != -1) {
             crc.update(buffer, 0, bytesRead);
         }
         return crc.getValue();
+    }
+
+    public static long calculateSize(FileInputStream stream) throws IOException
+    {
+        return stream.getChannel().size();
     }
 
     @Override

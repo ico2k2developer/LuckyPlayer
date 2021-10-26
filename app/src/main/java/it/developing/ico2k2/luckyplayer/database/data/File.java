@@ -1,6 +1,7 @@
 package it.developing.ico2k2.luckyplayer.database.data;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
@@ -33,7 +34,7 @@ public class File
     @ColumnInfo(name = COLUMN_SIZE)
     private final long size;
 
-    public File(@NonNull String uri, long crc32, long size)
+    public File(String uri,long crc32,long size)
     {
         this.uri = uri;
         this.crc32 = crc32;
@@ -52,7 +53,6 @@ public class File
         this(uri,getStream(uri,resolver));
     }
 
-    @NonNull
     public String getUri() {
         return uri;
     }
@@ -97,8 +97,7 @@ public class File
             if(o instanceof File)
             {
                 result =
-                        ((File)o).getCrc32() == getCrc32() &&
-                        getUri().equals(((File)o).getUri()) &&
+                        ((File)o).getCrc32() == getCrc32() && ((File)o).getUri().equals(getUri()) &&
                         ((File)o).getSize() == getSize();
             }
         }

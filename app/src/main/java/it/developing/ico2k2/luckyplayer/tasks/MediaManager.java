@@ -20,7 +20,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContentResolverCompat;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +37,12 @@ public class MediaManager
 {
     private static final String TAG = MediaManager.class.getSimpleName();
 
-    private static final String COLUMN = MediaStore.MediaColumns._ID;
+    private static final String ID = MediaStore.MediaColumns._ID;
+
+    private static final String PATH_OLD = MediaStore.MediaColumns.DATA;
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private static final String PATH_NEW = MediaStore.MediaColumns.RELATIVE_PATH;
 
     public static class QuerySettings
     {
@@ -214,53 +218,47 @@ public class MediaManager
     {
         scanning = true;
         Cursor cursor = null;
-        int columnIndex;
         long count = 0;
         //dao.deleteAll();
         SongDetailedDao songDao = songsDetailed.dao();
+        String[] keys = new String[2];
+        keys[0] = ID;
+        keys[1] = Build.VERSION.SDK_INT < Build.VERSION_CODES.Q ? PATH_OLD : PATH_NEW;
+        int[] columns = new int[2];
         FileDao fileDao = songsFiles.dao();
         for(Uri uri : uris)
         {
             Log.d(TAG,"Checking uri: " + uri.toString());
-            cursor = ContentResolverCompat.query(resolver,uri,new String[]{COLUMN},query,null,null,null);
+            cursor = ContentResolverCompat.query(resolver,uri,keys,query,null,null,null);
             Log.d(TAG,"Cursor contains " + cursor.getCount() + " elements");
-            columnIndex = cursor.getColumnIndex(COLUMN);
-            while(cursor.moveToNext())
+            int a;
+            for(a = 0; a < keys.length; a++)
+                columns[a] = cursor.getColumnIndex(keys[a]);
+            count = 0;
+            while(cursor.moveToNext() && count < 5)
             {
-                File file;
-                try
-                {
-                    Log.d(TAG,"Uri is " + uri.getPath() + " id is " + cursor.getString(columnIndex));
-                    file = new File(ContentUris.withAppendedId(uri,cursor.getLong(columnIndex)),resolver);
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                    file = null;
-                }
-                if(file != null)
-                {
-                    final File finalFile = file;
-                    new AsyncWork().executeAsync(null,
-                            new Callable<Void>() {
-                                @Override
-                                public Void call() throws Exception {
-                                    File loaded = fileDao.loadByUri(finalFile.getUri());
-                                    boolean write = true;
-                                    if(loaded != null)
-                                    {
-                                        write = loaded.getCrc32() == finalFile.getCrc32() && loaded.getSize() == finalFile.getSize();
-                                    }
-                                    if(write)
-                                    {
-                                        fileDao.insertAll(finalFile);
-                                        songDao.insertAll(SongDetailed.loadFromFile(finalFile));
-                                    }
-                                    return null;
-                                }
-                            },null);
-                    count++;
-                }
+                final Uri fileUri = ContentUris.withAppendedId(uri,cursor.getLong(columns[0]));
+                Log.d(TAG,"Uri is " + cursor.getString(columns[1]) + " id is " + cursor.getString(columns[0]) + " so file uri is " + fileUri);
+                new AsyncWork().executeAsync(null,
+                    new Callable<Void>() {
+                        @Override
+                        public Void call() throws Exception {
+                            File oldFile = fileDao.loadByUri(fileUri.getPath());
+                            File newFile = new File(fileUri,resolver);
+                            boolean write = false;
+                            if(oldFile != null)
+                            {
+                                write = oldFile.getCrc32() == newFile.getCrc32() && oldFile.getSize() == newFile.getSize();
+                            }
+                            if(write)
+                            {
+                                fileDao.insertAll(newFile);
+                                songDao.insertAll(SongDetailed.loadFromFile(newFile));
+                            }
+                            return null;
+                        }
+                    },null);
+                count++;
             }
             Log.d(TAG,"Jumping to the next uri");
         }

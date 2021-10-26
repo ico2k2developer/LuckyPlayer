@@ -1,6 +1,10 @@
 package it.developing.ico2k2.luckyplayer.database.data.songs;
 
+import android.content.ContentUris;
+import android.net.Uri;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -17,7 +21,6 @@ import java.util.Locale;
 
 import it.developing.ico2k2.luckyplayer.database.Optimized;
 import it.developing.ico2k2.luckyplayer.database.data.BaseSong;
-import it.developing.ico2k2.luckyplayer.database.data.File;
 
 @Entity
 public class SongDetailed extends BaseSong
@@ -106,10 +109,11 @@ public class SongDetailed extends BaseSong
     @ColumnInfo(name = COLUMN_LOSSLESS)
     private final boolean lossless;
 
-    public SongDetailed(@NotNull String uri, String title, String album, String albumArtist, String artist,
-                        short length, byte memTrackN, byte memTrackTotal, short releaseYear, short originalYear,
-                        String genre, String lyrics, byte memBpm, String initKey, short bitrate, String format,
-                        byte channels, boolean vbr, boolean lossless)
+    public SongDetailed(
+            @NonNull String uri,String title,String album,String albumArtist,String artist,
+            short length,byte memTrackN,byte memTrackTotal,short releaseYear,short originalYear,
+            String genre,String lyrics,byte memBpm,String initKey,short bitrate,String format,
+            byte channels,boolean vbr,boolean lossless)
     {
         this.uri = uri;
         this.title = title;
@@ -133,20 +137,19 @@ public class SongDetailed extends BaseSong
     }
 
     @Ignore
-    public SongDetailed(@NotNull String uri, String title, String album, String albumArtist, String artist,
-                        short length, short memTrackN, short memTrackTotal, short releaseYear, short originalYear,
-                        String genre, String lyrics, byte memBpm, String initKey, short bitrate, String format,
-                        byte channels, boolean vbr, boolean lossless)
+    public SongDetailed(@NonNull String uri,String title,String album,String albumArtist,String artist,
+                        short length,short memTrackN,short memTrackTotal,short releaseYear,short originalYear,
+                        String genre,String lyrics,byte memBpm,String initKey,short bitrate,String format,
+                        byte channels,boolean vbr,boolean lossless)
     {
         this(uri,title,album,albumArtist,artist,length,
-                Optimized.byte256((short) (memTrackN - TRACK_N_MIN)),
-                Optimized.byte256((short) (memTrackTotal - TRACK_N_MIN)),releaseYear, originalYear,
-                genre,lyrics,
-                Optimized.byte256((short) (memBpm - BPM_MIN)),initKey,bitrate,format,channels,
-                vbr,lossless);
+             Optimized.byte256((short) (memTrackN - TRACK_N_MIN)),
+             Optimized.byte256((short) (memTrackTotal - TRACK_N_MIN)),releaseYear,originalYear,
+             genre,lyrics,
+             Optimized.byte256((short) (memBpm - BPM_MIN)),initKey,bitrate,format,channels,
+             vbr,lossless);
     }
 
-    @NotNull
     public String getUri()
     {
         return uri;
@@ -243,21 +246,17 @@ public class SongDetailed extends BaseSong
         return lossless;
     }
 
-    public static SongDetailed loadFromFile(File file)
-    {
-        return loadFromUri(file.getUri());
-    }
-
     public static SongDetailed loadFromUri(String uri)
     {
         SongDetailed result;
         AudioFile file;
         try
         {
-            file = AudioFileIO.read(new java.io.File(uri));
+            file = AudioFileIO.readMagic(new java.io.File(uri));
         }
         catch (Exception e)
         {
+            e.printStackTrace();
             file = null;
         }
         if(file != null)

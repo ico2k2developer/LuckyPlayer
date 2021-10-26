@@ -88,7 +88,7 @@ public interface SongDetailedDao
     @Delete
     void delete(SongDetailed song);
 
-    @Query("DELETE FROM SongDetailed WHERE uri LIKE :id")
+    @Query("DELETE FROM SongDetailed WHERE " + COLUMN_URI + " LIKE :id")
     void delete(String id);
 
     @Query("DELETE FROM SongDetailed")

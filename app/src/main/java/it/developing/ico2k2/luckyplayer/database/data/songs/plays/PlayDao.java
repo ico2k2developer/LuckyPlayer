@@ -17,9 +17,6 @@ public interface PlayDao
     @Query("SELECT * FROM Play WHERE uri LIKE :uri")
     Play loadByUri(String uri);
 
-    @Query("SELECT * FROM Play WHERE uri IN (:uris)")
-    List<Play> loadAllByUris(String[] uris);
-
     @Query("SELECT * FROM Play WHERE title IN (:titles)")
     List<Play> loadAllByTitle(String[] titles);
 

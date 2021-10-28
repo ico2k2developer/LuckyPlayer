@@ -58,7 +58,7 @@
     <string name="no_songs_permission">Local data access permission has not been granted!</string>
     <string name="no_songs_permission_button">Grant permission</string>
     <string name="pause">Pause</string>
-    <string name="permission_reason">The permission you denied is needed in order to make the app work properly. Would you like to grant it now?</string>
+    <string name="permission_reason">The permission you denied is needed in order to make the app work. Would you like to grant it now?</string>
     <string name="permission_reason_data">Data access permission makes it possible to play local music</string>
     <string name="play">Play</string>
     <string name="player_notification_text">%s is running background</string>

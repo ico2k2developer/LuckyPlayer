@@ -119,7 +119,7 @@
     <string name="color_primary">Colore principale</string>
     <string name="color_primary_dark">Colore principale scuro</string>
     <string name="color_accent">Colore tono</string>
-    <string name="permission_reason">Il permesso che non hai consentito è necessario per far sì che l\'app funzioni a dovere. Vuoi consentirlo ora?</string>
+    <string name="permission_reason">Il permesso che non hai consentito è necessario per far sì che l\'app funzioni. Vuoi consentirlo ora?</string>
     <string name="permission_reason_data">L\'accesso alla memoria rende possibile la riproduzione dei file musicali locali</string>
     <string name="description_album">%s1, %s2 canzoni</string>
     <string name="description_artist">%s1 album, %s2 canzoni</string>

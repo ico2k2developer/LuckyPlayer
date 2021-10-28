@@ -3,11 +3,11 @@ package it.developing.ico2k2.luckyplayer.activities;
 import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
 import static it.developing.ico2k2.luckyplayer.Resources.MESSAGE_DESTROY;
 import static it.developing.ico2k2.luckyplayer.Resources.REQUEST_CODE_PERMISSIONS;
-import static it.developing.ico2k2.luckyplayer.Resources.permissionDialog;
 
 import android.Manifest;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
@@ -24,13 +25,14 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 
+import it.developing.ico2k2.luckyplayer.Permissions;
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.Resources;
 import it.developing.ico2k2.luckyplayer.activities.base.BasePlayingActivity;
 import it.developing.ico2k2.luckyplayer.fragments.SongListFragment;
 import it.developing.ico2k2.luckyplayer.services.PlayService;
 
-public class TabsActivity extends BasePlayingActivity
+public class TabsActivity extends BasePlayingActivity implements ActivityCompat.OnRequestPermissionsResultCallback
 {
     private static final String TAG = TabsActivity.class.getSimpleName();
 
@@ -141,7 +143,9 @@ public class TabsActivity extends BasePlayingActivity
     @Override
     public void onStart() {
         super.onStart();
-        Resources.askForPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE,REQUEST_CODE_PERMISSIONS);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+            Permissions.requestStoragePermission(this,REQUEST_CODE_PERMISSIONS);
+        //Resources.askForPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE,REQUEST_CODE_PERMISSIONS);
     }
 
     @Override
@@ -154,6 +158,7 @@ public class TabsActivity extends BasePlayingActivity
     @Override
     public void onRequestPermissionsResult(int requestCode,@NonNull String[] permissions,@NonNull int[] grantResults)
     {
+        super.onRequestPermissionsResult(requestCode,permissions,grantResults);
         if(grantResults.length > 0)
         {
             switch(requestCode)
@@ -163,8 +168,7 @@ public class TabsActivity extends BasePlayingActivity
                     if(grantResults[0] == PERMISSION_GRANTED)
                         refresh();
                     else
-                        permissionDialog(this,
-                                Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Permissions.permissionStorageDialog(this,
                                 REQUEST_CODE_PERMISSIONS,
                                 getString(R.string.permission_reason_data),
                                 getString(R.string.key_permission_data_no_more));

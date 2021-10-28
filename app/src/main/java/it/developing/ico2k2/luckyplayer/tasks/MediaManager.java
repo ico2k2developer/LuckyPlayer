@@ -9,6 +9,7 @@ import static android.provider.MediaStore.Audio.AudioColumns.IS_RINGTONE;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -49,7 +50,7 @@ public class MediaManager
         private final boolean music,ringtone,notification,podcast,alarm,other;
         private final Boolean audiobook,recording;
 
-        @RequiresApi(31)
+        @RequiresApi(Build.VERSION_CODES.S)
         public QuerySettings(boolean music,boolean ringtone,boolean notification,boolean podcast,
                              boolean alarm,boolean audiobook,boolean recording,boolean other)
         {
@@ -101,7 +102,7 @@ public class MediaManager
             boolean result = music && ringtone && notification && podcast && alarm && other;
             if(result && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
                 result = audiobook;
-            if(result && Build.VERSION.SDK_INT >= 31)
+            if(result && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
                 result = recording;
             return result;
         }
@@ -111,7 +112,7 @@ public class MediaManager
             boolean result = music || ringtone || notification || podcast || alarm || other;
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
                 result = result || audiobook;
-            if(Build.VERSION.SDK_INT >= 31)
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
                 result = result || recording;
             return !result;
         }
@@ -142,7 +143,7 @@ public class MediaManager
             return audiobook;
         }
 
-        @RequiresApi(31)
+        @RequiresApi(Build.VERSION_CODES.S)
         public boolean getRecording(){
             return recording;
         }
@@ -152,15 +153,15 @@ public class MediaManager
         }
     }
 
-    private final ContentResolver resolver;
+    private final Context context;
     private final SongsDetailedDatabase songsDetailed;
     private final FilesDatabase songsFiles;
     private String query;
     private boolean scanning;
 
-    public MediaManager(ContentResolver resolver, FilesDatabase files, SongsDetailedDatabase songs)
+    public MediaManager(Context context, FilesDatabase files, SongsDetailedDatabase songs)
     {
-        this.resolver = resolver;
+        this.context = context;
         songsFiles = files;
         songsDetailed = songs;
         scanning = false;
@@ -204,7 +205,7 @@ public class MediaManager
                 if(settings.getAudiobook() ^ settings.getOther())
                     builder.append(andOr).append(IS_AUDIOBOOK).append(comparator);
             }
-            if(Build.VERSION.SDK_INT >= 31)
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
             {
                 if(settings.getRecording() ^ settings.getOther())
                     builder.append(andOr).append("is_recording").append(comparator);
@@ -226,6 +227,7 @@ public class MediaManager
         keys[1] = Build.VERSION.SDK_INT < Build.VERSION_CODES.Q ? PATH_OLD : PATH_NEW;
         int[] columns = new int[2];
         FileDao fileDao = songsFiles.dao();
+        ContentResolver resolver = context.getContentResolver();
         for(Uri uri : uris)
         {
             Log.d(TAG,"Checking uri: " + uri.toString());
@@ -253,7 +255,7 @@ public class MediaManager
                             if(write)
                             {
                                 fileDao.insertAll(newFile);
-                                songDao.insertAll(SongDetailed.loadFromFile(newFile));
+                                songDao.insertAll(SongDetailed.loadFromUri(newFile.getUri()));
                             }
                             return null;
                         }

@@ -154,7 +154,7 @@ public class PlayService extends MediaBrowserServiceCompat
 
     private void loadQuerySettings()
     {
-        if(Build.VERSION.SDK_INT >= 31)
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
         {
             scanner.setQuerySettings(new MediaManager.QuerySettings(
                     prefs.getBoolean(getString(R.string.key_include_music),false),
@@ -738,7 +738,7 @@ public class PlayService extends MediaBrowserServiceCompat
         else
             songs = new ArrayList<>();*/
 
-        scanner = new MediaManager(getContentResolver(),
+        scanner = new MediaManager(this,
                 Client.getInstance(this,
                         FilesDatabase.class,Client.DATABASE_SONGS),
                 Client.getInstance(this,

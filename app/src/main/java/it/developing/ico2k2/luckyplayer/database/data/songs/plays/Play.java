@@ -304,7 +304,7 @@ public class Play extends BaseSong
     {
         return String.format(Locale.getDefault(),"Song with uri %s with title %s by %s," +
                         "duration: %s, played %d times, last time was: %s",
-                             getId(),getTitle(),getAlbumArtist(),getTextualLength(),getPlaysCount(),getLastPlay());
+                             getUri(),getTitle(),getAlbumArtist(),getTextualLength(),getPlaysCount(),getLastPlay());
     }
 
     @Override
@@ -315,7 +315,7 @@ public class Play extends BaseSong
         {
             if(o instanceof Play)
             {
-                result = uri.equals(((Play)o).getId());
+                result = uri.equals(((Play)o).getUri());
             }
         }
         return result;

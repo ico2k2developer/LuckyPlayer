@@ -1,24 +1,15 @@
 package it.developing.ico2k2.luckyplayer;
 
-import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
-
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -26,8 +17,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import it.developing.ico2k2.luckyplayer.activities.base.BaseActivity;
 
 public final class Resources
 {
@@ -39,10 +28,6 @@ public final class Resources
     public static final String EXTRA_URI = "intent uri";
 
     public static final String FILE_PROVIDER_AUTHORITY = "it.developing.ico2k2.luckyplayer.fileprovider";
-
-    public static final String CHANNEL_ID_MAIN = "main";
-    public static final String CHANNEL_ID_INFO = "info";
-    public static final String CHANNEL_ID_STATUS = "status";
 
     public static final String MESSAGE_DESTROY = "destroy";
     public static final String MESSAGE_SONG_REQUEST = "14";

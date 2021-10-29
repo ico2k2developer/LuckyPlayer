@@ -3,8 +3,6 @@ package it.developing.ico2k2.luckyplayer.services;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.support.v4.media.MediaBrowserCompat.EXTRA_PAGE;
 import static android.support.v4.media.MediaBrowserCompat.EXTRA_PAGE_SIZE;
-import static it.developing.ico2k2.luckyplayer.Resources.CHANNEL_ID_INFO;
-import static it.developing.ico2k2.luckyplayer.Resources.CHANNEL_ID_STATUS;
 import static it.developing.ico2k2.luckyplayer.Resources.KEY_REQUEST;
 import static it.developing.ico2k2.luckyplayer.Resources.MESSAGE_DESTROY;
 import static it.developing.ico2k2.luckyplayer.Resources.MESSAGE_SCAN_REQUESTED;
@@ -760,7 +758,7 @@ public class PlayService extends MediaBrowserServiceCompat
         intent.putExtra(KEY_REQUEST,MESSAGE_DESTROY);
         PendingIntent action = PendingIntent.getService(this,1,intent,PendingIntent.FLAG_CANCEL_CURRENT);
         PendingIntent pending = PendingIntent.getActivity(this,0,new Intent(this,MainActivity.class),PendingIntent.FLAG_UPDATE_CURRENT);
-        notification = new NotificationCompat.Builder(this,CHANNEL_ID_INFO)
+        notification = new NotificationCompat.Builder(this,NotificationChannelsManager.CHANNEL_INFO.getId())
                 .setColor(prefs.getInt(getString(R.string.key_notification_tint),0))
                 .setSmallIcon(R.drawable.ic_player_notification)
                 .setContentTitle(getString(R.string.player_notification_title).replace("%s",getString(R.string.app_name)))
@@ -770,7 +768,7 @@ public class PlayService extends MediaBrowserServiceCompat
                 .addAction(R.drawable.ic_exit_notification_action,getString(R.string.exit),action)
                 .build();
         startForeground(NOTIFICATION_STATUS,notification);
-        playNotif = new NotificationCompat.Builder(this,CHANNEL_ID_STATUS)
+        playNotif = new NotificationCompat.Builder(this,NotificationChannelsManager.CHANNEL_STATUS.getId())
                 .setContentIntent(mediaSession.getController().getSessionActivity())
                 .setDeleteIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(this,PlaybackStateCompat.ACTION_STOP))
                 .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()

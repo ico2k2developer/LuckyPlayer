@@ -4,7 +4,6 @@ import static android.support.v4.media.MediaBrowserCompat.EXTRA_PAGE;
 import static android.support.v4.media.MediaBrowserCompat.EXTRA_PAGE_SIZE;
 import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
 import static it.developing.ico2k2.luckyplayer.Resources.REQUEST_CODE_PERMISSIONS;
-import static it.developing.ico2k2.luckyplayer.Resources.goToAppSettingsPageForPermission;
 import static it.developing.ico2k2.luckyplayer.services.PlayService.ARG_LUCKY;
 import static it.developing.ico2k2.luckyplayer.services.PlayService.ID_ALBUMS;
 import static it.developing.ico2k2.luckyplayer.services.PlayService.ID_ARTISTS;
@@ -45,6 +44,7 @@ import java.lang.reflect.Constructor;
 import java.util.List;
 
 import it.developing.ico2k2.luckyplayer.MediaBrowserDependent;
+import it.developing.ico2k2.luckyplayer.Permissions;
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.adapters.MusicItemsAdapter;
 import it.developing.ico2k2.luckyplayer.adapters.items.Album;
@@ -322,7 +322,7 @@ public class SongListFragment extends BaseFragment
                 button.setOnClickListener(new View.OnClickListener(){
                     @Override
                     public void onClick(View v){
-                        goToAppSettingsPageForPermission(getActivity(),REQUEST_CODE_PERMISSIONS);
+                        Permissions.goToAppSettingsPageForPermission(getActivity(),REQUEST_CODE_PERMISSIONS);
                     }
                 });
             }

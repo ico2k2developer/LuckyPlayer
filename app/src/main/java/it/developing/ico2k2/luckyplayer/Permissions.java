@@ -28,7 +28,7 @@ public class Permissions
     {
         return ContextCompat.checkSelfPermission(
                 context,
-                Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
     }
 
     @RequiresApi(Build.VERSION_CODES.KITKAT)
@@ -36,7 +36,7 @@ public class Permissions
     {
         ActivityCompat.requestPermissions(
                 activity,
-                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},requestCode
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},requestCode
         );
     }
 

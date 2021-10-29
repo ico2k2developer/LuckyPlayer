@@ -2,9 +2,10 @@ package it.developing.ico2k2.luckyplayer.activities;
 
 import static androidx.core.content.PermissionChecker.PERMISSION_GRANTED;
 import static it.developing.ico2k2.luckyplayer.Resources.MESSAGE_DESTROY;
+import static it.developing.ico2k2.luckyplayer.Resources.MESSAGE_SCAN_REQUESTED;
 import static it.developing.ico2k2.luckyplayer.Resources.REQUEST_CODE_PERMISSIONS;
 
-import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Build;
@@ -19,15 +20,15 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.viewpager.widget.ViewPager;
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 import it.developing.ico2k2.luckyplayer.Permissions;
 import it.developing.ico2k2.luckyplayer.R;
-import it.developing.ico2k2.luckyplayer.Resources;
 import it.developing.ico2k2.luckyplayer.activities.base.BasePlayingActivity;
 import it.developing.ico2k2.luckyplayer.fragments.SongListFragment;
 import it.developing.ico2k2.luckyplayer.services.PlayService;
@@ -36,18 +37,42 @@ public class TabsActivity extends BasePlayingActivity implements ActivityCompat.
 {
     private static final String TAG = TabsActivity.class.getSimpleName();
 
-    private ViewPager pager;
+    private ViewPager2 pager;
+    private String[] tabs;
 
-    public class PagerAdapter extends FragmentStatePagerAdapter
+    public class SongListAdapter extends FragmentStateAdapter
+    {
+        private final String[] ids =
+                {
+                        PlayService.ID_SONGS,
+                        PlayService.ID_ALBUMS,
+                        PlayService.ID_ARTISTS,
+                        PlayService.ID_GENRES,
+                };
+
+        public SongListAdapter(FragmentActivity activity)
+        {
+            super(activity);
+            //tabs = new String[1];
+            //tabs[0] = getResources().getStringArray(R.array.tabs)[0];
+        }
+
+        @NonNull
+        @Override
+        public Fragment createFragment(int i) {
+            Log.d(TAG,"Loading fragment " + i);
+            return SongListFragment.create(ids[i]);
+        }
+
+        @Override
+        public int getItemCount() {
+            return tabs.length;
+        }
+    }
+
+    /*public class PagerAdapter extends FragmentStatePagerAdapter
     {
         private final String[] tabs;
-        private final String[] ids =
-        {
-            PlayService.ID_SONGS,
-            PlayService.ID_ALBUMS,
-            PlayService.ID_ARTISTS,
-            PlayService.ID_GENRES,
-        };
 
         public PagerAdapter(FragmentManager fm)
         {
@@ -74,7 +99,7 @@ public class TabsActivity extends BasePlayingActivity implements ActivityCompat.
         public CharSequence getPageTitle(int position) {
             return tabs[position];
         }
-    }
+    }*/
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -83,14 +108,21 @@ public class TabsActivity extends BasePlayingActivity implements ActivityCompat.
         setContentView(R.layout.activity_tabs);
         setSupportActionBar(findViewById(R.id.toolbar));
 
-        PagerAdapter adapter;
+        tabs = getResources().getStringArray(R.array.tabs);
+        SongListAdapter adapter;
         TabLayout tabLayout = findViewById(R.id.tabs_tab_layout);
         pager = findViewById(R.id.tabs_pager);
-        adapter = new PagerAdapter(getSupportFragmentManager());
+        adapter = new SongListAdapter(this);
         pager.setAdapter(adapter);
         pager.setOffscreenPageLimit(3);
-        tabLayout.setupWithViewPager(pager);
-        adapter.notifyDataSetChanged();
+        new TabLayoutMediator(tabLayout, pager, false, true,
+                new TabLayoutMediator.TabConfigurationStrategy() {
+                    @Override
+                    public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
+                        tab.setText(tabs[position]);
+                    }
+                }).attach();
+        //adapter.notifyDataSetChanged();
     }
 
     void buildTransportControls()
@@ -155,6 +187,7 @@ public class TabsActivity extends BasePlayingActivity implements ActivityCompat.
     }
 
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     public void onRequestPermissionsResult(int requestCode,@NonNull String[] permissions,@NonNull int[] grantResults)
     {
@@ -181,7 +214,15 @@ public class TabsActivity extends BasePlayingActivity implements ActivityCompat.
 
     protected void refresh()
     {
-        pager.getAdapter().notifyDataSetChanged();
+        sendMessageToService(MESSAGE_SCAN_REQUESTED);
+    }
+
+    private SongListFragment getFragment(int position) {
+        return (SongListFragment)getSupportFragmentManager().findFragmentByTag("f" + position);
+    }
+
+    private SongListFragment getCurrentFragment() {
+        return getFragment(pager.getCurrentItem());
     }
 
     @Override

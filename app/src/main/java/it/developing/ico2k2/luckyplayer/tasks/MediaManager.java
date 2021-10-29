@@ -5,10 +5,10 @@ import static android.provider.MediaStore.Audio.AudioColumns.IS_AUDIOBOOK;
 import static android.provider.MediaStore.Audio.AudioColumns.IS_MUSIC;
 import static android.provider.MediaStore.Audio.AudioColumns.IS_NOTIFICATION;
 import static android.provider.MediaStore.Audio.AudioColumns.IS_PODCAST;
+import static android.provider.MediaStore.Audio.AudioColumns.IS_RECORDING;
 import static android.provider.MediaStore.Audio.AudioColumns.IS_RINGTONE;
 
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -157,14 +157,14 @@ public class MediaManager
     private final SongsDetailedDatabase songsDetailed;
     private final FilesDatabase songsFiles;
     private String query;
-    private boolean scanning;
+    private long count;
 
     public MediaManager(Context context, FilesDatabase files, SongsDetailedDatabase songs)
     {
         this.context = context;
         songsFiles = files;
         songsDetailed = songs;
-        scanning = false;
+        count = 0;
     }
 
     public void setQuerySettings(QuerySettings settings)
@@ -178,7 +178,7 @@ public class MediaManager
         String result = null;
         if(!settings.areAllFalse())
         {
-            final StringBuilder builder = new StringBuilder();
+            final StringBuilder builder = new StringBuilder(" ");
             final String andOr,comparator;
             if(settings.getOther())
             {
@@ -191,15 +191,15 @@ public class MediaManager
                 andOr = " OR ";
             }
             if(settings.getMusic() ^ settings.getOther())
-                builder.append(IS_MUSIC).append(comparator).append(andOr);
+                builder.append(IS_MUSIC).append(comparator);
             if(settings.getRingtone() ^ settings.getOther())
-                builder.append(IS_RINGTONE).append(comparator).append(andOr);
+                builder.append(andOr).append(IS_RINGTONE).append(comparator);
             if(settings.getNotification() ^ settings.getOther())
-                builder.append(IS_NOTIFICATION).append(comparator).append(andOr);
+                builder.append(andOr).append(IS_NOTIFICATION).append(comparator);
             if(settings.getPodcast() ^ settings.getOther())
-                builder.append(IS_PODCAST).append(comparator).append(andOr);
+                builder.append(andOr).append(IS_PODCAST).append(comparator);
             if(settings.getAlarm() ^ settings.getOther())
-                builder.append(IS_ALARM).append(comparator);
+                builder.append(andOr).append(IS_ALARM).append(comparator);
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
             {
                 if(settings.getAudiobook() ^ settings.getOther())
@@ -208,7 +208,7 @@ public class MediaManager
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
             {
                 if(settings.getRecording() ^ settings.getOther())
-                    builder.append(andOr).append("is_recording").append(comparator);
+                    builder.append(andOr).append(IS_RECORDING).append(comparator);
             }
             result = builder.toString();
         }
@@ -217,9 +217,8 @@ public class MediaManager
 
     public long scan(Uri[] uris)
     {
-        scanning = true;
         Cursor cursor = null;
-        long count = 0;
+        count = 0;
         //dao.deleteAll();
         SongDetailedDao songDao = songsDetailed.dao();
         String[] keys = new String[2];
@@ -236,17 +235,16 @@ public class MediaManager
             int a;
             for(a = 0; a < keys.length; a++)
                 columns[a] = cursor.getColumnIndex(keys[a]);
-            count = 0;
-            while(cursor.moveToNext() && count < 5)
+            while(cursor.moveToNext())
             {
-                final Uri fileUri = ContentUris.withAppendedId(uri,cursor.getLong(columns[0]));
-                Log.d(TAG,"Uri is " + cursor.getString(columns[1]) + " id is " + cursor.getString(columns[0]) + " so file uri is " + fileUri);
+                String fileUri = cursor.getString(columns[1]);
+                Log.d(TAG,"Uri is " + fileUri);
                 new AsyncWork().executeAsync(null,
                     new Callable<Void>() {
                         @Override
                         public Void call() throws Exception {
-                            File oldFile = fileDao.loadByUri(fileUri.getPath());
-                            File newFile = new File(fileUri,resolver);
+                            File oldFile = fileDao.loadByUri(fileUri);
+                            File newFile = new File(fileUri);
                             boolean write = false;
                             if(oldFile != null)
                             {
@@ -266,7 +264,6 @@ public class MediaManager
         }
         if(cursor != null)
             cursor.close();
-        scanning = false;
         return count;
     }
 

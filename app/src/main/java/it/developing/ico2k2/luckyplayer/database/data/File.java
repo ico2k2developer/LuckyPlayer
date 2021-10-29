@@ -1,7 +1,6 @@
 package it.developing.ico2k2.luckyplayer.database.data;
 
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
@@ -42,15 +41,27 @@ public class File
     }
 
     @Ignore
-    public File(@NonNull Uri uri,FileInputStream stream) throws IOException
+    public File(String uri) throws IOException
     {
-        this(uri.getPath(),calculateCRC32(stream),calculateSize(stream));
+        this(uri,new java.io.File(uri));
     }
 
     @Ignore
-    public File(@NonNull Uri uri,ContentResolver resolver) throws IOException
+    private File(String uri,java.io.File file) throws IOException
     {
-        this(uri,getStream(uri,resolver));
+        this(uri,new FileInputStream(file));
+    }
+
+    @Ignore
+    public File(java.io.File file) throws IOException
+    {
+        this(file.getPath(),file);
+    }
+
+    @Ignore
+    public File(String uri,FileInputStream stream) throws IOException
+    {
+        this(uri,calculateCRC32(stream),calculateSize(stream));
     }
 
     public String getUri() {

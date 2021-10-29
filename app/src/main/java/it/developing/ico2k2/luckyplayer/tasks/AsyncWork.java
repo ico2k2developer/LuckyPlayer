@@ -21,7 +21,7 @@ public class AsyncWork {
         void onComplete();
     }
 
-    protected void executeAsync(@Nullable OnStart start, Callable<Void> callable, @Nullable OnFinish stop) {
+    public void executeAsync(@Nullable OnStart start, Callable<Void> callable, @Nullable OnFinish stop) {
         if(start != null)
             start.onStart();
         executor.execute(() -> {

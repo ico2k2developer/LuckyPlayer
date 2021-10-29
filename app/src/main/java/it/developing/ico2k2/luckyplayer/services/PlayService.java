@@ -15,7 +15,6 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -31,12 +30,12 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.media.MediaBrowserServiceCompat;
 import androidx.media.session.MediaButtonReceiver;
-import androidx.preference.PreferenceManager;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -46,7 +45,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
+import it.developing.ico2k2.luckyplayer.NotificationChannelsManager;
+import it.developing.ico2k2.luckyplayer.Prefs;
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.MainActivity;
 import it.developing.ico2k2.luckyplayer.adapters.items.Song;
@@ -54,6 +56,7 @@ import it.developing.ico2k2.luckyplayer.database.Client;
 import it.developing.ico2k2.luckyplayer.database.data.FilesDatabase;
 import it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailed;
 import it.developing.ico2k2.luckyplayer.database.data.songs.SongsDetailedDatabase;
+import it.developing.ico2k2.luckyplayer.tasks.AsyncTask;
 import it.developing.ico2k2.luckyplayer.tasks.MediaManager;
 
 public class PlayService extends MediaBrowserServiceCompat
@@ -113,7 +116,7 @@ public class PlayService extends MediaBrowserServiceCompat
             MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
     };
 
-    private SharedPreferences prefs;
+    private Prefs prefs;
     private NotificationManagerCompat manager;
     private NotificationCompat.Builder playNotif;
     private Notification notification;
@@ -731,7 +734,7 @@ public class PlayService extends MediaBrowserServiceCompat
     public void onCreate()
     {
         super.onCreate();
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs = Prefs.getInstance(this,Prefs.PREFS_SETTINGS);
         //mediaSelection = buildQuerySelectionString();
         /*if(prefs.contains(KEY_SONGLIST_LAST_SIZE))
             songs = new ArrayList<>(prefs.getInt(KEY_SONGLIST_LAST_SIZE,100));
@@ -806,17 +809,17 @@ public class PlayService extends MediaBrowserServiceCompat
             }
             case MESSAGE_SCAN_REQUESTED:
             {
-                //scan();
+                scan();
                 break;
             }
         }
     }
 
-    /*public void scan()
+    public void scan()
     {
         PendingIntent pendingIntent = PendingIntent.getActivity(this,0,new Intent(this,MainActivity.class),PendingIntent.FLAG_UPDATE_CURRENT);
-        final Notification notification = new NotificationCompat.Builder(this,CHANNEL_ID_INFO)
-                .setColor(prefs.getInt(KEY_NOTIFICATION_TINT,0))
+        final Notification notification = new NotificationCompat.Builder(this, NotificationChannelsManager.CHANNEL_INFO.getId())
+                .setColor(prefs.getInt(getString(R.string.key_notification_tint)))
                 .setSmallIcon(R.drawable.ic_scan_notification)
                 .setContentTitle(getString(R.string.scan_notification_title))
                 .setContentText(getString(R.string.scan_notification_text))
@@ -824,28 +827,26 @@ public class PlayService extends MediaBrowserServiceCompat
                 .setProgress(1,0,true)
                 .setContentIntent(pendingIntent)
                 .build();
-        MediaScanner scanner = new MediaScanner(getContentResolver(),new MediaScanner.OnMediaScannerResult(){
+        new AsyncTask<Long>().executeAsync(new AsyncTask.OnStart() {
             @Override
-            public void onScanStart(){
-                songs.clear();
-                manager.notify(NOTIFICATION_SCAN,notification);
-                Log.d(TAG,"Scan started");
+            public void onStart() {
+                manager.notify(NOTIFICATION_SCAN, notification);
+                Log.d(TAG, "Scan started");
             }
-
+        }, new Callable<Long>() {
             @Override
-            public void onScanResult(Song song){
-                songs.add(song);
+            public Long call() throws Exception {
+                return scanner.scan(SONGS_URI);
             }
-
+        }, new AsyncTask.OnFinish<Long>() {
             @Override
-            public void onScanStop(){
+            public void onComplete(@Nullable Long result) {
+                Log.d(TAG, "Scan ended: " + result + " items found");
                 manager.cancel(NOTIFICATION_SCAN);
-                prefs.edit().putInt(KEY_SONGLIST_LAST_SIZE,songs.size()).apply();
-                Log.d(TAG,"Scan finished, items: " + songs.size());
+                prefs.edit().putLong(getString(R.string.key_scan_last_size),result).apply();
             }
         });
-        scanner.startScan();
-    }*/
+    }
 
     @Override
     public int onStartCommand(Intent intent,int flags,int startId)

@@ -18,5 +18,6 @@
     <string name="key_songlist_packet_size" translatable="false">songlist packet size</string>
     <string name="key_show_init_every_time" translatable="false">show init every time</string>
     <string name="key_permission_data_no_more" translatable="false">no more data permission</string>
+    <string name="key_scan_last_size" translatable="false">last size</string>
 
 </resources>

@@ -28,7 +28,6 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
@@ -43,7 +42,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 import it.developing.ico2k2.luckyplayer.NotificationChannelsManager;
 import it.developing.ico2k2.luckyplayer.Prefs;
@@ -95,23 +93,23 @@ public class PlayService extends MediaBrowserServiceCompat
 
 
     public static final Uri[] SONGS_URI = new Uri[]{
-            MediaStore.Audio.Media.INTERNAL_CONTENT_URI,
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+            MediaStore.Audio.Media.INTERNAL_CONTENT_URI,
     };
 
     public static final Uri[] ALBUMS_URI = new Uri[]{
-            MediaStore.Audio.Albums.INTERNAL_CONTENT_URI,
             MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+            MediaStore.Audio.Albums.INTERNAL_CONTENT_URI,
     };
 
     public static final Uri[] ARTISTS_URI = new Uri[]{
-            MediaStore.Audio.Artists.INTERNAL_CONTENT_URI,
             MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
+            MediaStore.Audio.Artists.INTERNAL_CONTENT_URI,
     };
 
     public static final Uri[] GENRES_URI = new Uri[]{
-            MediaStore.Audio.Genres.INTERNAL_CONTENT_URI,
             MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
+            MediaStore.Audio.Genres.INTERNAL_CONTENT_URI,
     };
 
     private Prefs prefs;
@@ -550,14 +548,14 @@ public class PlayService extends MediaBrowserServiceCompat
         private void updateMetadata(String originalMediaId)
         {
             Log.d(TAG,"Updating metadata");
-            List<SongDetailed> result = scanner.getSongsDatabase().dao().loadAllByUris(new String[]{originalMediaId});
+            List<SongDetailed> result = scanner.getSongsDatabase().dao().loadAllByUri(originalMediaId);
             if(result.size() > 0)
             {
                 String description;
                 SongDetailed song = result.get(0);
                 mediaSession.setMetadata(new MediaMetadataCompat.Builder()
                         .putLong(MediaMetadataCompat.METADATA_KEY_DURATION,
-                                ((long)song.getLength() * 1000L))
+                                (song.getLength() * 1000L))
                         .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE,song.getTitle())
                         .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE,
                                 description = Song.getSongDescription(
@@ -745,7 +743,6 @@ public class PlayService extends MediaBrowserServiceCompat
                 Client.getInstance(this,
                         SongsDetailedDatabase.class,Client.DATABASE_SONGS_DETAILED));
         loadQuerySettings();
-        scanner.scan(SONGS_URI);
         mediaSession = new MediaSessionCompat(this,getClass().getSimpleName(),new ComponentName(this,Intent.ACTION_MEDIA_BUTTON),null);
         manager = NotificationManagerCompat.from(this);
         stateBuilder = new PlaybackStateCompat.Builder().setActions(
@@ -788,6 +785,7 @@ public class PlayService extends MediaBrowserServiceCompat
                     MediaButtonReceiver.buildMediaButtonPendingIntent(this,
                             PlaybackStateCompat.ACTION_PAUSE));
         }
+        scan();
         //scan();
         Log.d(TAG,"Service created");
     }
@@ -815,8 +813,10 @@ public class PlayService extends MediaBrowserServiceCompat
 
     public void scan()
     {
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,new Intent(this,MainActivity.class),PendingIntent.FLAG_UPDATE_CURRENT);
-        final Notification notification = new NotificationCompat.Builder(this, NotificationChannelsManager.CHANNEL_INFO.getId())
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,
+                new Intent(this,MainActivity.class),PendingIntent.FLAG_UPDATE_CURRENT);
+        final Notification notification = new NotificationCompat.Builder(this,
+                NotificationChannelsManager.CHANNEL_INFO.getId())
                 .setColor(prefs.getInt(getString(R.string.key_notification_tint)))
                 .setSmallIcon(R.drawable.ic_scan_notification)
                 .setContentTitle(getString(R.string.scan_notification_title))
@@ -825,25 +825,22 @@ public class PlayService extends MediaBrowserServiceCompat
                 .setProgress(1,0,true)
                 .setContentIntent(pendingIntent)
                 .build();
-        new AsyncTask<Long>().executeAsync(new AsyncTask.OnStart() {
-            @Override
-            public void onStart() {
-                manager.notify(NOTIFICATION_SCAN, notification);
-                Log.d(TAG, "Scan started");
-            }
-        }, new Callable<Long>() {
-            @Override
-            public Long call() throws Exception {
-                return scanner.scan(SONGS_URI);
-            }
-        }, new AsyncTask.OnFinish<Long>() {
-            @Override
-            public void onComplete(@Nullable Long result) {
-                Log.d(TAG, "Scan ended: " + result + " items found");
-                manager.cancel(NOTIFICATION_SCAN);
-                prefs.edit().putLong(getString(R.string.key_scan_last_size),result).apply();
-            }
-        });
+        scanner.scan(SONGS_URI,
+                new AsyncTask.OnStart() {
+                    @Override
+                    public void onStart() {
+                        manager.notify(NOTIFICATION_SCAN, notification);
+                        Log.d(TAG, "Scan started");
+                    }
+                },
+                new AsyncTask.OnFinish<Long>() {
+                    @Override
+                    public void onComplete(Long result) {
+                        Log.d(TAG, "Scan ended: " + result + " items found");
+                        manager.cancel(NOTIFICATION_SCAN);
+                        //prefs.edit().putLong(getString(R.string.key_scan_last_size),result).apply();
+                    }
+                });
     }
 
     @Override

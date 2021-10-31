@@ -2,6 +2,7 @@ package it.developing.ico2k2.luckyplayer.database.data;
 
 import android.content.ContentResolver;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
@@ -76,7 +77,7 @@ public class File
         return size;
     }
 
-    public static final byte CRC32_BYTES_AT_ONCE = 16;
+    public static final short CRC32_BYTES_AT_ONCE = 256;
 
     public static FileInputStream getStream(@NonNull Uri uri,ContentResolver resolver) throws IOException
     {
@@ -87,10 +88,12 @@ public class File
     {
         CRC32 crc = new CRC32();
         byte[] buffer = new byte[CRC32_BYTES_AT_ONCE];
-        byte bytesRead;
-        while((bytesRead = (byte)stream.read(buffer)) != -1) {
+        short bytesRead;
+        Log.d(TAG,"Calculating CRC32 value with buffer size " + CRC32_BYTES_AT_ONCE + " bytes");
+        while((bytesRead = (short)stream.read(buffer)) != -1) {
             crc.update(buffer, 0, bytesRead);
         }
+        Log.d(TAG,"Calculated CRC32 value " + crc.getValue());
         return crc.getValue();
     }
 

@@ -4,8 +4,9 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class BaseSong
 {
-    protected static String getTextualLength(short length)
+    protected static String getTextualLength(long length)
     {
+        length /= 1000;
         short hours = (short)(length / 60 / 60);
         byte minutes = (byte)(length / 60 - hours * 60);
         byte seconds = (byte)(length - hours * 60 * 60 - minutes * 60);
@@ -32,5 +33,5 @@ public abstract class BaseSong
 
     public abstract String getAlbumArtist();
 
-    public abstract short getLength();
+    public abstract long getLength();
 }

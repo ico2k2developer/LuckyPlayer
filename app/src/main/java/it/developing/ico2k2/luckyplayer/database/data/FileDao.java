@@ -30,5 +30,5 @@ public interface FileDao
     void deleteAll();
 
     @Query("SELECT COUNT(" + File.COLUMN_URI + ") FROM File")
-    int getCount();
+    long getCount();
 }

@@ -1,5 +1,6 @@
 package it.developing.ico2k2.luckyplayer.tasks;
 
+import static android.provider.BaseColumns._ID;
 import static android.provider.MediaStore.Audio.AudioColumns.IS_ALARM;
 import static android.provider.MediaStore.Audio.AudioColumns.IS_AUDIOBOOK;
 import static android.provider.MediaStore.Audio.AudioColumns.IS_MUSIC;
@@ -7,13 +8,16 @@ import static android.provider.MediaStore.Audio.AudioColumns.IS_NOTIFICATION;
 import static android.provider.MediaStore.Audio.AudioColumns.IS_PODCAST;
 import static android.provider.MediaStore.Audio.AudioColumns.IS_RECORDING;
 import static android.provider.MediaStore.Audio.AudioColumns.IS_RINGTONE;
+import static android.provider.MediaStore.MediaColumns.DATA;
+import static android.provider.MediaStore.MediaColumns.DISPLAY_NAME;
+import static android.provider.MediaStore.MediaColumns.RELATIVE_PATH;
+import static android.provider.MediaStore.MediaColumns.VOLUME_NAME;
 
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
-import android.provider.MediaStore;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -27,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import it.developing.ico2k2.luckyplayer.Storage;
 import it.developing.ico2k2.luckyplayer.database.data.File;
 import it.developing.ico2k2.luckyplayer.database.data.FileDao;
 import it.developing.ico2k2.luckyplayer.database.data.FilesDatabase;
@@ -37,13 +42,6 @@ import it.developing.ico2k2.luckyplayer.database.data.songs.SongsDetailedDatabas
 public class MediaManager
 {
     private static final String TAG = MediaManager.class.getSimpleName();
-
-    private static final String ID = MediaStore.MediaColumns._ID;
-
-    private static final String PATH_OLD = MediaStore.MediaColumns.DATA;
-
-    @RequiresApi(Build.VERSION_CODES.Q)
-    private static final String PATH_NEW = MediaStore.MediaColumns.RELATIVE_PATH;
 
     public static class QuerySettings
     {
@@ -157,7 +155,7 @@ public class MediaManager
     private final SongsDetailedDatabase songsDetailed;
     private final FilesDatabase songsFiles;
     private String query;
-    private long count;
+    private final long count;
 
     public MediaManager(Context context, FilesDatabase files, SongsDetailedDatabase songs)
     {
@@ -215,56 +213,208 @@ public class MediaManager
         return result;
     }
 
-    public long scan(Uri[] uris)
+    /*public static class ScanSettings
     {
-        Cursor cursor = null;
-        count = 0;
-        //dao.deleteAll();
-        SongDetailedDao songDao = songsDetailed.dao();
-        String[] keys = new String[2];
-        keys[0] = ID;
-        keys[1] = Build.VERSION.SDK_INT < Build.VERSION_CODES.Q ? PATH_OLD : PATH_NEW;
-        int[] columns = new int[2];
-        FileDao fileDao = songsFiles.dao();
-        ContentResolver resolver = context.getContentResolver();
-        for(Uri uri : uris)
+        public static class ScanItem
         {
-            Log.d(TAG,"Checking uri: " + uri.toString());
-            cursor = ContentResolverCompat.query(resolver,uri,keys,query,null,null,null);
-            Log.d(TAG,"Cursor contains " + cursor.getCount() + " elements");
-            int a;
-            for(a = 0; a < keys.length; a++)
-                columns[a] = cursor.getColumnIndex(keys[a]);
-            while(cursor.moveToNext())
+            private final Uri uri;
+            private String path;
+
+            public ScanItem(final Uri uri,final String path)
             {
-                String fileUri = cursor.getString(columns[1]);
-                Log.d(TAG,"Uri is " + fileUri);
-                new AsyncWork().executeAsync(null,
-                    new Callable<Void>() {
-                        @Override
-                        public Void call() throws Exception {
-                            File oldFile = fileDao.loadByUri(fileUri);
-                            File newFile = new File(fileUri);
-                            boolean write = false;
-                            if(oldFile != null)
-                            {
-                                write = oldFile.getCrc32() == newFile.getCrc32() && oldFile.getSize() == newFile.getSize();
-                            }
-                            if(write)
-                            {
-                                fileDao.insertAll(newFile);
-                                songDao.insertAll(SongDetailed.loadFromUri(newFile.getUri()));
-                            }
-                            return null;
-                        }
-                    },null);
-                count++;
+                this.uri = uri;
+                if(path.endsWith("/"))
+                    this.path = path;
+                else
+                    this.path = path + "/";
             }
-            Log.d(TAG,"Jumping to the next uri");
+
+            public static ScanItem externalStorage(Context context)
+            {
+                return new ScanItem(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                        Build.VERSION.SDK_INT < Build.VERSION_CODES.R ?
+                        getExternalStorageDirectory().getAbsolutePath() :
+                        getExternalStorageDirectoryAPI30(context).getAbsolutePath());
+            }
+
+            public String getCompletePath(String relativePath,String filename)
+            {
+                return path + relativePath + filename;
+            }
         }
-        if(cursor != null)
-            cursor.close();
-        return count;
+
+        private final List<ScanItem> items;
+
+        public ScanSettings(int initialSize)
+        {
+            items = new ArrayList<>(initialSize);
+        }
+
+        public ScanSettings()
+        {
+            items = new ArrayList<>();
+        }
+
+        public ScanSettings(Collection<? extends ScanItem> items)
+        {
+            this(items.size());
+            addAll(items);
+        }
+
+        public ScanSettings(ScanItem ... items)
+        {
+            this(items.length);
+            addAll(items);
+        }
+
+        public void add(ScanItem item)
+        {
+            items.add(item);
+        }
+
+        public void addAll(Collection<? extends ScanItem> items)
+        {
+            this.items.addAll(items);
+        }
+
+        public void addAll(ScanItem ... items)
+        {
+            addAll(Arrays.asList(items));
+        }
+    }*/
+
+    public void scan(Uri[] uris,@Nullable AsyncTask.OnStart start,@Nullable AsyncTask.OnFinish<Long> finish)
+    {
+        final SongDetailedDao songDao = songsDetailed.dao();
+        final FileDao fileDao = songsFiles.dao();
+        final ContentResolver resolver = context.getContentResolver();
+        final String[] keys;
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
+        {
+            keys = new String[]
+                    {
+                            _ID,
+                            DATA,
+                    };
+        }
+        else
+        {
+            keys = new String[]
+                    {
+                            _ID,
+                            DATA,
+                            VOLUME_NAME,
+                            RELATIVE_PATH,
+                            DISPLAY_NAME,
+                    };
+        }
+        new AsyncTask<Long>().executeAsync(new AsyncTask.OnStart() {
+            @Override
+            public void onStart() {
+                if(start != null)
+                    start.onStart();
+            }
+        }, new Callable<Long>() {
+            @Override
+            public Long call() throws Exception
+            {
+                long count = 0;
+                Cursor cursor;
+                Map<String,Integer> columns = new HashMap<>();
+                for(Uri uri : uris)
+                {
+                    Log.d(TAG,"Checking uri: " + uri.toString());
+                    cursor = ContentResolverCompat.query(resolver,uri,keys,query,null,null,null);
+                    Log.d(TAG,"Cursor contains " + cursor.getCount() + " elements");
+                    columns.clear();
+                    for(String key : keys)
+                        columns.put(key,cursor.getColumnIndex(key));
+                    while(cursor.moveToNext())
+                    {
+                        String alternativePath = cursor.getString(columns.get(DATA));
+                        String path;
+                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+                        {
+                            path = Storage.getAbsolutePath(context,
+                                    cursor.getString(columns.get(VOLUME_NAME)),
+                                    cursor.getString(columns.get(RELATIVE_PATH)),
+                                    cursor.getString(columns.get(DISPLAY_NAME)));
+                        }
+                        else
+                            path = null;
+                        Log.d(TAG,"Path is " + path + " alternative path is " + alternativePath);
+                        File newFile = null;
+                        if(path != null)
+                        {
+                            try
+                            {
+                                newFile = new File(path);
+                                Log.d(TAG,"Using path " + path);
+                            }
+                            catch(Exception e)
+                            {
+                                e.printStackTrace();
+                            }
+                        }
+                        if(newFile == null && alternativePath != null)
+                        {
+                            try
+                            {
+                                newFile = new File(alternativePath);
+                                Log.d(TAG,"Using alternative path " + alternativePath);
+                            }
+                            catch(Exception e)
+                            {
+                                e.printStackTrace();
+                            }
+                        }
+                        if(newFile != null)
+                        {
+                            try
+                            {
+                                File oldFile = fileDao.loadByUri(newFile.getUri());
+                                boolean write = true;
+                                if(oldFile != null)
+                                {
+                                    if(oldFile.getCrc32() == newFile.getCrc32() && oldFile.getSize() == newFile.getSize())
+                                        write = false;
+                                    Log.d(TAG,"Old file found");
+                                }
+                                else
+                                    Log.d(TAG,"Old file not found");
+                                if(write)
+                                {
+                                    SongDetailed song = SongDetailed.loadFromUri(newFile.getUri());
+                                    if(song != null)
+                                    {
+                                        Log.d(TAG,"Saving song " + song.getUri() + " to databases");
+                                        fileDao.insertAll(newFile);
+                                        songDao.insertAll(SongDetailed.loadFromUri(newFile.getUri()));
+                                        count++;
+                                    }
+                                    else
+                                        Log.d(TAG,"Could not load song from file " + newFile.getUri());
+                                }
+                            }
+                            catch(Exception e)
+                            {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    cursor.close();
+                    Log.d(TAG,"Jumping to the next uri, " + count + " items already found");
+                }
+                return count;
+            }
+        }, new AsyncTask.OnFinish<Long>() {
+            @Override
+            public void onComplete(@Nullable Long result) {
+                Log.d(TAG,"Jumping to the next uri");
+                if(finish != null)
+                    finish.onComplete(result);
+            }
+        });
     }
 
     public void wipe()
@@ -400,9 +550,14 @@ public class MediaManager
         }
     }
 
-    public int getCount()
+    public long getCount()
     {
         return songsFiles.dao().getCount();
+    }
+
+    public long getScanCount()
+    {
+        return count;
     }
 
     public QueryResult query(@NonNull String selection, @Nullable String[] selectionArgs)

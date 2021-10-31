@@ -1,13 +1,12 @@
 package it.developing.ico2k2.luckyplayer.database.data.songs;
 
-import android.content.ContentUris;
-import android.net.Uri;
+import android.media.MediaMetadataRetriever;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
-import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import org.jaudiotagger.audio.AudioFile;
@@ -50,6 +49,10 @@ public class SongDetailed extends BaseSong
     public static final short BPM_MIN = 0;
     public static final short BPM_MAX = Optimized.byte256maxFromMin(BPM_MIN);
 
+    protected static final byte VALUE_YES = 1;
+    protected static final byte VALUE_NO = -1;
+    protected static final byte VALUE_UNKNOWN = -1;
+
     @PrimaryKey
     @NonNull
     @ColumnInfo(name = COLUMN_URI)
@@ -68,7 +71,7 @@ public class SongDetailed extends BaseSong
     private final String artist;
 
     @ColumnInfo(name = COLUMN_LENGTH)
-    private final short length;
+    private final long length;
 
     @ColumnInfo(name = COLUMN_TRACK_N)
     private final byte memTrackN;
@@ -95,7 +98,7 @@ public class SongDetailed extends BaseSong
     private final String initKey;
 
     @ColumnInfo(name = COLUMN_BITRATE)
-    private final short bitrate;
+    private final int bitrate;
 
     @ColumnInfo(name = COLUMN_FORMAT)
     private final String format;
@@ -104,16 +107,16 @@ public class SongDetailed extends BaseSong
     private final byte channels;
 
     @ColumnInfo(name = COLUMN_VBR)
-    private final boolean vbr;
+    private final byte vbrCoded;
 
     @ColumnInfo(name = COLUMN_LOSSLESS)
-    private final boolean lossless;
+    private final byte losslessCoded;
 
     public SongDetailed(
             @NonNull String uri,String title,String album,String albumArtist,String artist,
-            short length,byte memTrackN,byte memTrackTotal,short releaseYear,short originalYear,
-            String genre,String lyrics,byte memBpm,String initKey,short bitrate,String format,
-            byte channels,boolean vbr,boolean lossless)
+            long length,byte memTrackN,byte memTrackTotal,short releaseYear,short originalYear,
+            String genre,String lyrics,byte memBpm,String initKey,int bitrate,String format,
+            byte channels,byte vbrCoded,byte losslessCoded)
     {
         this.uri = uri;
         this.title = title;
@@ -132,22 +135,41 @@ public class SongDetailed extends BaseSong
         this.bitrate = bitrate;
         this.format = format;
         this.channels = channels;
-        this.vbr = vbr;
-        this.lossless = lossless;
+        this.vbrCoded = vbrCoded;
+        this.losslessCoded = losslessCoded;
     }
 
-    @Ignore
+    public static SongDetailed create(@NonNull String uri,String title,String album,String albumArtist,String artist,
+                                      long length,short trackN,short trackTotal,short releaseYear,short originalYear,
+                                      String genre,String lyrics,byte bpm,String initKey,int bitrate,String format,
+                                      byte channels,boolean vbr,boolean lossless)
+    {
+        return new SongDetailed(uri,title,album,albumArtist,artist,length,
+                Optimized.byte256((short) (trackN - TRACK_N_MIN)),
+                Optimized.byte256((short) (trackTotal - TRACK_N_MIN)),releaseYear,originalYear,
+                genre,lyrics,
+                Optimized.byte256((short) (bpm - BPM_MIN)),initKey,bitrate,format,channels,
+                vbr ? VALUE_YES : VALUE_NO,lossless ? VALUE_YES : VALUE_NO);
+    }
+
     public SongDetailed(@NonNull String uri,String title,String album,String albumArtist,String artist,
-                        short length,short memTrackN,short memTrackTotal,short releaseYear,short originalYear,
-                        String genre,String lyrics,byte memBpm,String initKey,short bitrate,String format,
-                        byte channels,boolean vbr,boolean lossless)
+                                      long length,short trackN,short trackTotal,short releaseYear,short originalYear,
+                                      String genre,String lyrics,byte bpm,String initKey,int bitrate,String format,
+                                      byte channels)
     {
         this(uri,title,album,albumArtist,artist,length,
-             Optimized.byte256((short) (memTrackN - TRACK_N_MIN)),
-             Optimized.byte256((short) (memTrackTotal - TRACK_N_MIN)),releaseYear,originalYear,
-             genre,lyrics,
-             Optimized.byte256((short) (memBpm - BPM_MIN)),initKey,bitrate,format,channels,
-             vbr,lossless);
+                Optimized.byte256((short) (trackN - TRACK_N_MIN)),
+                Optimized.byte256((short) (trackTotal - TRACK_N_MIN)),releaseYear,originalYear,
+                genre,lyrics,
+                Optimized.byte256((short) (bpm - BPM_MIN)),initKey,bitrate,format,channels,
+                VALUE_UNKNOWN,VALUE_UNKNOWN);
+    }
+
+    public SongDetailed(@NonNull String uri,String title,String album,String albumArtist,String artist,
+                                      long length,short trackN,short releaseYear,String genre,int bitrate)
+    {
+        this(uri,title,album,albumArtist,artist,length,trackN,(short)-1,releaseYear,(short)-1,genre,
+                null,(byte)BPM_MIN,null,bitrate,null,(byte)-1);
     }
 
     public String getUri()
@@ -199,7 +221,7 @@ public class SongDetailed extends BaseSong
         return originalYear;
     }
 
-    public short getLength(){
+    public long getLength(){
         return length;
     }
 
@@ -225,7 +247,7 @@ public class SongDetailed extends BaseSong
         return initKey;
     }
 
-    public short getBitrate()
+    public int getBitrate()
     {
         return bitrate;
     }
@@ -238,63 +260,157 @@ public class SongDetailed extends BaseSong
         return channels;
     }
 
-    public boolean getVbr(){
-        return vbr;
-    }
-
-    public boolean getLossless(){
-        return lossless;
-    }
-
-    public static SongDetailed loadFromUri(String uri)
+    @Nullable
+    public Boolean isVbr()
     {
-        SongDetailed result;
-        AudioFile file;
+        Boolean result;
+        switch(vbrCoded)
+        {
+            case VALUE_YES:
+            {
+                result = true;
+                break;
+            }
+            case VALUE_NO:
+            {
+                result = false;
+                break;
+            }
+            default:
+            {
+                result = null;
+            }
+        }
+        return result;
+    }
+
+    @Nullable
+    public Boolean isLossless(){
+        Boolean result;
+        switch(losslessCoded)
+        {
+            case VALUE_YES:
+            {
+                result = true;
+                break;
+            }
+            case VALUE_NO:
+            {
+                result = false;
+                break;
+            }
+            default:
+            {
+                result = null;
+            }
+        }
+        return result;
+    }
+
+    @Nullable
+    public Boolean isLossy(){
+        Boolean lossless = isLossless();
+        return lossless == null ? null : !lossless;
+    }
+
+    @Nullable
+    public Boolean isCbr(){
+        Boolean vbr = isVbr();
+        return vbr == null ? null : !vbr;
+    }
+
+    @Deprecated
+    public boolean getVbr()
+    {
+        return vbrCoded == VALUE_YES;
+    }
+
+    @Deprecated
+    public boolean getLossless()
+    {
+        return losslessCoded == VALUE_YES;
+    }
+
+    public byte getVbrCoded()
+    {
+        return vbrCoded;
+    }
+
+    public byte getLosslessCoded()
+    {
+        return losslessCoded;
+    }
+
+    @Nullable
+    public static SongDetailed loadFromUri(@NonNull String uri)
+    {
+        SongDetailed result = null;
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        AudioFile file = null;
+        Tag tag = null;
+        AudioHeader header = null;
         try
         {
-            file = AudioFileIO.readMagic(new java.io.File(uri));
+            retriever.setDataSource(uri);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            retriever = null;
+        }
+        try
+        {
+            file = AudioFileIO.read(new java.io.File(uri));
+            tag = file.getTag();
+            header = file.getAudioHeader();
         }
         catch (Exception e)
         {
             e.printStackTrace();
-            file = null;
         }
         if(file != null)
         {
-            Tag tag = file.getTag();
-            AudioHeader header = file.getAudioHeader();
-            result = new SongDetailed(
+            long tmp;
+            if(header.getNoOfSamples() != null)
+                tmp = header.getNoOfSamples() * 1000L / header.getSampleRateAsNumber();
+            else
+                tmp = -1L;
+            result = create(
                     uri,
                     retrieveField(tag, FieldKey.TITLE,null),
                     retrieveField(tag, FieldKey.ALBUM,null),
                     retrieveField(tag, FieldKey.ALBUM_ARTIST,null),
                     retrieveField(tag, FieldKey.ARTIST,null),
-                    (short)header.getTrackLength(),
-                    Short.parseShort(retrieveField(tag, FieldKey.TRACK,"0")),
-                    Short.parseShort(retrieveField(tag, FieldKey.TRACK_TOTAL,"0")),
-                    Short.parseShort(retrieveField(tag, FieldKey.YEAR,"0")),
-                    Short.parseShort(retrieveField(tag, FieldKey.ORIGINAL_YEAR,"0")),
+                    tmp,
+                    Short.parseShort(retrieveField(tag, FieldKey.TRACK,Short.toString(TRACK_N_MIN))),
+                    Short.parseShort(retrieveField(tag, FieldKey.TRACK_TOTAL,Short.toString(TRACK_N_MIN))),
+                    retrieveYear(retrieveField(tag, FieldKey.YEAR,"-1")),
+                    retrieveYear(retrieveField(tag, FieldKey.ORIGINAL_YEAR,"-1")),
                     retrieveField(tag, FieldKey.GENRE,null),
                     retrieveField(tag, FieldKey.LYRICS,null),
-                    Byte.parseByte(retrieveField(tag, FieldKey.BPM,"0")),
+                    Byte.parseByte(retrieveField(tag, FieldKey.BPM,Short.toString(BPM_MIN))),
                     retrieveField(tag, FieldKey.KEY,null),
-                    (short)header.getBitRateAsNumber(),
+                    (int) header.getBitRateAsNumber(),
                     header.getFormat(),
-                    Byte.parseByte(header.getChannels()),
+                    retrieveChannels(header.getChannels()),
                     header.isVariableBitRate(),
                     header.isLossless());
-            /*result = new Song(
-                    retrieveField(tag, FieldKey.TITLE,null),
-                    retrieveField(tag,FieldKey.ALBUM,null),
-                    retrieveField(tag,FieldKey.ALBUM_ARTIST,null),
-                    Byte.parseByte(retrieveField(tag,FieldKey.TRACK,"0")),
-                    file.getAudioHeader().getTrackLength(),
-                    Short.parseShort(retrieveField(tag,FieldKey.ORIGINAL_YEAR,retrieveField(tag,FieldKey.YEAR,"0"))),
-                    tag.getFirst(retrieveField(tag,FieldKey.GENRE,null)),
-                    tag.getFirst(retrieveField(tag,FieldKey.LYRICS,null)));*/
         }
-        else
-            result = null;
+        else if(retriever != null)
+        {
+            result = new SongDetailed(
+                    uri,
+                    retrieveField(retriever,MediaMetadataRetriever.METADATA_KEY_TITLE,null),
+                    retrieveField(retriever,MediaMetadataRetriever.METADATA_KEY_ALBUM,null),
+                    retrieveField(retriever,MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST,null),
+                    retrieveField(retriever,MediaMetadataRetriever.METADATA_KEY_ARTIST,null),
+                    Long.parseLong(retrieveField(retriever,MediaMetadataRetriever.METADATA_KEY_DURATION,"-1")),
+                    Short.parseShort(retrieveField(retriever,MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER,Short.toString(TRACK_N_MIN))),
+                    retrieveYear(retrieveField(retriever,MediaMetadataRetriever.METADATA_KEY_YEAR,"-1")),
+                    retrieveField(retriever,MediaMetadataRetriever.METADATA_KEY_GENRE,null),
+                    Integer.parseInt(retrieveField(retriever,MediaMetadataRetriever.METADATA_KEY_BITRATE,"-1")));
+            retriever.release();
+        }
         return result;
     }
 
@@ -309,7 +425,39 @@ public class SongDetailed extends BaseSong
         {
             result = defaultValue;
         }
-        return result;
+        return TextUtils.isEmpty(result) ? defaultValue : result;
+    }
+
+    private static String retrieveField(MediaMetadataRetriever retriever,int key,String defaultValue)
+    {
+        String result;
+        try
+        {
+            result = retriever.extractMetadata(key);
+        }
+        catch (Exception e)
+        {
+            result = defaultValue;
+        }
+        return TextUtils.isEmpty(result) ? defaultValue : result;
+    }
+
+    private static short retrieveYear(String year)
+    {
+        if(year.length() >= 4)
+            year = year.substring(0,4);
+        return Short.parseShort(year);
+    }
+
+    private static byte retrieveChannels(String channels)
+    {
+        channels = channels.toLowerCase();
+        if(channels.contains("mono"))
+            return 1;
+        else if(channels.contains("stereo"))
+            return 2;
+        else
+            return Byte.parseByte(channels);
     }
 
     public String getLengthText()

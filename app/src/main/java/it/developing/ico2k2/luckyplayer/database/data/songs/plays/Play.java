@@ -29,7 +29,7 @@ public class Play extends BaseSong
     private final String albumArtist;
 
     @ColumnInfo(name = "length")
-    private final short length;
+    private final long length;
 
     @ColumnInfo(name = "plays_count")
     private final int playsCount;
@@ -49,7 +49,7 @@ public class Play extends BaseSong
     @ColumnInfo(name = "last_play_minute")
     private final byte lastPlayMinute;
 
-    public Play(@NotNull String uri, @NotNull String title, @NotNull String albumArtist, short length,
+    public Play(@NotNull String uri, @NotNull String title, @NotNull String albumArtist, long length,
                 int playsCount, byte lastPlayDay, byte lastPlayMonth, byte lastPlayMemYear,
                 byte lastPlayHour, byte lastPlayMinute)
     {
@@ -66,7 +66,7 @@ public class Play extends BaseSong
     }
 
     @Ignore
-    public Play(@NotNull String uri, @NotNull String title,@NotNull String albumArtist,short length,int playsCount,
+    public Play(@NotNull String uri, @NotNull String title,@NotNull String albumArtist,long length,int playsCount,
                 byte lastPlayDay, byte lastPlayMonth, short lastPlayYear,
                 byte lastPlayHour, byte lastPlayMinute)
     {
@@ -75,7 +75,7 @@ public class Play extends BaseSong
     }
 
     @Ignore
-    public Play(@NotNull String uri, @NotNull String title, @NotNull String albumArtist, short length, int playsCount,
+    public Play(@NotNull String uri, @NotNull String title, @NotNull String albumArtist, long length, int playsCount,
                 AbsoluteDate1970To2225 lastPlay)
     {
         this(uri,title,albumArtist,length,playsCount,
@@ -84,7 +84,7 @@ public class Play extends BaseSong
     }
 
     @Ignore
-    public Play(@NotNull String uri,@NotNull String title,@NotNull String albumArtist,short length,int playsCount)
+    public Play(@NotNull String uri,@NotNull String title,@NotNull String albumArtist,long length,int playsCount)
     {
         this(uri,title,albumArtist,length,playsCount,new AbsoluteDate1970To2225());
     }
@@ -105,7 +105,7 @@ public class Play extends BaseSong
         return albumArtist;
     }
 
-    public short getLength()
+    public long getLength()
     {
         return length;
     }

@@ -77,7 +77,7 @@
     <string name="saved">Saved</string>
     <string name="save_cover">Save cover to Download</string>
     <string name="saving">Saving&#8230;\n\nBig images may take long time to save</string>
-    <string name="scan_notification_text">Looking for audio files</string>
+    <string name="scan_notification_text">%d of %d</string>
     <string name="scan_notification_title">Searching&#8230;</string>
     <string name="search_category">Songs</string>
     <string name="search_song">Search a song</string>

@@ -27,7 +27,7 @@ public abstract class BaseSong
     }*/
 
     @NotNull
-    public abstract String getUri();
+    public abstract String getId();
 
     public abstract String getTitle();
 

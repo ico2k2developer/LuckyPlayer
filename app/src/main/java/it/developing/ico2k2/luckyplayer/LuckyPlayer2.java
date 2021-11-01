@@ -1,9 +1,10 @@
 package it.developing.ico2k2.luckyplayer;
 
-import android.app.Application;
 import android.os.Build;
 
-public class LuckyPlayer2 extends Application
+import androidx.multidex.MultiDexApplication;
+
+public class LuckyPlayer2 extends MultiDexApplication
 {
     @Override
     public void onCreate()

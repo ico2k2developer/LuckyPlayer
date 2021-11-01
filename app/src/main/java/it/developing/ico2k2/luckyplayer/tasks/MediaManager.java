@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 import it.developing.ico2k2.luckyplayer.Storage;
 import it.developing.ico2k2.luckyplayer.database.data.File;
@@ -283,7 +282,15 @@ public class MediaManager
         }
     }*/
 
-    public void scan(Uri[] uris,@Nullable AsyncTask.OnStart start,@Nullable AsyncTask.OnFinish<Long> finish)
+    private static final byte PROGRESS_ITEMS_FOUND = 0;
+    private static final byte PROGRESS_ITEMS_TOTAL = 1;
+
+    public interface OnScanProgress
+    {
+        void onProgress(int completedOfTotal,int total);
+    }
+
+    public void scan(Uri[] uris,@Nullable AsyncTask.OnStart start,@Nullable OnScanProgress progress,@Nullable AsyncTask.OnFinish<Long> finish)
     {
         final SongDetailedDao songDao = songsDetailed.dao();
         final FileDao fileDao = songsFiles.dao();
@@ -308,110 +315,99 @@ public class MediaManager
                             DISPLAY_NAME,
                     };
         }
-        new AsyncTask<Long>().executeAsync(new AsyncTask.OnStart() {
+        new AsyncTask<int[],Long>().executeProgressAsync(new AsyncTask.OnStart() {
             @Override
             public void onStart() {
-                if(start != null)
+                if (start != null)
                     start.onStart();
             }
-        }, new Callable<Long>() {
+        }, new AsyncTask.OnCall<int[], Long>() {
             @Override
-            public Long call() throws Exception
+            public Long call(@NonNull AsyncTask.PublishProgress<int[]> callback) throws Exception
             {
                 long count = 0;
                 Cursor cursor;
-                Map<String,Integer> columns = new HashMap<>();
-                for(Uri uri : uris)
-                {
-                    Log.d(TAG,"Checking uri: " + uri.toString());
-                    cursor = ContentResolverCompat.query(resolver,uri,keys,query,null,null,null);
-                    Log.d(TAG,"Cursor contains " + cursor.getCount() + " elements");
+                Map<String, Integer> columns = new HashMap<>();
+                String path, alternativePath;
+                int tableId,itemId,progress;
+                for (tableId = 0; tableId < uris.length; tableId++) {
+                    progress = 0;
+                    Log.d(TAG, "Checking uri: " + uris[tableId].toString());
+                    cursor = ContentResolverCompat.query(resolver, uris[tableId], keys, query, null, null, null);
+                    Log.d(TAG, "Cursor contains " + cursor.getCount() + " elements");
                     columns.clear();
-                    for(String key : keys)
-                        columns.put(key,cursor.getColumnIndex(key));
-                    while(cursor.moveToNext())
-                    {
-                        String alternativePath = cursor.getString(columns.get(DATA));
-                        String path;
-                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-                        {
+                    for (String key : keys)
+                        columns.put(key, cursor.getColumnIndex(key));
+                    while (cursor.moveToNext()) {
+                        itemId = cursor.getInt(columns.get(_ID));
+                        alternativePath = cursor.getString(columns.get(DATA));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                             path = Storage.getAbsolutePath(context,
                                     cursor.getString(columns.get(VOLUME_NAME)),
                                     cursor.getString(columns.get(RELATIVE_PATH)),
                                     cursor.getString(columns.get(DISPLAY_NAME)));
-                        }
-                        else
+                        } else
                             path = null;
-                        Log.d(TAG,"Path is " + path + " alternative path is " + alternativePath);
+                        //Log.d(TAG,"Path is " + path + " alternative path is " + alternativePath);
                         File newFile = null;
-                        if(path != null)
-                        {
-                            try
-                            {
-                                newFile = new File(path);
-                                Log.d(TAG,"Using path " + path);
-                            }
-                            catch(Exception e)
-                            {
+                        if (path != null) {
+                            try {
+                                newFile = new File(tableId, itemId, path);
+                                Log.d(TAG, "Using path " + path);
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
-                        if(newFile == null && alternativePath != null)
-                        {
-                            try
-                            {
-                                newFile = new File(alternativePath);
-                                Log.d(TAG,"Using alternative path " + alternativePath);
-                            }
-                            catch(Exception e)
-                            {
+                        if (newFile == null && alternativePath != null) {
+                            try {
+                                newFile = new File(tableId, itemId, alternativePath);
+                                Log.d(TAG, "Using alternative path " + alternativePath);
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
-                        if(newFile != null)
-                        {
-                            try
-                            {
-                                File oldFile = fileDao.loadByUri(newFile.getUri());
+                        if (newFile != null) {
+                            try {
+                                List<File> files = fileDao.loadAllById(newFile.getId());
                                 boolean write = true;
-                                if(oldFile != null)
-                                {
-                                    if(oldFile.getCrc32() == newFile.getCrc32() && oldFile.getSize() == newFile.getSize())
+                                if (files.size() > 0) {
+                                    if (files.get(0).equalsExactly(newFile))
                                         write = false;
-                                    Log.d(TAG,"Old file found");
-                                }
-                                else
-                                    Log.d(TAG,"Old file not found");
-                                if(write)
-                                {
-                                    SongDetailed song = SongDetailed.loadFromUri(newFile.getUri());
-                                    if(song != null)
-                                    {
-                                        Log.d(TAG,"Saving song " + song.getUri() + " to databases");
+                                    Log.d(TAG, "Old file found");
+                                } else
+                                    Log.d(TAG, "Old file not found");
+                                if (write) {
+                                    SongDetailed song = SongDetailed.loadFromUri(tableId, itemId, newFile.getUri());
+                                    if (song != null) {
+                                        Log.d(TAG, "Saving song " + song.getId() + " to databases");
                                         fileDao.insertAll(newFile);
-                                        songDao.insertAll(SongDetailed.loadFromUri(newFile.getUri()));
+                                        songDao.insertAll(song);
                                         count++;
-                                    }
-                                    else
-                                        Log.d(TAG,"Could not load song from file " + newFile.getUri());
+                                    } else
+                                        Log.d(TAG, "Could not load song from file " + newFile.getUri());
                                 }
-                            }
-                            catch(Exception e)
-                            {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
+                        callback.publishProgress(new int[] {++progress,cursor.getCount()});
                     }
                     cursor.close();
-                    Log.d(TAG,"Jumping to the next uri, " + count + " items already found");
+                    Log.d(TAG, "Jumping to the next uri, " + count + " items already found");
                 }
                 return count;
+            }
+        }, new AsyncTask.OnProgress<int[]>() {
+            @Override
+            public void onProgress(@NonNull int[] result)
+            {
+                progress.onProgress(result[PROGRESS_ITEMS_FOUND],result[PROGRESS_ITEMS_TOTAL]);
             }
         }, new AsyncTask.OnFinish<Long>() {
             @Override
             public void onComplete(@Nullable Long result) {
-                Log.d(TAG,"Jumping to the next uri");
-                if(finish != null)
+                Log.d(TAG, "Jumping to the next uri");
+                if (finish != null)
                     finish.onComplete(result);
             }
         });
@@ -533,6 +529,11 @@ public class MediaManager
         public void release()
         {
             cursor.close();
+        }
+
+        public int size()
+        {
+            return cursor.getCount();
         }
 
         @Override

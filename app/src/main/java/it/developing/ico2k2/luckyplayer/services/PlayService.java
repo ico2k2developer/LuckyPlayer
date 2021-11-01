@@ -14,25 +14,28 @@ import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.RatingCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.media.MediaBrowserServiceCompat;
 import androidx.media.session.MediaButtonReceiver;
+
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.SimpleExoPlayer;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -48,7 +51,8 @@ import it.developing.ico2k2.luckyplayer.Prefs;
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.MainActivity;
 import it.developing.ico2k2.luckyplayer.adapters.items.Song;
-import it.developing.ico2k2.luckyplayer.database.Client;
+import it.developing.ico2k2.luckyplayer.database.Database;
+import it.developing.ico2k2.luckyplayer.database.data.File;
 import it.developing.ico2k2.luckyplayer.database.data.FilesDatabase;
 import it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailed;
 import it.developing.ico2k2.luckyplayer.database.data.songs.SongsDetailedDatabase;
@@ -92,24 +96,9 @@ public class PlayService extends MediaBrowserServiceCompat
     };
 
 
-    public static final Uri[] SONGS_URI = new Uri[]{
+    public static final Uri[] MEDIA_URIS = new Uri[]{
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
             MediaStore.Audio.Media.INTERNAL_CONTENT_URI,
-    };
-
-    public static final Uri[] ALBUMS_URI = new Uri[]{
-            MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-            MediaStore.Audio.Albums.INTERNAL_CONTENT_URI,
-    };
-
-    public static final Uri[] ARTISTS_URI = new Uri[]{
-            MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
-            MediaStore.Audio.Artists.INTERNAL_CONTENT_URI,
-    };
-
-    public static final Uri[] GENRES_URI = new Uri[]{
-            MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
-            MediaStore.Audio.Genres.INTERNAL_CONTENT_URI,
     };
 
     private Prefs prefs;
@@ -118,13 +107,12 @@ public class PlayService extends MediaBrowserServiceCompat
     private Notification notification;
     private MediaSessionCompat mediaSession;
     private PlaybackStateCompat.Builder stateBuilder;
-    private String mediaSelection;
 
     @Override
     public BrowserRoot onGetRoot(@NonNull String clientPackageName,int clientUid,Bundle rootHints)
     {
         Log.d(TAG,"Root request from " + clientPackageName);
-        String result = "";
+        String result;
         switch(clientPackageName)
         {
             case PACKAGE_AUTO:
@@ -135,9 +123,14 @@ public class PlayService extends MediaBrowserServiceCompat
             case PACKAGE_LUCKY:
             {
                 result = ARG_LUCKY;
+                break;
+            }
+            default:
+            {
+                result = "";
             }
         }
-        result = result + ID_ROOT;
+        result += ID_ROOT;
         return new BrowserRoot(result,null);
     }
 
@@ -191,7 +184,7 @@ public class PlayService extends MediaBrowserServiceCompat
     @Override
     public void onLoadChildren(@NonNull String parentId,@NonNull Result<List<MediaBrowserCompat.MediaItem>> result,@NonNull Bundle options)
     {
-        ArrayList<MediaBrowserCompat.MediaItem> items;
+        ArrayList<MediaBrowserCompat.MediaItem> items = null;
         if(ContextCompat.checkSelfPermission(this,READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
         {
             String arg1,id,arg2;
@@ -272,10 +265,11 @@ public class PlayService extends MediaBrowserServiceCompat
                 }
                 case ID_SONGS:
                 {
-                    if(mediaSelection != null)
+                    Log.d(TAG,"Processing songs case");
+                    MediaManager.QueryResult query = scanner.query("SELECT * from " + SongDetailed.class.getSimpleName(),null);
+                    if(query.size() > 0)
                     {
-                        Log.d(TAG,"Processing songs case");
-                        MediaManager.QueryResult query = scanner.query(mediaSelection,null);
+                        Log.d(TAG,"Query found " + query.size() + " items");
                         Map<String,Integer> keys;
                         if(keysCache.containsKey(id))
                         {
@@ -292,7 +286,7 @@ public class PlayService extends MediaBrowserServiceCompat
                         else
                         {
                             List<String> columns = new ArrayList<>(Arrays.asList(
-                                    SongDetailed.COLUMN_URI,
+                                    SongDetailed.COLUMN_ID,
                                     SongDetailed.COLUMN_TITLE,
                                     SongDetailed.COLUMN_ALBUM,
                                     SongDetailed.COLUMN_ALBUM_ARTIST));
@@ -316,7 +310,7 @@ public class PlayService extends MediaBrowserServiceCompat
                             for(String key : row.keySet())
                                 extras.putString(key,row.get(key));
                             items.add(new MediaBrowserCompat.MediaItem(new MediaDescriptionCompat.Builder()
-                                    .setMediaId(row.get(SongDetailed.COLUMN_URI))
+                                    .setMediaId(row.get(SongDetailed.COLUMN_ID))
                                     .setTitle(row.get(SongDetailed.COLUMN_TITLE))
                                     .setSubtitle(Song.getSongDescription(
                                             row.get(SongDetailed.COLUMN_ALBUM),
@@ -324,12 +318,13 @@ public class PlayService extends MediaBrowserServiceCompat
                                     .setExtras(extras).build(),
                                     MediaBrowserCompat.MediaItem.FLAG_PLAYABLE));
                         }
-                        query.release();
                     }
                     else
-                        Log.d(TAG,"Skipped songs query because media selection string is null");
+                        Log.d(TAG,"Query found nothing");
+                    query.release();
                     break;
-                }/*
+                }
+                /*
                 case ID_ALBUMS:
                 {
                     Log.d(TAG,"Processing albums case");
@@ -527,15 +522,30 @@ public class PlayService extends MediaBrowserServiceCompat
         else
         {
             Log.w(getClass().getSimpleName(),"Permission " + READ_EXTERNAL_STORAGE + " not granted");
-            items = new ArrayList<>();
         }
         result.sendResult(items);
     }
 
-    private final class MediaSessionCallback extends MediaSessionCompat.Callback{
+    private static MediaBrowserCompat.MediaItem getMediaItem(@NonNull SongDetailed song,@Nullable Bundle extras)
+    {
+        return new MediaBrowserCompat.MediaItem(new MediaDescriptionCompat.Builder()
+                .setMediaId(song.getId())
+                .setTitle(song.getTitle())
+                .setSubtitle(Song.getSongDescription(
+                        song.getAlbum(),
+                        song.getAlbumArtist()))
+                .setExtras(extras).build(),
+                MediaBrowserCompat.MediaItem.FLAG_PLAYABLE);
+    }
 
-        MediaPlayer player;
-        Thread thread;
+    private static MediaBrowserCompat.MediaItem getMediaItem(@NonNull SongDetailed song)
+    {
+        return getMediaItem(song,null);
+    }
+
+    private final class MediaSessionCallback extends MediaSessionCompat.Callback
+    {
+        final SimpleExoPlayer player = new SimpleExoPlayer.Builder(PlayService.this).build();
 
         private void updateState()
         {
@@ -548,178 +558,228 @@ public class PlayService extends MediaBrowserServiceCompat
         private void updateMetadata(String originalMediaId)
         {
             Log.d(TAG,"Updating metadata");
-            List<SongDetailed> result = scanner.getSongsDatabase().dao().loadAllByUri(originalMediaId);
+            List<SongDetailed> result = scanner.getSongsDatabase().dao().loadAllById(originalMediaId);
             if(result.size() > 0)
             {
-                String description;
-                SongDetailed song = result.get(0);
-                mediaSession.setMetadata(new MediaMetadataCompat.Builder()
-                        .putLong(MediaMetadataCompat.METADATA_KEY_DURATION,
-                                (song.getLength() * 1000L))
-                        .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE,song.getTitle())
-                        .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE,
-                                description = Song.getSongDescription(
-                                        song.getAlbum(),
-                                        song.getArtist()))
-                        .build());
-                playNotif.setContentTitle(song.getTitle());
-                playNotif.setContentText(description);
+                updateMetadata(result.get(0));
             }
         }
 
-        @Override
-        public void onPlay()
+        private void updateMetadata(SongDetailed song)
         {
-            try
-            {
-                player.setOnCompletionListener(new MediaPlayer.OnCompletionListener(){
-                    @Override
-                    public void onCompletion(MediaPlayer mp){
-                        onPause();
-                    }
-                });
-                player.start();
-                playNotif.setSmallIcon(R.drawable.ic_play_notification);
-                Notification n = playNotif.build();
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-                {
-                    Notification.Action[] a = new Notification.Action[1];
-                    a[0] = play;
-                    n.actions = a;
-                }
-                manager.notify(NOTIFICATION_STATUS,n);
-                if(thread != null)
-                    thread.interrupt();
-                thread = new Thread(new Runnable(){
-                    @Override
-                    public void run(){
-                        while(player.isPlaying())
-                        {
-                            try
-                            {
-                                if(player.getCurrentPosition() > 1000)
-                                    Thread.sleep(250);
-                                else
-                                    Thread.sleep(50);
-                                updateState();
-                            }
-                            catch(Exception e)
-                            {
-                                Log.d(TAG,"Update state thread interrupted");
-                            }
-                        }
-                    }
-                });
-                thread.start();
-            }
-            catch(Exception e)
-            {
-                e.printStackTrace();
-            }
+            String description;
+            mediaSession.setMetadata(new MediaMetadataCompat.Builder()
+                    .putLong(MediaMetadataCompat.METADATA_KEY_DURATION,
+                            (song.getLength() * 1000L))
+                    .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE,song.getTitle())
+                    .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE,
+                            description = Song.getSongDescription(
+                                    song.getAlbum(),
+                                    song.getArtist()))
+                    .build());
+            playNotif.setContentTitle(song.getTitle());
+            playNotif.setContentText(description);
         }
 
         @Override
-        public void onSkipToQueueItem(long queueId){
-        }
-
-        @Override
-        public void onSeekTo(long position)
+        public void onAddQueueItem(MediaDescriptionCompat description,int index)
         {
-            try
-            {
-                player.seekTo((int)position);
-            }
-            catch(Exception e)
-            {
-                e.printStackTrace();
-            }
+            Log.d(TAG,"Called onAddQueueItem");
         }
 
         @Override
-        public void onPlayFromMediaId(String mediaId,Bundle extras)
+        public void onAddQueueItem(MediaDescriptionCompat description)
         {
-            int index = mediaId.indexOf(";");
-            final String id1 = mediaId.substring(0,index),id2 = mediaId.substring(index + 1);
-            Log.d(TAG,"Trying to play media id " + mediaId + " (id1: " + id1 + ", id2: " + id2 + ")");
-            onStop();
-            player = new MediaPlayer();
-            try
-            {
-                index = Integer.parseInt(mediaId.substring(0,mediaId.indexOf(";")));
-                ParcelFileDescriptor file = getBaseContext().getContentResolver().openFileDescriptor(Uri.withAppendedPath(
-                        SONGS_URI[Integer.parseInt(id1)],
-                        id2),"r");
-                player.setDataSource(file.getFileDescriptor());
-                player.setOnPreparedListener(new MediaPlayer.OnPreparedListener(){
-                    @Override
-                    public void onPrepared(MediaPlayer mp){
-                        playNotif.setContentTitle(id2);
-                        updateMetadata(id2);
-                        onPlay();
-                    }
-                });
-                player.prepare();
-            }
-            catch(Exception e)
-            {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void onPause()
-        {
-            try
-            {
-                player.pause();
-                playNotif.setSmallIcon(R.drawable.ic_pause_notification);
-                Notification n = playNotif.build();
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-                {
-                    Notification.Action[] a = new Notification.Action[1];
-                    a[0] = pause;
-                    n.actions = a;
-                }
-                manager.notify(NOTIFICATION_STATUS,n);
-                thread.interrupt();
-                updateState();
-            }
-            catch(Exception e)
-            {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void onStop(){
-            try
-            {
-                player.stop();
-                player.release();
-            }
-            catch(Exception e)
-            {
-                Log.d(TAG,"Could not stop MediaPlayer");
-            }
-            manager.notify(NOTIFICATION_STATUS,notification);
-        }
-
-        @Override
-        public void onSkipToNext(){
-        }
-
-        @Override
-        public void onSkipToPrevious(){
+            Log.d(TAG,"Called onAddQueueItem");
         }
 
         @Override
         public void onCustomAction(String action,Bundle extras)
         {
+            Log.d(TAG,"Called onCustomAction");
             elaborateRequest(action,extras);
         }
 
         @Override
-        public void onPlayFromSearch(final String query,final Bundle extras){
+        public void onFastForward()
+        {
+            Log.d(TAG,"Called onFastForward");
+        }
+
+        @Override
+        public boolean onMediaButtonEvent(Intent mediaButtonEvent)
+        {
+            Log.d(TAG,"Called onMediaButtonEvent");
+            return super.onMediaButtonEvent(mediaButtonEvent);
+        }
+
+        @Override
+        public void onPause()
+        {
+            Log.d(TAG,"Called onPause");
+            player.pause();
+            playNotif.setSmallIcon(R.drawable.ic_pause_notification);
+            Notification n = playNotif.build();
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+            {
+                Notification.Action[] a = new Notification.Action[1];
+                a[0] = pause;
+                n.actions = a;
+            }
+            manager.notify(NOTIFICATION_STATUS,n);
+            updateState();
+        }
+
+        @Override
+        public void onPlay()
+        {
+            Log.d(TAG,"Called onPlay");
+            player.play();
+            playNotif.setSmallIcon(R.drawable.ic_play_notification);
+            Notification n = playNotif.build();
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+            {
+                Notification.Action[] a = new Notification.Action[1];
+                a[0] = play;
+                n.actions = a;
+            }
+            manager.notify(NOTIFICATION_STATUS,n);
+            updateState();
+        }
+
+        @Override
+        public void onPlayFromMediaId(String mediaId,Bundle extras)
+        {
+            Log.d(TAG,"Called onPlayFromMediaId");
+            List<SongDetailed> songs = scanner.getSongsDatabase().dao().loadAllById(mediaId);
+            List<File> files = scanner.getFilesDatabase().dao().loadAllById(mediaId);
+            if(songs.size() > 0 && files.size() > 0)
+            {
+                SongDetailed song = songs.get(0);
+                File file = files.get(0);
+                Log.d(TAG,"Going to play song " + song.getTitle());
+                player.setMediaItem(MediaItem.fromUri(file.getUri()),true);
+                onPlay();
+            }
+        }
+
+        @Override
+        public void onPlayFromSearch(final String query,final Bundle extras)
+        {
+            Log.d(TAG,"Called onPlayFromSearch");
+        }
+
+        @Override
+        public void onPlayFromUri(Uri uri,Bundle extras)
+        {
+            Log.d(TAG,"Called onPlayFromUri");
+        }
+
+        @Override
+        public void onPrepare()
+        {
+            Log.d(TAG,"Called onPrepare");
+        }
+
+        @Override
+        public void onPrepareFromMediaId(String mediaId,Bundle extras)
+        {
+            Log.d(TAG,"Called onPrepareFromMediaId");
+        }
+
+        @Override
+        public void onPrepareFromSearch(final String query,final Bundle extras)
+        {
+            Log.d(TAG,"Called onPrepareFromSearch");
+        }
+
+        @Override
+        public void onPrepareFromUri(Uri uri,Bundle extras)
+        {
+            Log.d(TAG,"Called onPrepareFromUri");
+        }
+
+        @Override
+        public void onRemoveQueueItem(MediaDescriptionCompat description)
+        {
+            Log.d(TAG,"Called onRemoveQueueItem");
+        }
+
+        @Override
+        public void onRewind()
+        {
+            Log.d(TAG,"Called onRewind");
+        }
+
+        @Override
+        public void onSeekTo(long position)
+        {
+            Log.d(TAG,"Called onSeekTo");
+            player.seekTo(position);
+        }
+
+        @Override
+        public void onSetCaptioningEnabled(boolean enabled)
+        {
+            Log.d(TAG,"Called onSetCaptioningEnabled");
+        }
+
+        @Override
+        public void onSetPlaybackSpeed(float speed)
+        {
+            Log.d(TAG,"Called onSetPlaybackSpeed");
+            player.setPlaybackSpeed(speed);
+        }
+
+        @Override
+        public void onSetRating(RatingCompat rating)
+        {
+            Log.d(TAG,"Called onSetRating");
+        }
+
+        @Override
+        public void onSetRating(RatingCompat rating,Bundle extras)
+        {
+            Log.d(TAG,"Called onSetRating");
+        }
+
+        @Override
+        public void onSetRepeatMode(int repeatMode)
+        {
+            Log.d(TAG,"Called onSetRepeatMode");
+            player.setRepeatMode(repeatMode);
+        }
+
+        @Override
+        public void onSetShuffleMode(int shuffleMode)
+        {
+            Log.d(TAG,"Called onSetShuffleMode");
+        }
+
+        @Override
+        public void onSkipToNext()
+        {
+            Log.d(TAG,"Called onSkipToNext");
+        }
+
+        @Override
+        public void onSkipToPrevious()
+        {
+            Log.d(TAG,"Called onSkipToPrevious");
+        }
+
+        @Override
+        public void onSkipToQueueItem(long queueId)
+        {
+            Log.d(TAG,"Called onSkipToQueueItem");
+        }
+
+        @Override
+        public void onStop()
+        {
+            Log.d(TAG,"Called onStop");
+            player.stop();
+            manager.notify(NOTIFICATION_STATUS,notification);
         }
     }
 
@@ -738,10 +798,10 @@ public class PlayService extends MediaBrowserServiceCompat
             songs = new ArrayList<>();*/
 
         scanner = new MediaManager(this,
-                Client.getInstance(this,
-                        FilesDatabase.class,Client.DATABASE_SONGS),
-                Client.getInstance(this,
-                        SongsDetailedDatabase.class,Client.DATABASE_SONGS_DETAILED));
+                Database.getInstance(this,
+                        FilesDatabase.class, Database.DATABASE_SONGS),
+                Database.getInstance(this,
+                        SongsDetailedDatabase.class, Database.DATABASE_SONGS_DETAILED));
         loadQuerySettings();
         mediaSession = new MediaSessionCompat(this,getClass().getSimpleName(),new ComponentName(this,Intent.ACTION_MEDIA_BUTTON),null);
         manager = NotificationManagerCompat.from(this);
@@ -785,8 +845,6 @@ public class PlayService extends MediaBrowserServiceCompat
                     MediaButtonReceiver.buildMediaButtonPendingIntent(this,
                             PlaybackStateCompat.ACTION_PAUSE));
         }
-        scan();
-        //scan();
         Log.d(TAG,"Service created");
     }
 
@@ -813,24 +871,31 @@ public class PlayService extends MediaBrowserServiceCompat
 
     public void scan()
     {
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,
-                new Intent(this,MainActivity.class),PendingIntent.FLAG_UPDATE_CURRENT);
-        final Notification notification = new NotificationCompat.Builder(this,
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(this,
                 NotificationChannelsManager.CHANNEL_INFO.getId())
                 .setColor(prefs.getInt(getString(R.string.key_notification_tint)))
                 .setSmallIcon(R.drawable.ic_scan_notification)
                 .setContentTitle(getString(R.string.scan_notification_title))
-                .setContentText(getString(R.string.scan_notification_text))
                 .setOngoing(true)
                 .setProgress(1,0,true)
-                .setContentIntent(pendingIntent)
-                .build();
-        scanner.scan(SONGS_URI,
+                .setContentIntent(PendingIntent.getActivity(this,0,
+                        new Intent(this,MainActivity.class),
+                        PendingIntent.FLAG_UPDATE_CURRENT));
+        scanner.scan(MEDIA_URIS,
                 new AsyncTask.OnStart() {
                     @Override
                     public void onStart() {
-                        manager.notify(NOTIFICATION_SCAN, notification);
+                        manager.notify(NOTIFICATION_SCAN, builder.build());
                         Log.d(TAG, "Scan started");
+                    }
+                },
+                new MediaManager.OnScanProgress() {
+                    @Override
+                    public void onProgress(int completedOfTotal, int total) {
+                        builder.setProgress(total,completedOfTotal,false)
+                                .setContentText(getString(R.string.scan_notification_text,
+                                        completedOfTotal,total));
+                        manager.notify(NOTIFICATION_SCAN, builder.build());
                     }
                 },
                 new AsyncTask.OnFinish<Long>() {
@@ -838,7 +903,7 @@ public class PlayService extends MediaBrowserServiceCompat
                     public void onComplete(Long result) {
                         Log.d(TAG, "Scan ended: " + result + " items found");
                         manager.cancel(NOTIFICATION_SCAN);
-                        //prefs.edit().putLong(getString(R.string.key_scan_last_size),result).apply();
+                        prefs.edit().putLong(getString(R.string.key_scan_last_size),result).apply();
                     }
                 });
     }

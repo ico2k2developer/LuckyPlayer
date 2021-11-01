@@ -14,8 +14,8 @@ public interface PlayDao
     @Query("SELECT * FROM Play")
     List<Play> loadAll();
 
-    @Query("SELECT * FROM Play WHERE uri LIKE :uri")
-    Play loadByUri(String uri);
+    @Query("SELECT * FROM Play WHERE id LIKE :id")
+    Play loadById(String id);
 
     @Query("SELECT * FROM Play WHERE title IN (:titles)")
     List<Play> loadAllByTitle(String[] titles);
@@ -50,8 +50,8 @@ public interface PlayDao
     @Delete
     void delete(Play play);
 
-    @Query("DELETE FROM Play WHERE uri LIKE :uri")
-    void delete(String uri);
+    @Query("DELETE FROM Play WHERE id LIKE :id")
+    void delete(String id);
 
     @Query("DELETE FROM Play")
     void deleteAll();

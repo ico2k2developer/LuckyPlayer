@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
+import it.developing.ico2k2.luckyplayer.database.Database;
 import it.developing.ico2k2.luckyplayer.database.Optimized;
 import it.developing.ico2k2.luckyplayer.database.data.BaseSong;
 import it.developing.ico2k2.luckyplayer.database.date.AbsoluteDate1970To2225;
@@ -19,8 +20,8 @@ public class Play extends BaseSong
 {
     @PrimaryKey
     @NonNull
-    @ColumnInfo(name = "uri")
-    private final String uri;
+    @ColumnInfo(name = "id")
+    private final String id;
 
     @ColumnInfo(name = "title")
     private final String title;
@@ -49,11 +50,11 @@ public class Play extends BaseSong
     @ColumnInfo(name = "last_play_minute")
     private final byte lastPlayMinute;
 
-    public Play(@NotNull String uri, @NotNull String title, @NotNull String albumArtist, long length,
+    public Play(@NotNull String id, @NotNull String title, @NotNull String albumArtist, long length,
                 int playsCount, byte lastPlayDay, byte lastPlayMonth, byte lastPlayMemYear,
                 byte lastPlayHour, byte lastPlayMinute)
     {
-        this.uri = uri;
+        this.id = id;
         this.title = title;
         this.albumArtist = albumArtist;
         this.length = length;
@@ -66,33 +67,43 @@ public class Play extends BaseSong
     }
 
     @Ignore
-    public Play(@NotNull String uri, @NotNull String title,@NotNull String albumArtist,long length,int playsCount,
+    public Play(@NotNull String id, @NotNull String title,@NotNull String albumArtist,long length,int playsCount,
                 byte lastPlayDay, byte lastPlayMonth, short lastPlayYear,
                 byte lastPlayHour, byte lastPlayMinute)
     {
-        this(uri,title,albumArtist,length,playsCount,
+        this(id,title,albumArtist,length,playsCount,
                 lastPlayDay,lastPlayMonth, Optimized.byte256(lastPlayYear),lastPlayHour,lastPlayMinute);
     }
 
     @Ignore
-    public Play(@NotNull String uri, @NotNull String title, @NotNull String albumArtist, long length, int playsCount,
+    public Play(@NotNull String id, @NotNull String title, @NotNull String albumArtist, long length, int playsCount,
                 AbsoluteDate1970To2225 lastPlay)
     {
-        this(uri,title,albumArtist,length,playsCount,
+        this(id,title,albumArtist,length,playsCount,
                 lastPlay.getDay(),lastPlay.getMonth(),lastPlay.getMemYear(),
                 lastPlay.getHour(),lastPlay.getMinute());
     }
 
     @Ignore
-    public Play(@NotNull String uri,@NotNull String title,@NotNull String albumArtist,long length,int playsCount)
+    public Play(@NotNull String id,@NotNull String title,@NotNull String albumArtist,long length,int playsCount)
     {
-        this(uri,title,albumArtist,length,playsCount,new AbsoluteDate1970To2225());
+        this(id,title,albumArtist,length,playsCount,new AbsoluteDate1970To2225());
     }
 
-    @NotNull
-    public String getUri()
+    @NonNull
+    public String getId()
     {
-        return uri;
+        return id;
+    }
+
+    public int getTableId()
+    {
+        return Database.getTableId(getId());
+    }
+
+    public int getItemId()
+    {
+        return Database.getItemId(getId());
     }
 
     public String getTitle()
@@ -304,7 +315,7 @@ public class Play extends BaseSong
     {
         return String.format(Locale.getDefault(),"Song with uri %s with title %s by %s," +
                         "duration: %s, played %d times, last time was: %s",
-                             getUri(),getTitle(),getAlbumArtist(),getTextualLength(),getPlaysCount(),getLastPlay());
+                             getId(),getTitle(),getAlbumArtist(),getTextualLength(),getPlaysCount(),getLastPlay());
     }
 
     @Override
@@ -315,7 +326,7 @@ public class Play extends BaseSong
         {
             if(o instanceof Play)
             {
-                result = uri.equals(((Play)o).getUri());
+                result = id.equals(((Play)o).getId());
             }
         }
         return result;

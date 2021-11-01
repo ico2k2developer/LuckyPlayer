@@ -18,13 +18,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
+import it.developing.ico2k2.luckyplayer.database.Database;
 import it.developing.ico2k2.luckyplayer.database.Optimized;
 import it.developing.ico2k2.luckyplayer.database.data.BaseSong;
 
 @Entity
 public class SongDetailed extends BaseSong
 {
-    public static final String COLUMN_URI = "uri";
+    public static final String COLUMN_ID = "id";
     public static final String COLUMN_TITLE = "title";
     public static final String COLUMN_ALBUM = "album";
     public static final String COLUMN_ALBUM_ARTIST = "album_artist";
@@ -46,8 +47,6 @@ public class SongDetailed extends BaseSong
 
     public static final short TRACK_N_MIN = 1;
     public static final short TRACK_N_MAX = Optimized.byte256maxFromMin(TRACK_N_MIN);
-    public static final short BPM_MIN = 0;
-    public static final short BPM_MAX = Optimized.byte256maxFromMin(BPM_MIN);
 
     protected static final byte VALUE_YES = 1;
     protected static final byte VALUE_NO = -1;
@@ -55,8 +54,8 @@ public class SongDetailed extends BaseSong
 
     @PrimaryKey
     @NonNull
-    @ColumnInfo(name = COLUMN_URI)
-    private final String uri;
+    @ColumnInfo(name = COLUMN_ID)
+    private final String id;
 
     @ColumnInfo(name = COLUMN_TITLE)
     private final String title;
@@ -92,7 +91,7 @@ public class SongDetailed extends BaseSong
     private final String lyrics;
 
     @ColumnInfo(name = COLUMN_BPM)
-    private final byte memBpm;
+    private final short bpm;
 
     @ColumnInfo(name = COLUMN_KEY_INIT)
     private final String initKey;
@@ -113,12 +112,12 @@ public class SongDetailed extends BaseSong
     private final byte losslessCoded;
 
     public SongDetailed(
-            @NonNull String uri,String title,String album,String albumArtist,String artist,
-            long length,byte memTrackN,byte memTrackTotal,short releaseYear,short originalYear,
-            String genre,String lyrics,byte memBpm,String initKey,int bitrate,String format,
-            byte channels,byte vbrCoded,byte losslessCoded)
+            @NonNull String id, String title, String album, String albumArtist, String artist,
+            long length, byte memTrackN, byte memTrackTotal, short releaseYear, short originalYear,
+            String genre, String lyrics, short bpm, String initKey, int bitrate, String format,
+            byte channels, byte vbrCoded, byte losslessCoded)
     {
-        this.uri = uri;
+        this.id = id;
         this.title = title;
         this.album = album;
         this.albumArtist = albumArtist;
@@ -130,7 +129,7 @@ public class SongDetailed extends BaseSong
         this.originalYear = originalYear;
         this.genre = genre;
         this.lyrics = lyrics;
-        this.memBpm = memBpm;
+        this.bpm = bpm;
         this.initKey = initKey;
         this.bitrate = bitrate;
         this.format = format;
@@ -139,42 +138,50 @@ public class SongDetailed extends BaseSong
         this.losslessCoded = losslessCoded;
     }
 
-    public static SongDetailed create(@NonNull String uri,String title,String album,String albumArtist,String artist,
+    public SongDetailed(int tableId,int itemId,String title,String album,String albumArtist,String artist,
                                       long length,short trackN,short trackTotal,short releaseYear,short originalYear,
-                                      String genre,String lyrics,byte bpm,String initKey,int bitrate,String format,
+                                      String genre,String lyrics,short bpm,String initKey,int bitrate,String format,
                                       byte channels,boolean vbr,boolean lossless)
     {
-        return new SongDetailed(uri,title,album,albumArtist,artist,length,
+        this(Database.generateId(tableId,itemId),title,album,albumArtist,artist,length,
                 Optimized.byte256((short) (trackN - TRACK_N_MIN)),
                 Optimized.byte256((short) (trackTotal - TRACK_N_MIN)),releaseYear,originalYear,
-                genre,lyrics,
-                Optimized.byte256((short) (bpm - BPM_MIN)),initKey,bitrate,format,channels,
+                genre,lyrics,bpm,initKey,bitrate,format,channels,
                 vbr ? VALUE_YES : VALUE_NO,lossless ? VALUE_YES : VALUE_NO);
     }
 
-    public SongDetailed(@NonNull String uri,String title,String album,String albumArtist,String artist,
-                                      long length,short trackN,short trackTotal,short releaseYear,short originalYear,
-                                      String genre,String lyrics,byte bpm,String initKey,int bitrate,String format,
-                                      byte channels)
+    public SongDetailed(int tableId,int itemId, String title, String album, String albumArtist, String artist,
+                        long length, short trackN, short trackTotal, short releaseYear, short originalYear,
+                        String genre, String lyrics, short bpm, String initKey, int bitrate, String format,
+                        byte channels)
     {
-        this(uri,title,album,albumArtist,artist,length,
+        this(Database.generateId(tableId,itemId),title,album,albumArtist,artist,length,
                 Optimized.byte256((short) (trackN - TRACK_N_MIN)),
                 Optimized.byte256((short) (trackTotal - TRACK_N_MIN)),releaseYear,originalYear,
-                genre,lyrics,
-                Optimized.byte256((short) (bpm - BPM_MIN)),initKey,bitrate,format,channels,
-                VALUE_UNKNOWN,VALUE_UNKNOWN);
+                genre,lyrics,bpm,initKey,bitrate,format,channels,VALUE_UNKNOWN,VALUE_UNKNOWN);
     }
 
-    public SongDetailed(@NonNull String uri,String title,String album,String albumArtist,String artist,
-                                      long length,short trackN,short releaseYear,String genre,int bitrate)
+    public SongDetailed(int tableId,int itemId, String title, String album, String albumArtist, String artist,
+                        long length, short trackN, short releaseYear, String genre, int bitrate)
     {
-        this(uri,title,album,albumArtist,artist,length,trackN,(short)-1,releaseYear,(short)-1,genre,
-                null,(byte)BPM_MIN,null,bitrate,null,(byte)-1);
+        this(tableId,itemId,title,album,albumArtist,artist,length,trackN,(short)-1,releaseYear,(short)-1,genre,
+                null, (short) -1,null,bitrate,null,(byte)-1);
     }
 
-    public String getUri()
+    @NonNull
+    public String getId()
     {
-        return uri;
+        return id;
+    }
+
+    public int getTableId()
+    {
+        return Database.getTableId(getId());
+    }
+
+    public int getItemId()
+    {
+        return Database.getItemId(getId());
     }
 
     public String getTitle()
@@ -233,14 +240,9 @@ public class SongDetailed extends BaseSong
         return lyrics;
     }
 
-    public byte getMemBpm()
-    {
-        return memBpm;
-    }
-
     public short getBpm()
     {
-        return Optimized.shortFromByte256(memBpm);
+        return bpm;
     }
 
     public String getInitKey(){
@@ -342,7 +344,7 @@ public class SongDetailed extends BaseSong
     }
 
     @Nullable
-    public static SongDetailed loadFromUri(@NonNull String uri)
+    public static SongDetailed loadFromUri(int tableId,int itemId,@NonNull String uri)
     {
         SongDetailed result = null;
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
@@ -375,9 +377,10 @@ public class SongDetailed extends BaseSong
                 tmp = header.getNoOfSamples() * 1000L / header.getSampleRateAsNumber();
             else
                 tmp = -1L;
-            result = create(
-                    uri,
-                    retrieveField(tag, FieldKey.TITLE,null),
+            result = new SongDetailed(
+                    tableId,
+                    itemId,
+                    retrieveTitle(retrieveField(tag, FieldKey.TITLE,null),uri),
                     retrieveField(tag, FieldKey.ALBUM,null),
                     retrieveField(tag, FieldKey.ALBUM_ARTIST,null),
                     retrieveField(tag, FieldKey.ARTIST,null),
@@ -388,7 +391,7 @@ public class SongDetailed extends BaseSong
                     retrieveYear(retrieveField(tag, FieldKey.ORIGINAL_YEAR,"-1")),
                     retrieveField(tag, FieldKey.GENRE,null),
                     retrieveField(tag, FieldKey.LYRICS,null),
-                    Byte.parseByte(retrieveField(tag, FieldKey.BPM,Short.toString(BPM_MIN))),
+                    Short.parseShort(retrieveField(tag, FieldKey.BPM,"-1")),
                     retrieveField(tag, FieldKey.KEY,null),
                     (int) header.getBitRateAsNumber(),
                     header.getFormat(),
@@ -399,8 +402,9 @@ public class SongDetailed extends BaseSong
         else if(retriever != null)
         {
             result = new SongDetailed(
-                    uri,
-                    retrieveField(retriever,MediaMetadataRetriever.METADATA_KEY_TITLE,null),
+                    tableId,
+                    itemId,
+                    retrieveTitle(retrieveField(retriever,MediaMetadataRetriever.METADATA_KEY_TITLE,null),uri),
                     retrieveField(retriever,MediaMetadataRetriever.METADATA_KEY_ALBUM,null),
                     retrieveField(retriever,MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST,null),
                     retrieveField(retriever,MediaMetadataRetriever.METADATA_KEY_ARTIST,null),
@@ -412,6 +416,21 @@ public class SongDetailed extends BaseSong
             retriever.release();
         }
         return result;
+    }
+
+    private static String retrieveTitle(String title,String uri)
+    {
+        if(TextUtils.isEmpty(title))
+        {
+            if(uri.contains("/"))
+                uri = uri.substring(uri.lastIndexOf("/") + 1);
+            if(uri.contains("."))
+                uri = uri.substring(0,uri.indexOf("."));
+            uri = uri.replace("_"," ");
+            return uri;
+        }
+        else
+            return title;
     }
 
     private static String retrieveField(Tag tag,FieldKey key,String defaultValue)
@@ -472,7 +491,7 @@ public class SongDetailed extends BaseSong
     public @NotNull String toString()
     {
         return String.format(Locale.getDefault(),"Song with uri %s with title %s by %s," +
-                        "duration: %s",getUri(),getTitle(),getAlbumArtist(),getTextualLength());
+                        "duration: %s", getId(),getTitle(),getAlbumArtist(),getTextualLength());
     }
 
     @Override
@@ -483,7 +502,7 @@ public class SongDetailed extends BaseSong
         {
             if(o instanceof SongDetailed)
             {
-                result = uri.equals(((SongDetailed)o).getUri());
+                result = id.equals(((SongDetailed)o).getId());
             }
         }
         return result;

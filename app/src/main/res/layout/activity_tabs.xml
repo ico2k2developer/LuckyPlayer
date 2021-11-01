@@ -11,16 +11,16 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="?actionBarSize"
         android:background="?colorPrimary"
+        android:minHeight="?actionBarSize"
         android:animateLayoutChanges="true">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?toolbarBackgroundColor"
-            android:minHeight="?attr/actionBarSize"/>
+            android:minHeight="?attr/actionBarSize"
+            android:background="?toolbarBackgroundColor"/>
 
         <com.google.android.material.tabs.TabLayout
             android:layout_width="match_parent"

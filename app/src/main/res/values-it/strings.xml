@@ -64,7 +64,7 @@
     <string name="status_notification_channel">Notifica di stato</string>
     <string name="main_notification_channel">Notifiche più importanti</string>
     <string name="scan_notification_title">Ricerca in corso&#8230;</string>
-    <string name="scan_notification_text">Ricerca file audio in corso</string>
+    <string name="scan_notification_text">%d di %d</string>
     <string name="player_notification_title">%s è attivo</string>
     <string name="player_notification_text">%s è attivo in background</string>
     <string name="song_show_details">Mostra dettagli</string>

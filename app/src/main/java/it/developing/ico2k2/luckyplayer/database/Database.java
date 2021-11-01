@@ -8,26 +8,26 @@ import androidx.room.RoomDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Client
+public class Database
 {
     public static final String DATABASE_SONGS = "songs";
     public static final String DATABASE_SONGS_DETAILED = "songs_detailed";
     public static final String DATABASE_PLAYS = "plays";
 
-    private static final Map<String,Client> clients = new HashMap<>();
+    private static final Map<String, Database> clients = new HashMap<>();
     private final RoomDatabase database;
 
-    private Client(Context context,Class<? extends RoomDatabase> databaseClass,String actualName)
+    private Database(Context context, Class<? extends RoomDatabase> databaseClass, String actualName)
     {
         database = Room.databaseBuilder(context, databaseClass, actualName).build();
     }
 
     public static synchronized <D extends RoomDatabase> D getInstance(Context context, Class<D> databaseClass, String name)
     {
-        Client result;
+        Database result;
         String actualName = actualNameFromName(databaseClass,name);
         if (!clients.containsKey(actualName)) {
-            clients.put(actualName,result = new Client(context,databaseClass,actualName));
+            clients.put(actualName,result = new Database(context,databaseClass,actualName));
         }
         else
             result = clients.get(actualName);
@@ -37,5 +37,22 @@ public class Client
     private static <D extends RoomDatabase> String actualNameFromName(Class<D> databaseClass, String name)
     {
         return databaseClass.getSimpleName() + "_" + name;
+    }
+
+    private static final char SEPARATOR = ';';
+
+    public static String generateId(int tableId,int itemId)
+    {
+        return Integer.toString(tableId) + SEPARATOR + itemId;
+    }
+
+    public static int getTableId(String id)
+    {
+        return Integer.parseInt(id.substring(0,id.indexOf(SEPARATOR)));
+    }
+
+    public static int getItemId(String id)
+    {
+        return Integer.parseInt(id.substring(id.indexOf(SEPARATOR) + 1));
     }
 }

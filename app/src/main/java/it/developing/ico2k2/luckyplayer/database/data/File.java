@@ -14,17 +14,23 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.zip.CRC32;
 
+import it.developing.ico2k2.luckyplayer.database.Database;
+
 @Entity
 public class File
 {
     private static final String TAG = File.class.getSimpleName();
 
+    public static final String COLUMN_ID = "id";
     public static final String COLUMN_URI = "uri";
     public static final String COLUMN_CHECKSUM = "crc32";
     public static final String COLUMN_SIZE = "size";
 
     @PrimaryKey
     @NonNull
+    @ColumnInfo(name = COLUMN_ID)
+    private final String id;
+
     @ColumnInfo(name = COLUMN_URI)
     private final String uri;
 
@@ -34,35 +40,52 @@ public class File
     @ColumnInfo(name = COLUMN_SIZE)
     private final long size;
 
-    public File(String uri,long crc32,long size)
+    public File(String id,String uri,long crc32,long size)
     {
+        this.id = id;
         this.uri = uri;
         this.crc32 = crc32;
         this.size = size;
     }
 
     @Ignore
-    public File(String uri) throws IOException
+    public File(int tableId,int itemId,String uri) throws IOException
     {
-        this(uri,new java.io.File(uri));
+        this(tableId,itemId,uri,new java.io.File(uri));
     }
 
     @Ignore
-    private File(String uri,java.io.File file) throws IOException
+    private File(int tableId,int itemId,String uri,java.io.File file) throws IOException
     {
-        this(uri,new FileInputStream(file));
+        this(tableId,itemId,uri,new FileInputStream(file));
     }
 
     @Ignore
-    public File(java.io.File file) throws IOException
+    public File(int tableId,int itemId,java.io.File file) throws IOException
     {
-        this(file.getPath(),file);
+        this(tableId,itemId,file.getPath(),file);
     }
 
     @Ignore
-    public File(String uri,FileInputStream stream) throws IOException
+    public File(int tableId,int itemId,String uri,FileInputStream stream) throws IOException
     {
-        this(uri,calculateCRC32(stream),calculateSize(stream));
+        this(Database.generateId(tableId,itemId),uri,calculateCRC32(stream),calculateSize(stream));
+    }
+
+    @NonNull
+    public String getId()
+    {
+        return id;
+    }
+
+    public int getTableId()
+    {
+        return Database.getTableId(getId());
+    }
+
+    public int getItemId()
+    {
+        return Database.getItemId(getId());
     }
 
     public String getUri() {
@@ -110,11 +133,18 @@ public class File
         {
             if(o instanceof File)
             {
-                result =
-                        ((File)o).getCrc32() == getCrc32() && ((File)o).getUri().equals(getUri()) &&
-                        ((File)o).getSize() == getSize();
+                result = ((File)o).getId().equals(getId());
             }
         }
         return result;
+    }
+
+    public boolean equalsExactly(Object o)
+    {
+        if(equals(o))
+            return ((File)o).getCrc32() == getCrc32() &&
+                    ((File)o).getSize() == getSize() && ((File)o).getUri().equals(getUri());
+        else
+            return false;
     }
 }

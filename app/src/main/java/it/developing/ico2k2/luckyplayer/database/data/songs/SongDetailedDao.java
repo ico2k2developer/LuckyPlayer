@@ -8,6 +8,7 @@ import static it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailed.
 import static it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailed.COLUMN_CHANNELS;
 import static it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailed.COLUMN_FORMAT;
 import static it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailed.COLUMN_GENRE;
+import static it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailed.COLUMN_ID;
 import static it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailed.COLUMN_KEY_INIT;
 import static it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailed.COLUMN_LENGTH;
 import static it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailed.COLUMN_LOSSLESS;
@@ -15,7 +16,6 @@ import static it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailed.
 import static it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailed.COLUMN_TITLE;
 import static it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailed.COLUMN_TRACK_N;
 import static it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailed.COLUMN_TRACK_TOTAL;
-import static it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailed.COLUMN_URI;
 import static it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailed.COLUMN_VBR;
 import static it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailed.COLUMN_YEAR_ORIGINAL;
 import static it.developing.ico2k2.luckyplayer.database.data.songs.SongDetailed.COLUMN_YEAR_RELEASE;
@@ -36,11 +36,8 @@ public interface SongDetailedDao
     @Query("SELECT * FROM SongDetailed")
     List<SongDetailed> loadAll();
 
-    /*@Query("SELECT * FROM SongDetailed WHERE " + COLUMN_URI + " LIKE :uri")
-    SongDetailed loadByUri(String uri);*/
-
-    @Query("SELECT * FROM SongDetailed WHERE " + COLUMN_URI + " IN (:uris)")
-    List<SongDetailed> loadAllByUri(String ... uris);
+    @Query("SELECT * FROM SongDetailed WHERE " + COLUMN_ID + " IN (:ids)")
+    List<SongDetailed> loadAllById(String ... ids);
 
     @Query("SELECT * FROM SongDetailed WHERE " + COLUMN_TITLE + " IN (:titles)")
     List<SongDetailed> loadAllByTitle(String ... titles);
@@ -55,7 +52,7 @@ public interface SongDetailedDao
     List<SongDetailed> loadAllByArtist(String ... artists);
 
     @Query("SELECT * FROM SongDetailed WHERE " + COLUMN_LENGTH + " IN (:lengths)")
-    List<SongDetailed> loadAllByLength(short ... lengths);
+    List<SongDetailed> loadAllByLength(long ... lengths);
 
     @Query("SELECT * FROM SongDetailed WHERE " + COLUMN_TRACK_N + " IN (:trackNs)")
     List<SongDetailed> loadAllByTrackN(byte ... trackNs);
@@ -76,13 +73,13 @@ public interface SongDetailedDao
     List<SongDetailed> loadAllByLyrics(String ... lyrics);
 
     @Query("SELECT * FROM SongDetailed WHERE " + COLUMN_BPM + " IN (:bpms)")
-    List<SongDetailed> loadAllByBPM(byte ... bpms);
+    List<SongDetailed> loadAllByBPM(short ... bpms);
 
     @Query("SELECT * FROM SongDetailed WHERE " + COLUMN_KEY_INIT + " IN (:initKeys)")
     List<SongDetailed> loadAllByInitKey(String ... initKeys);
 
     @Query("SELECT * FROM SongDetailed WHERE " + COLUMN_BITRATE + " IN (:bitrates)")
-    List<SongDetailed> loadAllByBitrate(short ... bitrates);
+    List<SongDetailed> loadAllByBitrate(int ... bitrates);
 
     @Query("SELECT * FROM SongDetailed WHERE " + COLUMN_FORMAT + " IN (:formats)")
     List<SongDetailed> loadAllByFormat(String ... formats);
@@ -103,12 +100,12 @@ public interface SongDetailedDao
     List<SongDetailed> loadAllLossy();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAll(SongDetailed... songs);
+    void insertAll(SongDetailed ... songs);
 
     @Delete
     void delete(SongDetailed song);
 
-    @Query("DELETE FROM SongDetailed WHERE " + COLUMN_URI + " LIKE :id")
+    @Query("DELETE FROM SongDetailed WHERE " + COLUMN_ID + " LIKE :id")
     void delete(String id);
 
     @Query("DELETE FROM SongDetailed")

@@ -57,7 +57,7 @@ public class File
     @Ignore
     private File(int tableId,int itemId,String uri,java.io.File file) throws IOException
     {
-        this(tableId,itemId,uri,new FileInputStream(file));
+        this(tableId,itemId,uri,new FileInputStream(file),true);
     }
 
     @Ignore
@@ -67,9 +67,11 @@ public class File
     }
 
     @Ignore
-    public File(int tableId,int itemId,String uri,FileInputStream stream) throws IOException
+    public File(int tableId,int itemId,String uri,FileInputStream stream,boolean close) throws IOException
     {
         this(Database.generateId(tableId,itemId),uri,calculateCRC32(stream),calculateSize(stream));
+        if(close)
+            stream.close();
     }
 
     @NonNull

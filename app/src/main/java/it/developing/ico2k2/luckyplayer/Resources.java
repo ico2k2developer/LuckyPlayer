@@ -25,8 +25,6 @@ public final class Resources
 
     public static final String KEY_REQUEST = "request";
 
-    public static final String EXTRA_URI = "intent uri";
-
     public static final String FILE_PROVIDER_AUTHORITY = "it.developing.ico2k2.luckyplayer.fileprovider";
 
     public static final String MESSAGE_DESTROY = "destroy";

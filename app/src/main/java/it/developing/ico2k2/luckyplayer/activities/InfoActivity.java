@@ -1,17 +1,15 @@
 package it.developing.ico2k2.luckyplayer.activities;
 
-import static it.developing.ico2k2.luckyplayer.Resources.EXTRA_URI;
 import static it.developing.ico2k2.luckyplayer.Resources.FILE_PROVIDER_AUTHORITY;
 
 import android.app.ActivityManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -20,15 +18,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
-import androidx.appcompat.widget.ShareActionProvider;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
-import androidx.core.view.MenuItemCompat;
 import androidx.lifecycle.Observer;
 import androidx.palette.graphics.Palette;
 import androidx.work.Data;
@@ -43,6 +40,7 @@ import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.AudioHeader;
 import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.KeyNotFoundException;
 import org.jaudiotagger.tag.Tag;
 
 import java.io.File;
@@ -53,9 +51,12 @@ import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.base.BaseActivity;
 import it.developing.ico2k2.luckyplayer.adapters.DetailsAdapter;
 import it.developing.ico2k2.luckyplayer.adapters.lib.ViewHandle;
+import it.developing.ico2k2.luckyplayer.database.Database;
 import it.developing.ico2k2.luckyplayer.dialogs.DefaultDialog;
 import it.developing.ico2k2.luckyplayer.fragments.DetailsFragment;
 import it.developing.ico2k2.luckyplayer.tasks.AlbumArtLoadWorker;
+import it.developing.ico2k2.luckyplayer.tasks.AsyncTask;
+import it.developing.ico2k2.luckyplayer.tasks.MediaManager;
 
 public class InfoActivity extends BaseActivity
 {
@@ -63,7 +64,7 @@ public class InfoActivity extends BaseActivity
 
     private CollapsingToolbarLayout toolbarLayout;
     private DetailsFragment tagDetails,fileDetails;
-    private String path;
+    private it.developing.ico2k2.luckyplayer.database.data.File file;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -95,50 +96,102 @@ public class InfoActivity extends BaseActivity
             }
         });
 
-        if(path == null)
-            handleIntent(getIntent());
+        loadIntent(getIntent());
     }
 
-    public String getRealPath(Uri contentPath){
-        String result = null;
-        if(contentPath != null)
-        {
-            result = contentPath.toString();
-            Log.d(TAG,"Original path: " + result);
-            result = contentPath.getPath();
-            if(!new File(result).exists())
-            {
-                try
-                {
-                    Cursor cursor = getContentResolver().query(contentPath,null,null,null,null);
+    private static class Value
+    {
+        private final FieldKey key;
+        private final String value;
 
-                    int index = cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.DATA);
-                    cursor.moveToFirst();
-                    result = cursor.getString(index);
-                    cursor.close();
-                }
-                catch(Exception e)
-                {
-                    e.printStackTrace();
-                }
+        private Value(FieldKey key,String value)
+        {
+            this.key = key;
+            this.value = value;
+        }
+    }
+
+    private void loadIntent(@NonNull final Intent intent)
+    {
+        final String[] titles = getResources().getStringArray(R.array.info_details_tag_titles);
+        final DetailsAdapter tagAdapter = new DetailsAdapter(titles.length);
+
+        tagAdapter.setOnItemClickListener(new ViewHandle.OnItemClickListener(){
+            @Override
+            public void onItemClick(ViewHandle handle,int position){
+                showDetailDialog(tagAdapter.get(position));
+            }
+        });
+        new AsyncTask<Value,it.developing.ico2k2.luckyplayer.database.data.File>()
+                .executeProgressAsync(new AsyncTask.OnStart()
+        {
+            @Override public void onStart()
+            {
 
             }
-        }
-        Log.d(TAG,"Real path: " + result);
-        return result;
-    }
-
-    void handleIntent(Intent intent)
-    {
-        if(path == null)
-            resolvePath(intent);
+        },new AsyncTask.OnCall<Value,it.developing.ico2k2.luckyplayer.database.data.File>()
+        {
+            @Override public it.developing.ico2k2.luckyplayer.database.data.File
+                call(@NonNull AsyncTask.PublishProgress<Value> progress) throws Exception
+            {
+                it.developing.ico2k2.luckyplayer.database.data.File file = loadFile(InfoActivity.this,intent);
+                AudioFile audio = AudioFileIO.read(new File(file.getUri()));
+                Tag tag = audio.getTag();
+                AudioHeader header = audio.getAudioHeader();
+                String value;
+                for(FieldKey key : FieldKey.values())
+                {
+                    value = null;
+                    try
+                    {
+                        value = tag.getFirst(key);
+                    }
+                    catch(KeyNotFoundException e)
+                    {
+                        e.printStackTrace();
+                    }
+                    if(value != null)
+                        progress.publishProgress(new Value(key,value));
+                }
+                return file;
+            }
+        },new AsyncTask.OnProgress<Value>()
+        {
+            @Override public void onProgress(@NonNull Value progress)
+            {
+                switch(progress.key)
+                {
+                    case TITLE:
+                    {
+                        setTitle(progress.value);
+                    }
+                    default:
+                    {
+                        if(!TextUtils.isEmpty(progress.value))
+                        {
+                            DetailsAdapter.Detail detail;
+                            if(progress.value.contains("\n"))
+                            {
+                                detail = new DetailsAdapter.TextDetail(titles[progress.key.ordinal()],
+                                                                       null,progress.value);
+                            }
+                            else
+                                detail = new DetailsAdapter.Detail(titles[progress.key.ordinal()],
+                                                                   progress.value);
+                            tagAdapter.add(detail);
+                        }
+                    }
+                }
+            }
+        },new AsyncTask.OnFinish<it.developing.ico2k2.luckyplayer.database.data.File>(){
+            @Override public void onComplete(@Nullable it.developing.ico2k2.luckyplayer.database.data.File result)
+            {
+                InfoActivity.this.file = result;
+            }
+        });
         try
         {
-            AudioFile audio = AudioFileIO.read(new File(path));
-            Tag tag = audio.getTag();
             setTitle(tag.getFirst(FieldKey.TITLE));
-            String[] titles = getResources().getStringArray(R.array.info_details_tag_titles);
-            final DetailsAdapter tagAdapter = new DetailsAdapter(titles.length);
             String data;
             for(FieldKey field : FieldKey.values())
             {
@@ -155,19 +208,12 @@ public class InfoActivity extends BaseActivity
                     tagAdapter.add(detail);
                 }
             }
-            tagAdapter.setOnItemClickListener(new ViewHandle.OnItemClickListener(){
-                @Override
-                public void onItemClick(ViewHandle handle,int position){
-                    showDetailDialog(tagAdapter.get(position));
-                }
-            });
             /*tagDetails.setOnFragmentInitialized(new BaseFragment.OnFragmentInitialized(){
                 @Override
                 public void onInitialized(@NonNull View view){
                     tagDetails.setAdapter(tagAdapter);
                 }
             });*/
-            AudioHeader header = audio.getAudioHeader();
             titles = getResources().getStringArray(R.array.info_details_file_titles);
             final DetailsAdapter fileAdapter = new DetailsAdapter(titles.length);
             int a = 0;
@@ -274,21 +320,52 @@ public class InfoActivity extends BaseActivity
         }
     }
 
-    protected void resolvePath(Intent intent)
+    public static final String EXTRA_ID = "item id";
+
+    @Nullable
+    public static it.developing.ico2k2.luckyplayer.database.data.File loadFile(Context context,Intent intent)
     {
-        path = intent.getStringExtra(EXTRA_URI);
-        if(path == null)
-            path = getRealPath(intent.getParcelableExtra(Intent.EXTRA_STREAM));
-        if(path == null)
-            path = getRealPath(intent.getData());
-        Log.d(TAG,"Path is: " + path);
+        it.developing.ico2k2.luckyplayer.database.data.File file = null;
+        MediaManager.CursorResult result = null;
+        Bundle extras = intent.getExtras();
+        Uri uri = intent.getData();
+        if(uri != null)
+            result = MediaManager.getRealPath(context,uri);
+        if(extras != null)
+        {
+            String tmp;
+            if(result == null)
+            {
+                tmp = extras.getString(Intent.EXTRA_STREAM);
+                if(tmp != null)
+                    result = MediaManager.getRealPath(context,Uri.parse(tmp));
+            }
+            if(result != null)
+            {
+                tmp = extras.getString(EXTRA_ID);
+                if(tmp != null)
+                {
+                    try
+                    {
+                        file = result.loadBest(Database.getTableId(tmp),Database.getItemId(tmp));
+                    }
+                    catch(StringIndexOutOfBoundsException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        if(file == null && result != null)
+            file = result.loadBest(0,0);
+        return file;
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
         getMenuInflater().inflate(R.menu.menu_info,menu);
-        ShareActionProvider sap = (ShareActionProvider)MenuItemCompat.getActionProvider(menu.findItem(R.id.info_share));
+        /*ShareActionProvider sap = (ShareActionProvider)MenuItemCompat.getActionProvider(menu.findItem(R.id.info_share));
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("audio/*");
         if(path == null)
@@ -297,7 +374,7 @@ public class InfoActivity extends BaseActivity
         Log.d(TAG,"Path: " + uri);
         intent.putExtra(Intent.EXTRA_STREAM,uri);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        sap.setShareIntent(intent);
+        sap.setShareIntent(intent);*/
         return true;
     }
 

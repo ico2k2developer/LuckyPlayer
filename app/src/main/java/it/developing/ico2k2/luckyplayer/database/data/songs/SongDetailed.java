@@ -21,6 +21,7 @@ import java.util.Locale;
 import it.developing.ico2k2.luckyplayer.database.Database;
 import it.developing.ico2k2.luckyplayer.database.Optimized;
 import it.developing.ico2k2.luckyplayer.database.data.BaseSong;
+import it.developing.ico2k2.luckyplayer.database.data.File;
 
 @Entity
 public class SongDetailed extends BaseSong
@@ -344,7 +345,13 @@ public class SongDetailed extends BaseSong
     }
 
     @Nullable
-    public static SongDetailed loadFromUri(int tableId,int itemId,@NonNull String uri)
+    public static SongDetailed loadFrom(int tableId,int itemId,@NonNull File file)
+    {
+        return loadFrom(tableId,itemId,file.getUri());
+    }
+
+    @Nullable
+    public static SongDetailed loadFrom(int tableId,int itemId,@NonNull String uri)
     {
         SongDetailed result = null;
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();

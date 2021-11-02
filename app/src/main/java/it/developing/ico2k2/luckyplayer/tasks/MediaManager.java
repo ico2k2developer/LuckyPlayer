@@ -295,26 +295,7 @@ public class MediaManager
         final SongDetailedDao songDao = songsDetailed.dao();
         final FileDao fileDao = songsFiles.dao();
         final ContentResolver resolver = context.getContentResolver();
-        final String[] keys;
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
-        {
-            keys = new String[]
-                    {
-                            _ID,
-                            DATA,
-                    };
-        }
-        else
-        {
-            keys = new String[]
-                    {
-                            _ID,
-                            DATA,
-                            VOLUME_NAME,
-                            RELATIVE_PATH,
-                            DISPLAY_NAME,
-                    };
-        }
+        final String[] keys = getBaseColumns();
         new AsyncTask<int[],Long>().executeProgressAsync(new AsyncTask.OnStart() {
             @Override
             public void onStart() {
@@ -328,7 +309,6 @@ public class MediaManager
                 long count = 0;
                 Cursor cursor;
                 Map<String, Integer> columns = new HashMap<>();
-                String path, alternativePath;
                 int tableId,itemId,progress;
                 for (tableId = 0; tableId < uris.length; tableId++) {
                     progress = 0;
@@ -336,48 +316,33 @@ public class MediaManager
                     cursor = ContentResolverCompat.query(resolver, uris[tableId], keys, query, null, null, null);
                     Log.d(TAG, "Cursor contains " + cursor.getCount() + " elements");
                     columns.clear();
-                    for (String key : keys)
-                        columns.put(key, cursor.getColumnIndex(key));
-                    while (cursor.moveToNext()) {
-                        itemId = cursor.getInt(columns.get(_ID));
-                        alternativePath = cursor.getString(columns.get(DATA));
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            path = Storage.getAbsolutePath(context,
-                                    cursor.getString(columns.get(VOLUME_NAME)),
-                                    cursor.getString(columns.get(RELATIVE_PATH)),
-                                    cursor.getString(columns.get(DISPLAY_NAME)));
-                        } else
-                            path = null;
-                        //Log.d(TAG,"Path is " + path + " alternative path is " + alternativePath);
-                        File newFile = null;
-                        if (path != null) {
-                            try {
-                                newFile = new File(tableId, itemId, path);
-                                Log.d(TAG, "Using path " + path);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        if (newFile == null && alternativePath != null) {
-                            try {
-                                newFile = new File(tableId, itemId, alternativePath);
-                                Log.d(TAG, "Using alternative path " + alternativePath);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        if (newFile != null) {
-                            try {
+                    getBaseColumnIndexes(cursor,keys,columns);
+                    cursor = ContentResolverCompat.query(context.getContentResolver(),uris[tableId],keys,null,
+                                                         null,null,null);
+                    if(cursor == null)
+                        Log.d(TAG,"Null cursor for uri " + uris[tableId].getPath());
+                    else
+                    {
+                        while (cursor.moveToNext())
+                        {
+                            CursorResult result = getRealPath(context,cursor,columns);
+                            itemId = Integer.parseInt(result.getData().get(_ID));
+                            try
+                            {
+                                File newFile = result.loadBest(tableId,itemId);
+                                Log.d(TAG, "Using path " + newFile.getUri());
                                 List<File> files = fileDao.loadAllById(newFile.getId());
                                 boolean write = true;
-                                if (files.size() > 0) {
-                                    if (files.get(0).equalsExactly(newFile))
+                                if(files.size() > 0)
+                                {
+                                    if(files.get(0).equalsExactly(newFile))
                                         write = false;
                                     Log.d(TAG, "Old file found");
-                                } else
+                                }
+                                else
                                     Log.d(TAG, "Old file not found");
                                 if (write) {
-                                    SongDetailed song = SongDetailed.loadFromUri(tableId, itemId, newFile.getUri());
+                                    SongDetailed song = SongDetailed.loadFrom(tableId,itemId,newFile);
                                     if (song != null) {
                                         Log.d(TAG, "Saving song " + song.getId() + " to databases");
                                         fileDao.insertAll(newFile);
@@ -386,13 +351,15 @@ public class MediaManager
                                     } else
                                         Log.d(TAG, "Could not load song from file " + newFile.getUri());
                                 }
-                            } catch (Exception e) {
+                            }
+                            catch(Exception e)
+                            {
                                 e.printStackTrace();
                             }
+                            callback.publishProgress(new int[] {++progress,cursor.getCount()});
                         }
-                        callback.publishProgress(new int[] {++progress,cursor.getCount()});
+                        cursor.close();
                     }
-                    cursor.close();
                     Log.d(TAG, "Jumping to the next uri, " + count + " items already found");
                 }
                 return count;
@@ -413,7 +380,7 @@ public class MediaManager
         });
     }
 
-    private static class CursorResult
+    public static class CursorResult
     {
         private final String path,alternativePath;
         private final Map<String,String> data;
@@ -432,7 +399,7 @@ public class MediaManager
         }
 
         @Nullable
-        private File loadBest(int tableId, int itemId)
+        public File loadBest(int tableId, int itemId)
         {
             File result = null;
             if (path != null) {
@@ -453,7 +420,7 @@ public class MediaManager
         }
 
         @NonNull
-        private Map<String,String> getData()
+        public Map<String,String> getData()
         {
             return data;
         }
@@ -486,7 +453,7 @@ public class MediaManager
         return columns;
     }
 
-    private static Map<String,Integer> getBaseColumnIndexes(Cursor cursor,String[] columns,Map<String,Integer> recycle)
+    private static Map<String,Integer> getBaseColumnIndexes(Cursor cursor,String[] columns,@Nullable Map<String,Integer> recycle)
     {
         if(recycle == null)
             recycle = new HashMap<>(columns.length);
@@ -496,169 +463,46 @@ public class MediaManager
         return recycle;
     }
 
-    private static int[] getBaseColumnIndexes(Cursor cursor,String[] columns,int[] recycle)
-    {
-        if(recycle != null)
-        {
-            if(recycle.length < columns.length)
-                recycle = new int[columns.length];
-        }
-        else
-            recycle = new int[columns.length];
-        int a;
-        for(a = 0; a < columns.length; a++)
-            recycle[a] = cursor.getColumnIndex(columns[a]);
-        return recycle;
-    }
-
-    private static int[] getBaseColumnIndexes(Cursor cursor,String[] columns)
+    private static Map<String,Integer> getBaseColumnIndexes(Cursor cursor,String[] columns)
     {
         return getBaseColumnIndexes(cursor,columns,null);
     }
 
-    private static CursorResult getRealPath(Context context,Uri uri,Map<String,Integer> columns)
+    @Nullable
+    private static CursorResult getRealPath(Context context,Cursor cursor,Map<String,Integer> indexes)
     {
-        Cursor cursor = ContentResolverCompat.query(context.getContentResolver(),uri,
-                columns.keySet().toArray(new String[0]),null,null,
-                null,null);
-        String path,alternativePath;
-        alternativePath = cursor.getString(columns.get(DATA));
-        if (Build.VERSION.SDK_INT > DATA_LATEST_API) {
-            path = Storage.getAbsolutePath(context,
-                    cursor.getString(columns.get(VOLUME_NAME)),
-                    cursor.getString(columns.get(RELATIVE_PATH)),
-                    cursor.getString(columns.get(DISPLAY_NAME)));
-        } else
-            path = null;
-        Map<String,String> data = new HashMap<>(columns.size());
-        for(String column : columns.keySet())
+        if(cursor != null)
         {
-            data.put(column,cursor.getString(columns.get(column)));
+            String path,alternativePath;
+            alternativePath = cursor.getString(indexes.get(DATA));
+            if (Build.VERSION.SDK_INT > DATA_LATEST_API) {
+                path = Storage.getAbsolutePath(context,
+                                               cursor.getString(indexes.get(VOLUME_NAME)),
+                                               cursor.getString(indexes.get(RELATIVE_PATH)),
+                                               cursor.getString(indexes.get(DISPLAY_NAME)));
+            } else
+                path = null;
+            Map<String,String> data = new HashMap<>(indexes.size());
+            for(String column : indexes.keySet())
+            {
+                data.put(column,cursor.getString(indexes.get(column)));
+            }
+            return new CursorResult(path,alternativePath,data);
         }
-        return new CursorResult(path,alternativePath,data);
+        return null;
     }
 
-    public static void getRealPath(@Nullable AsyncTask.OnStart start,@Nullable AsyncTask.OnFinish<Long> finish)
+    @Nullable
+    private static CursorResult getRealPath(Context context,Cursor cursor,String[] columns)
     {
-        final SongDetailedDao songDao = songsDetailed.dao();
-        final FileDao fileDao = songsFiles.dao();
-        final ContentResolver resolver = context.getContentResolver();
-        final String[] keys;
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
-        {
-            keys = new String[]
-                    {
-                            _ID,
-                            DATA,
-                    };
-        }
-        else
-        {
-            keys = new String[]
-                    {
-                            _ID,
-                            DATA,
-                            VOLUME_NAME,
-                            RELATIVE_PATH,
-                            DISPLAY_NAME,
-                    };
-        }
-        new AsyncTask<int[],Long>().executeProgressAsync(new AsyncTask.OnStart() {
-            @Override
-            public void onStart() {
-                if (start != null)
-                    start.onStart();
-            }
-        }, new AsyncTask.OnCall<int[], Long>() {
-            @Override
-            public Long call(@NonNull AsyncTask.PublishProgress<int[]> callback) throws Exception
-            {
-                long count = 0;
-                Cursor cursor;
-                Map<String, Integer> columns = new HashMap<>();
-                String path, alternativePath;
-                int tableId,itemId,progress;
-                for (tableId = 0; tableId < uris.length; tableId++) {
-                    progress = 0;
-                    Log.d(TAG, "Checking uri: " + uris[tableId].toString());
-                    cursor = ContentResolverCompat.query(resolver, uris[tableId], keys, query, null, null, null);
-                    Log.d(TAG, "Cursor contains " + cursor.getCount() + " elements");
-                    columns.clear();
-                    for (String key : keys)
-                        columns.put(key, cursor.getColumnIndex(key));
-                    while (cursor.moveToNext()) {
-                        itemId = cursor.getInt(columns.get(_ID));
-                        alternativePath = cursor.getString(columns.get(DATA));
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            path = Storage.getAbsolutePath(context,
-                                    cursor.getString(columns.get(VOLUME_NAME)),
-                                    cursor.getString(columns.get(RELATIVE_PATH)),
-                                    cursor.getString(columns.get(DISPLAY_NAME)));
-                        } else
-                            path = null;
-                        //Log.d(TAG,"Path is " + path + " alternative path is " + alternativePath);
-                        File newFile = null;
-                        if (path != null) {
-                            try {
-                                newFile = new File(tableId, itemId, path);
-                                Log.d(TAG, "Using path " + path);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        if (newFile == null && alternativePath != null) {
-                            try {
-                                newFile = new File(tableId, itemId, alternativePath);
-                                Log.d(TAG, "Using alternative path " + alternativePath);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        if (newFile != null) {
-                            try {
-                                List<File> files = fileDao.loadAllById(newFile.getId());
-                                boolean write = true;
-                                if (files.size() > 0) {
-                                    if (files.get(0).equalsExactly(newFile))
-                                        write = false;
-                                    Log.d(TAG, "Old file found");
-                                } else
-                                    Log.d(TAG, "Old file not found");
-                                if (write) {
-                                    SongDetailed song = SongDetailed.loadFromUri(tableId, itemId, newFile.getUri());
-                                    if (song != null) {
-                                        Log.d(TAG, "Saving song " + song.getId() + " to databases");
-                                        fileDao.insertAll(newFile);
-                                        songDao.insertAll(song);
-                                        count++;
-                                    } else
-                                        Log.d(TAG, "Could not load song from file " + newFile.getUri());
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        callback.publishProgress(new int[] {++progress,cursor.getCount()});
-                    }
-                    cursor.close();
-                    Log.d(TAG, "Jumping to the next uri, " + count + " items already found");
-                }
-                return count;
-            }
-        }, new AsyncTask.OnProgress<int[]>() {
-            @Override
-            public void onProgress(@NonNull int[] result)
-            {
-                progress.onProgress(result[PROGRESS_ITEMS_FOUND],result[PROGRESS_ITEMS_TOTAL]);
-            }
-        }, new AsyncTask.OnFinish<Long>() {
-            @Override
-            public void onComplete(@Nullable Long result) {
-                Log.d(TAG, "Jumping to the next uri");
-                if (finish != null)
-                    finish.onComplete(result);
-            }
-        });
+        return getRealPath(context,cursor,getBaseColumnIndexes(cursor,columns));
+    }
+
+    @Nullable
+    public static CursorResult getRealPath(Context context,Uri uri)
+    {
+        return getRealPath(context,ContentResolverCompat.query(context.getContentResolver(),uri,getBaseColumns(),
+                           null,null,null,null),getBaseColumns());
     }
 
     public void wipe()

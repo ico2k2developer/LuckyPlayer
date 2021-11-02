@@ -1,7 +1,5 @@
 package it.developing.ico2k2.luckyplayer.database.data;
 
-import android.content.ContentResolver;
-import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -103,11 +101,6 @@ public class File
     }
 
     public static final short CRC32_BYTES_AT_ONCE = 256;
-
-    public static FileInputStream getStream(@NonNull Uri uri,ContentResolver resolver) throws IOException
-    {
-        return new FileInputStream(resolver.openFileDescriptor(uri,"r").getFileDescriptor());
-    }
 
     public static long calculateCRC32(FileInputStream stream) throws IOException
     {

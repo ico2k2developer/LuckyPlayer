@@ -46,12 +46,12 @@ public class Database
         return Integer.toString(tableId) + SEPARATOR + itemId;
     }
 
-    public static int getTableId(String id)
+    public static int getTableId(String id) throws StringIndexOutOfBoundsException
     {
         return Integer.parseInt(id.substring(0,id.indexOf(SEPARATOR)));
     }
 
-    public static int getItemId(String id)
+    public static int getItemId(String id) throws StringIndexOutOfBoundsException
     {
         return Integer.parseInt(id.substring(id.indexOf(SEPARATOR) + 1));
     }

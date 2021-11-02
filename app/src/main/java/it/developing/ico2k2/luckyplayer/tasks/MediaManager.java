@@ -474,22 +474,32 @@ public class MediaManager
         if(cursor != null)
         {
             String path,alternativePath;
-            alternativePath = cursor.getString(indexes.get(DATA));
-            if (Build.VERSION.SDK_INT > DATA_LATEST_API) {
+            alternativePath = getString(cursor,indexes.get(DATA));
+            if (Build.VERSION.SDK_INT > DATA_LATEST_API)
+            {
                 path = Storage.getAbsolutePath(context,
-                                               cursor.getString(indexes.get(VOLUME_NAME)),
-                                               cursor.getString(indexes.get(RELATIVE_PATH)),
-                                               cursor.getString(indexes.get(DISPLAY_NAME)));
+                                               getString(cursor,indexes.get(VOLUME_NAME)),
+                                               getString(cursor,indexes.get(RELATIVE_PATH)),
+                                               getString(cursor,indexes.get(DISPLAY_NAME)));
             } else
                 path = null;
             Map<String,String> data = new HashMap<>(indexes.size());
             for(String column : indexes.keySet())
             {
-                data.put(column,cursor.getString(indexes.get(column)));
+                data.put(column,getString(cursor,indexes.get(column)));
             }
             return new CursorResult(path,alternativePath,data);
         }
         return null;
+    }
+
+    @Nullable
+    private static String getString(Cursor cursor,int index)
+    {
+        if(index >= 0)
+            return cursor.getString(index);
+        else
+            return null;
     }
 
     @Nullable
@@ -501,6 +511,7 @@ public class MediaManager
     @Nullable
     public static CursorResult getRealPath(Context context,Uri uri)
     {
+        Log.d(TAG,"Trying to load uri " + uri.getPath());
         return getRealPath(context,ContentResolverCompat.query(context.getContentResolver(),uri,getBaseColumns(),
                            null,null,null,null),getBaseColumns());
     }

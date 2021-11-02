@@ -1,22 +1,17 @@
 package it.developing.ico2k2.luckyplayer.activities;
 
-import static it.developing.ico2k2.luckyplayer.Resources.FILE_PROVIDER_AUTHORITY;
-
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,27 +20,21 @@ import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.FileProvider;
-import androidx.lifecycle.Observer;
-import androidx.palette.graphics.Palette;
-import androidx.work.Data;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkInfo;
-import androidx.work.WorkManager;
-import androidx.work.WorkRequest;
 
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.AudioHeader;
-import org.jaudiotagger.tag.FieldKey;
-import org.jaudiotagger.tag.KeyNotFoundException;
-import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.tag.TagException;
+import org.jaudiotagger.tag.TagField;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
+import java.io.IOException;
+import java.util.Iterator;
 
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.base.BaseActivity;
@@ -54,7 +43,6 @@ import it.developing.ico2k2.luckyplayer.adapters.lib.ViewHandle;
 import it.developing.ico2k2.luckyplayer.database.Database;
 import it.developing.ico2k2.luckyplayer.dialogs.DefaultDialog;
 import it.developing.ico2k2.luckyplayer.fragments.DetailsFragment;
-import it.developing.ico2k2.luckyplayer.tasks.AlbumArtLoadWorker;
 import it.developing.ico2k2.luckyplayer.tasks.AsyncTask;
 import it.developing.ico2k2.luckyplayer.tasks.MediaManager;
 
@@ -99,147 +87,135 @@ public class InfoActivity extends BaseActivity
         loadIntent(getIntent());
     }
 
+    protected void onNewIntent(Intent intent)
+    {
+        super.onNewIntent(intent);
+        loadIntent(intent);
+    }
+
     private static class Value
     {
-        private final FieldKey key;
+        private final String key;
         private final String value;
 
-        private Value(FieldKey key,String value)
+        private Value(String key,String value)
         {
             this.key = key;
             this.value = value;
+        }
+
+        private Value(TagField field)
+        {
+            this(field.getId(),field.toString());
+        }
+    }
+
+    private static class Result
+    {
+        private final it.developing.ico2k2.luckyplayer.database.data.File file;
+        private final AudioFile audioFile;
+
+        private Result(it.developing.ico2k2.luckyplayer.database.data.File file,AudioFile audioFile)
+        {
+            this.file = file;
+            this.audioFile = audioFile;
+        }
+
+        private Result(it.developing.ico2k2.luckyplayer.database.data.File file) throws TagException, ReadOnlyFileException, CannotReadException, InvalidAudioFrameException, IOException
+        {
+            this(file,AudioFileIO.read(new File(file.getUri())));
         }
     }
 
     private void loadIntent(@NonNull final Intent intent)
     {
-        final String[] titles = getResources().getStringArray(R.array.info_details_tag_titles);
-        final DetailsAdapter tagAdapter = new DetailsAdapter(titles.length);
-
+        /*final String[] tagTitles = getResources().getStringArray(R.array.info_details_tag_titles);
+        final DetailsAdapter tagAdapter = new DetailsAdapter(tagTitles.length);*/
+        final String[] fileTitles = getResources().getStringArray(R.array.info_details_file_titles);
+        final DetailsAdapter tagAdapter = new DetailsAdapter();
+        final DetailsAdapter fileAdapter = new DetailsAdapter(fileTitles.length);
+        final AppCompatImageView imageView = findViewById(R.id.info_album_art);
         tagAdapter.setOnItemClickListener(new ViewHandle.OnItemClickListener(){
             @Override
             public void onItemClick(ViewHandle handle,int position){
                 showDetailDialog(tagAdapter.get(position));
             }
         });
-        new AsyncTask<Value,it.developing.ico2k2.luckyplayer.database.data.File>()
+        fileAdapter.setOnItemClickListener(new ViewHandle.OnItemClickListener(){
+            @Override
+            public void onItemClick(ViewHandle handle,int position){
+                showDetailDialog(fileAdapter.get(position));
+            }
+        });
+
+
+        new AsyncTask<Value,Result>()
                 .executeProgressAsync(new AsyncTask.OnStart()
         {
             @Override public void onStart()
             {
 
             }
-        },new AsyncTask.OnCall<Value,it.developing.ico2k2.luckyplayer.database.data.File>()
+        },new AsyncTask.OnCall<Value,Result>()
         {
-            @Override public it.developing.ico2k2.luckyplayer.database.data.File
-                call(@NonNull AsyncTask.PublishProgress<Value> progress) throws Exception
+            @Override public Result call(@NonNull AsyncTask.PublishProgress<Value> progress) throws Exception
             {
-                it.developing.ico2k2.luckyplayer.database.data.File file = loadFile(InfoActivity.this,intent);
-                AudioFile audio = AudioFileIO.read(new File(file.getUri()));
-                Tag tag = audio.getTag();
-                AudioHeader header = audio.getAudioHeader();
-                String value;
-                for(FieldKey key : FieldKey.values())
+                Result result = new Result(loadFile(InfoActivity.this,intent));
+                Iterator<TagField> i = result.audioFile.getTag().getFields();
+                TagField field;
+                while(i.hasNext())
                 {
-                    value = null;
-                    try
-                    {
-                        value = tag.getFirst(key);
-                    }
-                    catch(KeyNotFoundException e)
-                    {
-                        e.printStackTrace();
-                    }
-                    if(value != null)
-                        progress.publishProgress(new Value(key,value));
+                    field = i.next();
+                    if(!field.isBinary())
+                        progress.publishProgress(new Value(field.getId(),field.toString()));
+                    progress.publishProgress(new Value(field));
                 }
-                return file;
+                return result;
             }
         },new AsyncTask.OnProgress<Value>()
         {
             @Override public void onProgress(@NonNull Value progress)
             {
-                switch(progress.key)
-                {
-                    case TITLE:
-                    {
-                        setTitle(progress.value);
-                    }
-                    default:
-                    {
-                        if(!TextUtils.isEmpty(progress.value))
-                        {
-                            DetailsAdapter.Detail detail;
-                            if(progress.value.contains("\n"))
-                            {
-                                detail = new DetailsAdapter.TextDetail(titles[progress.key.ordinal()],
-                                                                       null,progress.value);
-                            }
-                            else
-                                detail = new DetailsAdapter.Detail(titles[progress.key.ordinal()],
-                                                                   progress.value);
-                            tagAdapter.add(detail);
-                        }
-                    }
-                }
-            }
-        },new AsyncTask.OnFinish<it.developing.ico2k2.luckyplayer.database.data.File>(){
-            @Override public void onComplete(@Nullable it.developing.ico2k2.luckyplayer.database.data.File result)
-            {
-                InfoActivity.this.file = result;
-            }
-        });
-        try
-        {
-            setTitle(tag.getFirst(FieldKey.TITLE));
-            String data;
-            for(FieldKey field : FieldKey.values())
-            {
-                data = tag.getFirst(field);
-                if(!TextUtils.isEmpty(data))
+                if(!TextUtils.isEmpty(progress.value))
                 {
                     DetailsAdapter.Detail detail;
-                    if(data.contains("\n"))
+                    if(progress.value.contains("\n"))
                     {
-                        detail = new DetailsAdapter.TextDetail(titles[field.ordinal()],null,data);
+                        detail = new DetailsAdapter.TextDetail(progress.key,null,progress.value);
                     }
                     else
-                        detail = new DetailsAdapter.Detail(titles[field.ordinal()],data);
+                    {
+                        detail = new DetailsAdapter.Detail(progress.key,progress.value);
+                    }
+                    if(progress.key.equals("TITLE"))
+                        setTitle(progress.value);
                     tagAdapter.add(detail);
+                    tagAdapter.notifyItemInserted(tagAdapter.getItemCount() - 1);
                 }
             }
-            /*tagDetails.setOnFragmentInitialized(new BaseFragment.OnFragmentInitialized(){
-                @Override
-                public void onInitialized(@NonNull View view){
-                    tagDetails.setAdapter(tagAdapter);
+        },new AsyncTask.OnFinish<Result>(){
+            @Override public void onComplete(@Nullable final Result result)
+            {
+                if(result != null)
+                {
+                    InfoActivity.this.file = result.file;
+                    AudioHeader header = result.audioFile.getAudioHeader();
+                    int a = 0;
+                    fileAdapter.add(new DetailsAdapter.TextDetail(fileTitles[a++],null,result.file.getUri()));
+                    fileAdapter.add(new DetailsAdapter.Detail(fileTitles[a++],header.getBitRate()));
+                    fileAdapter.add(new DetailsAdapter.Detail(fileTitles[a++],Integer.toString(header.getBitsPerSample())));
+                    fileAdapter.add(new DetailsAdapter.Detail(fileTitles[a++],header.getChannels()));
+                    fileAdapter.add(new DetailsAdapter.Detail(fileTitles[a++],header.getEncodingType()));
+                    fileAdapter.add(new DetailsAdapter.Detail(fileTitles[a++],header.getFormat()));
+                    fileAdapter.add(new DetailsAdapter.Detail(fileTitles[a++],header.getSampleRate()));
+                    fileAdapter.add(new DetailsAdapter.Detail(fileTitles[a++],Integer.toString(header.getTrackLength())));
+                    fileAdapter.add(new DetailsAdapter.CheckedDetail(fileTitles[a++],null,header.isLossless()));
+                    fileAdapter.add(new DetailsAdapter.CheckedDetail(fileTitles[a],null,header.isVariableBitRate()));
                 }
-            });*/
-            titles = getResources().getStringArray(R.array.info_details_file_titles);
-            final DetailsAdapter fileAdapter = new DetailsAdapter(titles.length);
-            int a = 0;
-            fileAdapter.add(new DetailsAdapter.TextDetail(titles[a++],null,path));
-            fileAdapter.add(new DetailsAdapter.Detail(titles[a++],header.getBitRate()));
-            fileAdapter.add(new DetailsAdapter.Detail(titles[a++],Integer.toString(header.getBitsPerSample())));
-            fileAdapter.add(new DetailsAdapter.Detail(titles[a++],header.getChannels()));
-            fileAdapter.add(new DetailsAdapter.Detail(titles[a++],header.getEncodingType()));
-            fileAdapter.add(new DetailsAdapter.Detail(titles[a++],header.getFormat()));
-            fileAdapter.add(new DetailsAdapter.Detail(titles[a++],header.getSampleRate()));
-            fileAdapter.add(new DetailsAdapter.Detail(titles[a++],Integer.toString(header.getTrackLength())));
-            fileAdapter.add(new DetailsAdapter.CheckedDetail(titles[a++],null,header.isLossless()));
-            fileAdapter.add(new DetailsAdapter.CheckedDetail(titles[a],null,header.isVariableBitRate()));
-            fileAdapter.setOnItemClickListener(new ViewHandle.OnItemClickListener(){
-                @Override
-                public void onItemClick(ViewHandle handle,int position){
-                    showDetailDialog(fileAdapter.get(position));
             }
-            });
-            /*fileDetails.setOnFragmentInitialized(new BaseFragment.OnFragmentInitialized(){
-                @Override
-                public void onInitialized(@NonNull View view){
-                    fileDetails.setAdapter(fileAdapter);
-                }
-            });*/
-            final AppCompatImageView imageView = findViewById(R.id.info_album_art);
+        });
+        /*try
+        {
             WorkManager manager = WorkManager.getInstance(this);
             WorkRequest request = new OneTimeWorkRequest.Builder(AlbumArtLoadWorker.class).setInputData(
                     new Data.Builder()
@@ -269,7 +245,7 @@ public class InfoActivity extends BaseActivity
             e.printStackTrace();
             Toast.makeText(this,R.string.error,Toast.LENGTH_LONG).show();
             finish();
-        }
+        }*/
     }
 
     /*
@@ -391,7 +367,7 @@ public class InfoActivity extends BaseActivity
 
         switch(id)
         {
-            case R.id.info_save_cover:
+            /*case R.id.info_save_cover:
             case R.id.info_send_cover:
             {
                 WorkManager manager = WorkManager.getInstance(this);
@@ -445,7 +421,7 @@ public class InfoActivity extends BaseActivity
                     }
                 });
                 break;
-            }
+            }*/
             default:
             {
                 result = super.onOptionsItemSelected(item);

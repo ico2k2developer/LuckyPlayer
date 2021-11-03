@@ -457,9 +457,13 @@ public class MediaManager
     {
         if(recycle == null)
             recycle = new HashMap<>(columns.length);
-        int a;
+        int a,index;
         for(a = 0; a < columns.length; a++)
-            recycle.put(columns[a],cursor.getColumnIndex(columns[a]));
+        {
+            index = cursor.getColumnIndex(columns[a]);
+            if(index >= 0)
+                recycle.put(columns[a],index);
+        }
         return recycle;
     }
 
@@ -512,8 +516,10 @@ public class MediaManager
     public static CursorResult getRealPath(Context context,Uri uri)
     {
         Log.d(TAG,"Trying to load uri " + uri.getPath());
-        return getRealPath(context,ContentResolverCompat.query(context.getContentResolver(),uri,getBaseColumns(),
-                           null,null,null,null),getBaseColumns());
+        Cursor cursor = ContentResolverCompat.query(context.getContentResolver(),uri,getBaseColumns(),
+                                                    null,null,null,null);
+        cursor.moveToFirst();
+        return getRealPath(context,cursor,getBaseColumns());
     }
 
     public void wipe()

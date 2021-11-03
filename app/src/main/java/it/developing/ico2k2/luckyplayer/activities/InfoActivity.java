@@ -4,6 +4,8 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +22,7 @@ import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.palette.graphics.Palette;
 
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
@@ -35,6 +38,7 @@ import org.jaudiotagger.tag.TagField;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.concurrent.Callable;
 
 import it.developing.ico2k2.luckyplayer.R;
 import it.developing.ico2k2.luckyplayer.activities.base.BaseActivity;
@@ -65,6 +69,7 @@ public class InfoActivity extends BaseActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbarLayout = findViewById(R.id.info_appbar_collapsingLayout);
         tagDetails = (DetailsFragment)getSupportFragmentManager().findFragmentById(R.id.info_details_tag);
+        fileDetails = (DetailsFragment)getSupportFragmentManager().findFragmentById(R.id.info_details_file);
         toolbarLayout.setTitleEnabled(true);
 
         toolbar.setOnHierarchyChangeListener(new ViewGroup.OnHierarchyChangeListener(){
@@ -168,7 +173,6 @@ public class InfoActivity extends BaseActivity
                     field = i.next();
                     if(!field.isBinary())
                         progress.publishProgress(new Value(field.getId(),field.toString()));
-                    progress.publishProgress(new Value(field));
                 }
                 return result;
             }
@@ -190,12 +194,13 @@ public class InfoActivity extends BaseActivity
                     if(progress.key.equals("TITLE"))
                         setTitle(progress.value);
                     tagAdapter.add(detail);
-                    tagAdapter.notifyItemInserted(tagAdapter.getItemCount() - 1);
+                    //tagAdapter.notifyItemInserted(tagAdapter.getItemCount() - 1);
                 }
             }
         },new AsyncTask.OnFinish<Result>(){
             @Override public void onComplete(@Nullable final Result result)
             {
+                tagDetails.setAdapter(tagAdapter);
                 if(result != null)
                 {
                     InfoActivity.this.file = result.file;
@@ -211,6 +216,35 @@ public class InfoActivity extends BaseActivity
                     fileAdapter.add(new DetailsAdapter.Detail(fileTitles[a++],Integer.toString(header.getTrackLength())));
                     fileAdapter.add(new DetailsAdapter.CheckedDetail(fileTitles[a++],null,header.isLossless()));
                     fileAdapter.add(new DetailsAdapter.CheckedDetail(fileTitles[a],null,header.isVariableBitRate()));
+                    fileDetails.setAdapter(fileAdapter);
+                    new AsyncTask<Void,Bitmap>().executeAsync(new AsyncTask.OnStart()
+                    {
+                        @Override public void onStart()
+                        {
+
+                        }
+                    },new Callable<Bitmap>()
+                    {
+                        @Override public Bitmap call() throws Exception
+                        {
+                            byte[] data = result.audioFile.getTag().getFirstArtwork().getBinaryData();
+                            return BitmapFactory.decodeByteArray(data,0,data.length);
+                        }
+                    },new AsyncTask.OnFinish<Bitmap>(){
+                        @Override public void onComplete(@Nullable Bitmap result)
+                        {
+                            if(result != null)
+                            {
+                                imageView.setImageBitmap(result);
+                                Palette.from(result).generate(new Palette.PaletteAsyncListener() {
+                                    @Override
+                                    public void onGenerated(Palette palette) {
+                                        toolbarLayout.setContentScrimColor(palette.getLightMutedColor(R.attr.colorPrimary));
+                                    }
+                                });
+                            }
+                        }
+                    });
                 }
             }
         });
@@ -250,13 +284,7 @@ public class InfoActivity extends BaseActivity
 
     /*
 
-        Palette.from(albumArt).generate(new Palette.PaletteAsyncListener() {
-            @Override
-            public void onGenerated(Palette palette) {
-                int mutedColor = palette.getLightMutedColor(R.attr.colorPrimary);
-                collapsingLayout.setContentScrimColor(mutedColor);
-            }
-        });
+
      */
 
     public void showDetailDialog(DetailsAdapter.Detail detail)

@@ -5,6 +5,7 @@
     package="it.developing.ico2k2.luckyplayer">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
 
     <application
         android:allowBackup="true"
@@ -36,7 +37,7 @@
             android:exported="true"/>
 
         <service
-            android:name=".MediaService"
+            android:name=".media.MediaService"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService" />

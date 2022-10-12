@@ -1,129 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="it.developing.ico2k2.luckyplayer"
-    android:installLocation="auto">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="it.developing.ico2k2.luckyplayer">
 
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
 
     <application
-        android:name=".LuckyPlayer2"
         android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:requestLegacyExternalStorage="true"
-        android:theme="@style/Theme.Dark.Red">
-
-        <meta-data
-            android:name="com.google.android.gms.car.application"
-            android:resource="@xml/automotive_app_desc" />
-
-        <!--<provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="it.developing.ico2k2.luckyplayer.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/files" />
-        </provider>-->
+        android:theme="@style/Theme.LuckyPlayer"
+        tools:targetApi="33">
 
         <activity
             android:name=".activities.MainActivity"
             android:launchMode="singleTop"
             android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!--
-            <meta-data
-                android:name="android.app.default_searchable"
-                android:resource="@xml/search_songs" />
-
-
-
-            <meta-data
-                android:name="android.app.shortcuts"
-                android:resource="@xml/shortcuts" />
-            -->
-
-        </activity>
-        <activity
-            android:name=".activities.TabsActivity"
-            android:label="@string/app_name"
-            android:launchMode="singleTop" />
-        <activity
-            android:name=".activities.InitializeActivity"
-            android:label="@string/app_name"
-            android:launchMode="singleTop" />
-        <activity
-            android:name=".activities.PrefsViewActivity"
-            android:label="@string/settings_prefs_data"
-            android:launchMode="singleTop" />
-        <activity
-            android:name=".activities.SettingsActivity"
-            android:label="@string/settings"
-            android:launchMode="singleTop" />
-        <activity
-            android:name=".activities.SettingsActivity$SettingsSecondaryActivity"
-            android:label="@string/settings"
-            android:launchMode="singleTop" />
-        <activity
-            android:name=".activities.InfoActivity"
-            android:documentLaunchMode="always"
-            android:label="@string/song_info"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <action android:name="android.intent.action.SEND" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:scheme="file" />
-                <data android:scheme="content" />
-                <data android:mimeType="audio/*" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".activities.PlayActivity"
-            android:label="@string/song_play"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <action android:name="android.intent.action.SEND" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:scheme="file" />
-                <data android:scheme="content" />
-                <data android:mimeType="audio/*" />
-            </intent-filter>
         </activity>
 
+        <activity
+            android:name=".activities.SongsActivity"
+            android:launchMode="singleTop"
+            android:exported="true"/>
 
-        <!--
-         Main music service, provides media browsing and media playback services to
-         consumers through MediaBrowserService and MediaSession. Consumers connect to it through
-         MediaBrowser (for browsing) and MediaController (for playback control)
-        -->
         <service
-            android:name=".services.PlayService"
+            android:name=".MediaService"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService" />
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </service>
 

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <Preference
-        android:title="com.readystatesoftware.systembartint"
-        android:summary="Copyright (C) 2013 readyState Software Ltd"
-        android:key="apache 2.0"/>
-
-</PreferenceScreen>

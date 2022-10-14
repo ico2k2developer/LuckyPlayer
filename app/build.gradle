@@ -30,6 +30,7 @@ android
         targetCompatibility JavaVersion.VERSION_1_8
     }
     buildToolsVersion '31.0.0'
+    namespace 'it.developing.ico2k2.luckyplayer'
 }
 
 dependencies

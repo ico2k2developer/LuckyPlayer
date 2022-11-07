@@ -15,8 +15,8 @@ public class MainActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
 
-        Log.d(LOG,LOG + " started, redirecting user to " + SongsActivity.class.getSimpleName());
-        startActivity(new Intent(MainActivity.this,SongsActivity.class));
+        Log.d(LOG,LOG + " started, redirecting user to " + TabsActivity.class.getSimpleName());
+        startActivity(new Intent(MainActivity.this, TabsActivity.class));
         finish();
     }
 }

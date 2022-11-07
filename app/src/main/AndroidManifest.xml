@@ -31,12 +31,12 @@
         </activity>
 
         <activity
-            android:name=".activities.SongsActivity"
+            android:name=".activities.TabsActivity"
             android:launchMode="singleTop"
             android:exported="true"/>
 
         <service
-            android:name=".media.MediaService"
+            android:name=".database.media.MediaService"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService" />

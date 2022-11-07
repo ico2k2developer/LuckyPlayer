@@ -1,4 +1,4 @@
-package it.developing.ico2k2.luckyplayer.media.database;
+package it.developing.ico2k2.luckyplayer.database;
 
 import android.content.Context;
 
@@ -11,8 +11,9 @@ import java.util.Map;
 public class Database
 {
     public static final String DATABASE_SONGS = "songs";
-    public static final String DATABASE_SONGS_DETAILED = "songs_detailed";
-    public static final String DATABASE_PLAYS = "plays";
+    public static final String DATABASE_FILES = "files";
+    /*public static final String DATABASE_SONGS_DETAILED = "songs_detailed";
+    public static final String DATABASE_PLAYS = "plays";*/
 
     private static final Map<String, Database> clients = new HashMap<>();
     private final RoomDatabase database;

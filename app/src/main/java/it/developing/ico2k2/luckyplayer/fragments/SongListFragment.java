@@ -5,7 +5,7 @@ import android.util.Log;
 
 import androidx.fragment.app.Fragment;
 
-import it.developing.ico2k2.luckyplayer.database.media.MusicAdapter;
+import it.developing.ico2k2.luckyplayer.database.file.media.MusicAdapter;
 
 public class SongListFragment extends Fragment
 {

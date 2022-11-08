@@ -1,4 +1,4 @@
-package it.developing.ico2k2.luckyplayer.database.media;
+package it.developing.ico2k2.luckyplayer.database.file.media;
 
 import androidx.room.Database;
 import androidx.room.RoomDatabase;

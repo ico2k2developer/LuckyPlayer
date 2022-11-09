@@ -2,17 +2,30 @@ package it.developing.ico2k2.luckyplayer.database.file.media;
 
 import static android.provider.MediaStore.Audio.AudioColumns.*;
 
+import static it.developing.ico2k2.luckyplayer.preference.Settings.KEY_MEDIA_UPDATE;
+import static it.developing.ico2k2.luckyplayer.preference.Settings.PREFERENCE_SETTINGS;
+
 import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.core.content.ContentResolverCompat;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import it.developing.ico2k2.luckyplayer.AsyncTask;
+import it.developing.ico2k2.luckyplayer.preference.PreferenceManager;
+import it.developing.ico2k2.luckyplayer.R;
 
 public class MediaScan
 {
@@ -82,7 +95,7 @@ public class MediaScan
 
         private boolean areAllFalse()
         {
-            boolean result = music || ringtone || notification || podcast || alarm || other;
+            boolean result = music || ringtone || notification || podcast || alarm |  | other;
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
                 result = result || Boolean.TRUE.equals(audiobook);
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
@@ -171,7 +184,7 @@ public class MediaScan
 
     private final Context context;
     private final MediaDatabase database;
-    private QuerySettings query;
+    private String query;
 
     public MediaScan(Context context,MediaDatabase database)
     {
@@ -181,7 +194,14 @@ public class MediaScan
 
     public void setQuerySettings(QuerySettings query)
     {
-        this.query = query;
+        this.query = query.build();
+    }
+
+    public boolean isScanNeeded()
+    {
+        return !MediaStore.getVersion(context).equals(
+                PreferenceManager.getInstance(context,PREFERENCE_SETTINGS)
+                .getString(KEY_MEDIA_UPDATE,null));
     }
 
     public interface OnScanProgress
@@ -189,12 +209,44 @@ public class MediaScan
         void onProgress(int completedOfTotal,int total);
     }
 
-    //TODO: Implement actual media scanning
+    private static List<String> getBaseColumns()
+    {
+        final List<String> result = new ArrayList<>();
+        result.add(_ID);
+        result.add(DATA);
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.P)
+        {
+            result.add(VOLUME_NAME);
+            result.add(RELATIVE_PATH);
+            result.add(DISPLAY_NAME);
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.Q)
+                result.add(IS_FAVORITE);
+        }
+        return result;
+    }
+
+    private static Map<String,Integer> getColumnsIndexes(Cursor cursor,List<String> columns,
+                                                  @Nullable Map<String,Integer> recycle)
+    {
+        if(recycle == null)
+            recycle = new HashMap<>(columns.size());
+        else
+            recycle.clear();
+        for(String column : columns)
+            recycle.put(column,cursor.getColumnIndex(column));
+        return recycle;
+    }
+
+    private static Map<String,Integer> getColumnsIndexes(Cursor cursor,List<String> columns)
+    {
+        return getColumnsIndexes(cursor,columns,null);
+    }
 
     public void scan(Uri[] uris, @Nullable AsyncTask.OnStart start, @Nullable OnScanProgress progress, @Nullable AsyncTask.OnFinish<Long> finish)
     {
         final MediaDao dao = database.mediaDao();
         final ContentResolver resolver = context.getContentResolver();
+        final List<String> columns = getBaseColumns();
         new AsyncTask<int[],Long>().executeProgressAsync(new AsyncTask.OnStart() {
             @Override
             public void onStart() {
@@ -205,7 +257,22 @@ public class MediaScan
             @Override
             public Long call(@NonNull AsyncTask.PublishProgress<int[]> callback) throws Exception
             {
-                long count = 0;
+                long progress,count = 0;
+                Cursor cursor;
+                int tableId;
+                Map<String,Integer> columnsMap = null;
+                for(tableId = 0; tableId < uris.length; tableId++)
+                {
+                    progress = 0;
+                    Log.d(LOG,"Checking uri " + uris[tableId].toString());
+                    cursor = ContentResolverCompat.query(resolver,uris[tableId],
+                            columns.toArray(new String[0]), query,null,null,
+                            null);
+                    Log.d(LOG,cursor.getCount() + " elements in cursor");
+                    columnsMap = getColumnsIndexes(cursor,columns,columnsMap);
+
+                }
+
                 return count;
             }
         }, new AsyncTask.OnProgress<int[]>() {

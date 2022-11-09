@@ -22,18 +22,19 @@ public class Media extends BaseMedia
 {
     public static final String COLUMN_ALBUM = "album";
     public static final String COLUMN_ARTIST = "artist";
-    public static final String COLUMN_TRACK_N = "track_n";
-    public static final String COLUMN_TRACK_TOTAL = "track_total";
-    public static final String COLUMN_TRACK_DISC = "track_disc";
-    public static final String COLUMN_TRACK_DISC_TOTAL = "track_disc_total";
-    public static final String COLUMN_RELEASE_YEAR = "release_year";
-    public static final String COLUMN_ORIGINAL_YEAR = "original_year";
+    public static final String COLUMN_TRACK_N = "track n";
+    public static final String COLUMN_TRACK_TOTAL = "track total";
+    public static final String COLUMN_TRACK_DISC = "track disc";
+    public static final String COLUMN_TRACK_DISC_TOTAL = "track disc total";
+    public static final String COLUMN_RELEASE_YEAR = "release year";
+    public static final String COLUMN_ORIGINAL_YEAR = "original year";
     public static final String COLUMN_GENRE = "genre";
     public static final String COLUMN_BITRATE = "bitrate";
     public static final String COLUMN_FORMAT = "format";
     public static final String COLUMN_CHANNELS = "channels";
     public static final String COLUMN_LOSSLESS = "lossless";
     public static final String COLUMN_FAVOURITE = "like";
+    public static final String COLUMN_ID_MEDIASTORE = "mediastore id";
 
     @ColumnInfo(name = COLUMN_ALBUM)
     private final String album;
@@ -77,12 +78,16 @@ public class Media extends BaseMedia
     @ColumnInfo(name = COLUMN_FAVOURITE)
     private final boolean like;
 
+    @ColumnInfo(name = COLUMN_ID_MEDIASTORE)
+    private final long idMediaStore;
+
     public Media(final String uri,final long crc32,final long size,final String id,
                  final String title,final String releaseArtist,final long lengthMs,
                  final String album,final String artist,final short trackN,final short trackTotal,
                  final byte trackDisc,final byte trackDiscTotal,final short releaseYear,
                  final short originalYear,final String genre,final long bitrate,
-                 final String format,final byte channels,final boolean lossless,final boolean like)
+                 final String format,final byte channels,final boolean lossless,final boolean like,
+                 final long idMediaStore)
     {
         super(uri,crc32,size,id,title,releaseArtist,lengthMs);
         this.album = album;
@@ -99,6 +104,7 @@ public class Media extends BaseMedia
         this.channels = channels;
         this.lossless = lossless;
         this.like = like;
+        this.idMediaStore = idMediaStore;
     }
 
     @Ignore
@@ -106,7 +112,8 @@ public class Media extends BaseMedia
                  final String album,final String artist,final short trackN,final short trackTotal,
                  final byte trackDisc,final byte trackDiscTotal,final short releaseYear,
                  final short originalYear,final String genre,final long bitrate,
-                 final String format,final byte channels,final boolean lossless,final boolean like)
+                 final String format,final byte channels,final boolean lossless,final boolean like,
+                 final long idMediaStore)
             throws IOException
     {
         super(uri,title,releaseArtist,lengthMs);
@@ -124,9 +131,10 @@ public class Media extends BaseMedia
         this.channels = channels;
         this.lossless = lossless;
         this.like = like;
+        this.idMediaStore = idMediaStore;
     }
 
-    public static Media loadMedia(String uri) throws Exception
+    public static Media loadMedia(String uri,boolean favourite,long idMediaStore) throws Exception
     {
         AudioFile file = AudioFileIO.read(new File(uri));
         AudioHeader header = file.getAudioHeader();
@@ -187,7 +195,7 @@ public class Media extends BaseMedia
                 (header.getNoOfSamples() * 1000L / ((long)header.getSampleRateAsNumber())),
                 album,artist,trackN,trackTotal,trackDisk,trackDiskTotal,year,origYear,genre,
                 header.getBitRateAsNumber(), header.getFormat(),
-                Byte.parseByte(header.getChannels()),header.isLossless(),false);
+                Byte.parseByte(header.getChannels()),header.isLossless(),favourite,idMediaStore);
 
     }
 

@@ -1,31 +1,37 @@
 package it.developing.ico2k2.luckyplayer.database.file.media;
 
 import android.net.Uri;
+import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
-import androidx.room.PrimaryKey;
 
 import java.io.IOException;
 
-import it.developing.ico2k2.luckyplayer.database.file.File;
+import it.developing.ico2k2.luckyplayer.database.file.BaseFile;
 
-@Entity
-public class BaseMedia extends File
+@Entity(primaryKeys = {BaseMedia.COLUMN_VOLUME,BaseMedia.COLUMN_ID})
+public class BaseMedia extends BaseFile
 {
-    private final static String ID_SEP = "§";
-
-    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_ID = "mediastore id";
+    public static final String COLUMN_VOLUME = "mediastore volume";
     public static final String COLUMN_TITLE = "title";
-    public static final String COLUMN_RELEASE_ARTIST = "release_artist";
+    public static final String COLUMN_RELEASE_ARTIST = "release artist";
     public static final String COLUMN_LENGTH = "length";
 
-    @PrimaryKey
-    @NonNull
+    public static final Uri[] VOLUMES = new Uri[]
+    {
+            MediaStore.Audio.Media.INTERNAL_CONTENT_URI,
+            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+    };
+
     @ColumnInfo(name = COLUMN_ID)
-    private final String id;
+    private final long id;
+
+    @ColumnInfo(name = COLUMN_VOLUME)
+    private final short volume;
 
     @ColumnInfo(name = COLUMN_TITLE)
     private final String title;
@@ -36,6 +42,7 @@ public class BaseMedia extends File
     @ColumnInfo(name = COLUMN_LENGTH)
     private final long lengthMs;
 
+    @Ignore
     private final Timestamp timestamp;
 
     public static class Timestamp
@@ -72,15 +79,12 @@ public class BaseMedia extends File
         }
     }
 
-    private static String generateId(String title,String releaseArtist,Timestamp timestamp)
+    public BaseMedia(String uri,long size,long lastModified,short volume,long id,
+                     String title,String releaseArtist,long lengthMs)
     {
-        return title + ID_SEP + releaseArtist + ID_SEP + timestamp;
-    }
-
-    public BaseMedia(String uri,long crc32,long size,String id,String title,String releaseArtist,long lengthMs)
-    {
-        super(uri,crc32,size);
+        super(uri,size,lastModified);
         this.id = id;
+        this.volume = volume;
         this.title = title;
         this.releaseArtist = releaseArtist;
         this.lengthMs = lengthMs;
@@ -88,18 +92,24 @@ public class BaseMedia extends File
     }
 
     @Ignore
-    public BaseMedia(String uri,String title,String releaseArtist,long lengthMs) throws IOException
+    public BaseMedia(java.io.File file,short volume,long id, String title, String releaseArtist,
+                     long lengthMs)
+            throws IOException
     {
-        super(uri);
-        timestamp = new Timestamp(lengthMs);
-        id = generateId(title,releaseArtist,timestamp);
+        super(file);
+        this.id = id;
+        this.volume = volume;
         this.title = title;
         this.releaseArtist = releaseArtist;
         this.lengthMs = lengthMs;
+        timestamp = new Timestamp(lengthMs);
     }
 
-    @NonNull
-    public String getId()
+    public short getVolume()
+    {
+        return volume;
+    }
+    public long getId()
     {
         return id;
     }
@@ -108,6 +118,7 @@ public class BaseMedia extends File
     {
         return timestamp;
     }
+
     public String getTitle()
     {
         return title;

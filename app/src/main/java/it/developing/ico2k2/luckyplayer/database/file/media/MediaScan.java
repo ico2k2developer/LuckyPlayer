@@ -1,15 +1,17 @@
 package it.developing.ico2k2.luckyplayer.database.file.media;
 
+import static android.os.Environment.getExternalStorageDirectory;
 import static android.provider.MediaStore.Audio.AudioColumns.*;
 
-import static it.developing.ico2k2.luckyplayer.preference.Settings.KEY_MEDIA_UPDATE;
-import static it.developing.ico2k2.luckyplayer.preference.Settings.PREFERENCE_SETTINGS;
+import static it.developing.ico2k2.luckyplayer.preference.Settings.KEY_LONG_MEDIA_COUNT;
+import static it.developing.ico2k2.luckyplayer.preference.Settings.KEY_STRING_MEDIA_UPDATE;
 
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
+import android.os.storage.StorageManager;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -18,14 +20,16 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContentResolverCompat;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import it.developing.ico2k2.luckyplayer.AsyncTask;
+import it.developing.ico2k2.luckyplayer.database.file.BaseFile;
 import it.developing.ico2k2.luckyplayer.preference.PreferenceManager;
-import it.developing.ico2k2.luckyplayer.R;
+import it.developing.ico2k2.luckyplayer.preference.Settings;
 
 public class MediaScan
 {
@@ -78,28 +82,27 @@ public class MediaScan
             this.recording = null;
         }
 
-        public QuerySettings()
-        {
-            this(false,false,false,false,false,false);
-        }
-
         private boolean areAllTrue()
         {
             boolean result = music && ringtone && notification && podcast && alarm && other;
             if(result && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+            {
                 result = Boolean.TRUE.equals(audiobook);
-            if(result && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-                result = Boolean.TRUE.equals(recording);
+                if(result && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                    result = Boolean.TRUE.equals(recording);
+            }
             return result;
         }
 
         private boolean areAllFalse()
         {
-            boolean result = music || ringtone || notification || podcast || alarm |  | other;
+            boolean result = music || ringtone || notification || podcast || alarm || other;
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+            {
                 result = result || Boolean.TRUE.equals(audiobook);
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-                result = result || Boolean.TRUE.equals(recording);
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                    result = result || Boolean.TRUE.equals(recording);
+            }
             return !result;
         }
 
@@ -134,7 +137,8 @@ public class MediaScan
             return Boolean.TRUE.equals(recording);
         }
 
-        public boolean getOther(){
+        public boolean getOther()
+        {
             return other;
         }
 
@@ -142,7 +146,7 @@ public class MediaScan
         private String build()
         {
             String result = null;
-            if(!areAllFalse())
+            if(!areAllTrue() && !areAllFalse())
             {
                 final StringBuilder builder = new StringBuilder(" ");
                 final String andOr,comparator;
@@ -180,28 +184,56 @@ public class MediaScan
             }
             return result;
         }
+
+        @NonNull
+        @Override
+        public String toString()
+        {
+            return String.format("Music: %s, ringtone %s, notification: %s, podcast: %s, alarm %s, " +
+                    "other: %s",
+                    getMusic(),getRingtone(),getNotification(),getPodcast(),getAlarm(),getOther());
+        }
     }
 
     private final Context context;
-    private final MediaDatabase database;
+    private final MediaDao database;
+    private final PreferenceManager prefs;
     private String query;
 
-    public MediaScan(Context context,MediaDatabase database)
+    public MediaScan(Context context,MediaDao database)
     {
         this.context = context;
         this.database = database;
+        prefs = Settings.getInstance(context);
     }
 
     public void setQuerySettings(QuerySettings query)
     {
         this.query = query.build();
+        Log.d(LOG,"New query: \"" + this.query  + "\" (null? " + (this.query == null) + ") from " + query.toString());
     }
 
     public boolean isScanNeeded()
     {
-        return !MediaStore.getVersion(context).equals(
-                PreferenceManager.getInstance(context,PREFERENCE_SETTINGS)
-                .getString(KEY_MEDIA_UPDATE,null));
+        return !getMediaStoreVersion().equals(getCachedVersion()) ||
+                getCachedCount() == 0;
+    }
+
+    public long getCachedCount()
+    {
+        return prefs.getLong(KEY_LONG_MEDIA_COUNT,0);
+    }
+
+    @NonNull
+    public String getMediaStoreVersion()
+    {
+        return MediaStore.getVersion(context);
+    }
+
+    @Nullable
+    public String getCachedVersion()
+    {
+        return prefs.getString(KEY_STRING_MEDIA_UPDATE, null);
     }
 
     public interface OnScanProgress
@@ -237,14 +269,8 @@ public class MediaScan
         return recycle;
     }
 
-    private static Map<String,Integer> getColumnsIndexes(Cursor cursor,List<String> columns)
-    {
-        return getColumnsIndexes(cursor,columns,null);
-    }
-
     public void scan(Uri[] uris, @Nullable AsyncTask.OnStart start, @Nullable OnScanProgress progress, @Nullable AsyncTask.OnFinish<Long> finish)
     {
-        final MediaDao dao = database.mediaDao();
         final ContentResolver resolver = context.getContentResolver();
         final List<String> columns = getBaseColumns();
         new AsyncTask<int[],Long>().executeProgressAsync(new AsyncTask.OnStart() {
@@ -257,34 +283,127 @@ public class MediaScan
             @Override
             public Long call(@NonNull AsyncTask.PublishProgress<int[]> callback) throws Exception
             {
-                long progress,count = 0;
+                long count = 0,mediaId;
                 Cursor cursor;
-                int tableId;
+                short volumeId;
+                int cursorCount,progress;
                 Map<String,Integer> columnsMap = null;
-                for(tableId = 0; tableId < uris.length; tableId++)
+                boolean fav;
+                File file;
+                for(volumeId = 0; volumeId < uris.length; volumeId++)
                 {
                     progress = 0;
-                    Log.d(LOG,"Checking uri " + uris[tableId].toString());
-                    cursor = ContentResolverCompat.query(resolver,uris[tableId],
-                            columns.toArray(new String[0]), query,null,null,
-                            null);
-                    Log.d(LOG,cursor.getCount() + " elements in cursor");
+                    Log.d(LOG,"Checking uri " + (volumeId + 1) + " of " + uris.length + " " +
+                            uris[volumeId].toString());
+                    cursor = null;
+                    try
+                    {
+                        cursor = ContentResolverCompat.query(resolver,uris[volumeId],
+                                columns.toArray(new String[0]), query,null,null,
+                                null);
+                    }
+                    catch(Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                    if(cursor == null)
+                    {
+                        Log.d(LOG,"Cursor is null, skipping uri");
+                        continue;
+                    }
+                    cursorCount = cursor.getCount();
+                    Log.d(LOG,cursorCount + " rows in cursor");
                     columnsMap = getColumnsIndexes(cursor,columns,columnsMap);
-
+                    while(cursor.moveToNext())
+                    {
+                        mediaId = cursor.getLong(columnsMap.get(_ID));
+                        file = new File(cursor.getString(columnsMap.get(DATA)));
+                        if(!file.exists() && Build.VERSION.SDK_INT > Build.VERSION_CODES.P)
+                        {
+                            String volume = cursor.getString(columnsMap.get(VOLUME_NAME));
+                            String path = cursor.getString(columnsMap.get(RELATIVE_PATH));
+                            StringBuilder result = new StringBuilder();
+                            switch(volume)
+                            {
+                                case MediaStore.VOLUME_EXTERNAL_PRIMARY:
+                                {
+                                    result.append((Build.VERSION.SDK_INT < Build.VERSION_CODES.R ?
+                                            getExternalStorageDirectory() : ((StorageManager)
+                                            context.getSystemService(Context.STORAGE_SERVICE))
+                                            .getPrimaryStorageVolume().getDirectory())
+                                            .getAbsolutePath());
+                                    break;
+                                }
+                                case MediaStore.VOLUME_INTERNAL:
+                                {
+                                    result.append("/system/media/audio/ui");
+                                    break;
+                                }
+                                default:
+                                {
+                                    result.append("/storage/");
+                                    result.append(volume.toUpperCase());
+                                }
+                            }
+                            result.append('/');
+                            if(path != null)
+                                result.append(path);
+                            result.append(cursor.getString(columnsMap.get(DISPLAY_NAME)));
+                            file = new File(result.toString());
+                        }
+                        if(file.exists())
+                        {
+                            fav = false;
+                            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.Q)
+                                fav = cursor.getInt(columnsMap.get(IS_FAVORITE)) == 1;
+                            try
+                            {
+                                if(database.contains(volumeId,mediaId))
+                                {
+                                    if(database.loadLastModified(volumeId,mediaId) !=
+                                            file.lastModified())
+                                    {
+                                        database.update(Media.loadMedia(file,fav,volumeId,mediaId));
+                                        Log.d(LOG,"Updated " + file.getAbsolutePath());
+                                    }
+                                    else
+                                        Log.d(LOG,"Skipped " + file.getAbsolutePath());
+                                }
+                                else
+                                {
+                                    database.put(Media.loadMedia(file,fav,volumeId,mediaId));
+                                    Log.d(LOG,"Put " + file.getAbsolutePath());
+                                }
+                                count++;
+                            }
+                            catch (Exception e)
+                            {
+                                e.printStackTrace();
+                            }
+                            callback.publishProgress(new int[]{++progress,cursorCount});
+                        }
+                    }
+                    cursor.close();
+                    Log.d(LOG, "Jumping to the next uri, " + count + " items found until now");
                 }
-
                 return count;
             }
         }, new AsyncTask.OnProgress<int[]>() {
             @Override
             public void onProgress(@NonNull int[] result)
             {
-                progress.onProgress(0,0);
+                progress.onProgress(result[0],result[1]);
             }
         }, new AsyncTask.OnFinish<Long>() {
             @Override
             public void onComplete(@Nullable Long result)
             {
+                Log.d(LOG,"MediaStore version was " + prefs.getString(KEY_STRING_MEDIA_UPDATE) +
+                        " now is " + MediaStore.getVersion(context));
+                prefs.edit()
+                        .putString(KEY_STRING_MEDIA_UPDATE,MediaStore.getVersion(context))
+                        .putLong(KEY_LONG_MEDIA_COUNT,result == null ? 0 : result)
+                        .apply();
                 if (finish != null)
                     finish.onComplete(result);
             }

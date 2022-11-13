@@ -4,9 +4,11 @@ import static it.developing.ico2k2.luckyplayer.database.Database.DATABASE_SONGS;
 
 import android.text.TextUtils;
 
+import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
+import androidx.room.Insert;
 
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -26,15 +28,14 @@ public class Media extends BaseMedia
     public static final String COLUMN_TRACK_TOTAL = "track total";
     public static final String COLUMN_TRACK_DISC = "track disc";
     public static final String COLUMN_TRACK_DISC_TOTAL = "track disc total";
-    public static final String COLUMN_RELEASE_YEAR = "release year";
-    public static final String COLUMN_ORIGINAL_YEAR = "original year";
+    public static final String COLUMN_RELEASE_DATE = "release date";
+    public static final String COLUMN_ORIGINAL_DATE = "original date";
     public static final String COLUMN_GENRE = "genre";
     public static final String COLUMN_BITRATE = "bitrate";
     public static final String COLUMN_FORMAT = "format";
     public static final String COLUMN_CHANNELS = "channels";
     public static final String COLUMN_LOSSLESS = "lossless";
     public static final String COLUMN_FAVOURITE = "like";
-    public static final String COLUMN_ID_MEDIASTORE = "mediastore id";
 
     @ColumnInfo(name = COLUMN_ALBUM)
     private final String album;
@@ -54,11 +55,11 @@ public class Media extends BaseMedia
     @ColumnInfo(name = COLUMN_TRACK_DISC_TOTAL)
     private final byte trackDiscTotal;
 
-    @ColumnInfo(name = COLUMN_RELEASE_YEAR)
-    private final short releaseYear;
+    @ColumnInfo(name = COLUMN_RELEASE_DATE)
+    private final String releaseDate;
 
-    @ColumnInfo(name = COLUMN_ORIGINAL_YEAR)
-    private final short originalYear;
+    @ColumnInfo(name = COLUMN_ORIGINAL_DATE)
+    private final String originalDate;
 
     @ColumnInfo(name = COLUMN_GENRE)
     private final String genre;
@@ -78,78 +79,74 @@ public class Media extends BaseMedia
     @ColumnInfo(name = COLUMN_FAVOURITE)
     private final boolean like;
 
-    @ColumnInfo(name = COLUMN_ID_MEDIASTORE)
-    private final long idMediaStore;
-
-    public Media(final String uri,final long crc32,final long size,final String id,
-                 final String title,final String releaseArtist,final long lengthMs,
-                 final String album,final String artist,final short trackN,final short trackTotal,
-                 final byte trackDisc,final byte trackDiscTotal,final short releaseYear,
-                 final short originalYear,final String genre,final long bitrate,
-                 final String format,final byte channels,final boolean lossless,final boolean like,
-                 final long idMediaStore)
+    public Media(final String uri,final long size,final long lastModified,
+                 final short volume,final long id,final String title,final String releaseArtist,
+                 final long lengthMs,final String album,final String artist,final short trackN,
+                 final short trackTotal,final byte trackDisc,final byte trackDiscTotal,
+                 final String releaseDate,final String originalDate,final String genre,
+                 final long bitrate,final String format,final byte channels,final boolean lossless,
+                 final boolean like)
     {
-        super(uri,crc32,size,id,title,releaseArtist,lengthMs);
+        super(uri,size,lastModified,volume,id,title,releaseArtist,lengthMs);
         this.album = album;
         this.artist = artist;
         this.trackN = trackN;
         this.trackTotal = trackTotal;
         this.trackDisc = trackDisc;
         this.trackDiscTotal = trackDiscTotal;
-        this.releaseYear = releaseYear;
-        this.originalYear = originalYear;
+        this.releaseDate = releaseDate;
+        this.originalDate = originalDate;
         this.genre = genre;
         this.bitrate = bitrate;
         this.format = format;
         this.channels = channels;
         this.lossless = lossless;
         this.like = like;
-        this.idMediaStore = idMediaStore;
     }
 
     @Ignore
-    public Media(final String uri,final String title,final String releaseArtist,final long lengthMs,
-                 final String album,final String artist,final short trackN,final short trackTotal,
-                 final byte trackDisc,final byte trackDiscTotal,final short releaseYear,
-                 final short originalYear,final String genre,final long bitrate,
-                 final String format,final byte channels,final boolean lossless,final boolean like,
-                 final long idMediaStore)
+    public Media(final File file,final short volume,final long id,final String title,
+                 final String releaseArtist,final long lengthMs,final String album,
+                 final String artist,final short trackN,final short trackTotal,
+                 final byte trackDisc,final byte trackDiscTotal,final String releaseDate,
+                 final String originalDate,final String genre,final long bitrate,
+                 final String format,final byte channels,final boolean lossless,final boolean like)
             throws IOException
     {
-        super(uri,title,releaseArtist,lengthMs);
+        super(file,volume,id,title,releaseArtist,lengthMs);
         this.album = album;
         this.artist = artist;
         this.trackN = trackN;
         this.trackTotal = trackTotal;
         this.trackDisc = trackDisc;
         this.trackDiscTotal = trackDiscTotal;
-        this.releaseYear = releaseYear;
-        this.originalYear = originalYear;
+        this.releaseDate = releaseDate;
+        this.originalDate = originalDate;
         this.genre = genre;
         this.bitrate = bitrate;
         this.format = format;
         this.channels = channels;
         this.lossless = lossless;
         this.like = like;
-        this.idMediaStore = idMediaStore;
     }
 
-    public static Media loadMedia(String uri,boolean favourite,long idMediaStore) throws Exception
+    public static Media loadMedia(File file,boolean favourite,short volume,long id) throws Exception
     {
-        AudioFile file = AudioFileIO.read(new File(uri));
-        AudioHeader header = file.getAudioHeader();
-        Tag tag = file.getTag();
+        AudioFile audioFile = AudioFileIO.read(file);
+        AudioHeader header = audioFile.getAudioHeader();
+        Tag tag = audioFile.getTag();
 
-        String title,releaseArtist = null,artist = null,album = null,genre = null;
-        short trackN,trackTotal,year,origYear;
+        String title,releaseArtist,artist,album,genre,date,origDate;
+        short trackN,trackTotal;
         byte trackDisk,trackDiskTotal;
-        trackN = trackTotal = year = origYear = 0;
+        releaseArtist = artist = album = genre = date = origDate = null;
+        trackN = trackTotal = 0;
         trackDisk = trackDiskTotal = 0;
 
         if(tag.hasField(FieldKey.TITLE))
             title = tag.getFirstField(FieldKey.TITLE).toString();
         else
-            title = file.getFile().getName();
+            title = audioFile.getFile().getName();
         if(TextUtils.isEmpty(title))
             title = null;
 
@@ -173,30 +170,162 @@ public class Media extends BaseMedia
                 artist = releaseArtist;
         }
 
-        if(tag.hasField(FieldKey.TRACK))
-            trackN = Short.parseShort(tag.getFirstField(FieldKey.TRACK).toString());
-        if(tag.hasField(FieldKey.TRACK_TOTAL))
-            trackTotal = Short.parseShort(tag.getFirstField(FieldKey.TRACK_TOTAL).toString());
-        if(tag.hasField(FieldKey.DISC_NO))
-            trackDisk = Byte.parseByte(tag.getFirstField(FieldKey.DISC_NO).toString());
-        if(tag.hasField(FieldKey.DISC_TOTAL))
-            trackDiskTotal = Byte.parseByte(tag.getFirstField(FieldKey.DISC_TOTAL).toString());
-        if(tag.hasField(FieldKey.YEAR))
-            year = Short.parseShort(tag.getFirstField(FieldKey.YEAR).toString());
-        if(tag.hasField(FieldKey.ORIGINAL_YEAR))
-            origYear = Short.parseShort(tag.getFirstField(FieldKey.ORIGINAL_YEAR).toString());
+        if(hasValidField(tag,FieldKey.TRACK))
+            trackN = parseShort(tag.getFirstField(FieldKey.TRACK).toString());
+        if(hasValidField(tag,FieldKey.TRACK_TOTAL))
+            trackTotal = parseShort(tag.getFirstField(FieldKey.TRACK_TOTAL).toString());
+        if(hasValidField(tag,FieldKey.DISC_NO))
+            trackDisk = parseByte(tag.getFirstField(FieldKey.DISC_NO).toString());
+        if(hasValidField(tag,FieldKey.DISC_TOTAL))
+            trackDiskTotal = parseByte(tag.getFirstField(FieldKey.DISC_TOTAL).toString());
+        if(hasValidField(tag,FieldKey.YEAR))
+            date = tag.getFirstField(FieldKey.YEAR).toString();
+        if(hasValidField(tag,FieldKey.ORIGINAL_YEAR))
+            origDate = tag.getFirstField(FieldKey.ORIGINAL_YEAR).toString();
 
-        if(tag.hasField(FieldKey.GENRE))
+        if(hasValidField(tag,FieldKey.GENRE))
             genre = tag.getFirstField(FieldKey.GENRE).toString();
-        if(TextUtils.isEmpty(genre))
-            genre = null;
 
-        return new Media(uri,title,releaseArtist,
-                (header.getNoOfSamples() * 1000L / ((long)header.getSampleRateAsNumber())),
-                album,artist,trackN,trackTotal,trackDisk,trackDiskTotal,year,origYear,genre,
+        return new Media(file,volume,id,title,releaseArtist,
+                header.getNoOfSamples() == null ? 0 :
+                        (header.getNoOfSamples() * 1000L / ((long)header.getSampleRateAsNumber())),
+                album,artist,trackN,trackTotal,trackDisk,trackDiskTotal,date,origDate,genre,
                 header.getBitRateAsNumber(), header.getFormat(),
-                Byte.parseByte(header.getChannels()),header.isLossless(),favourite,idMediaStore);
+                parseChannel(header.getChannels()),header.isLossless(),favourite);
 
     }
 
+    @Nullable
+    private static String getLeadingDigits(@Nullable String value)
+    {
+        if(value == null)
+            return null;
+        int i;
+        for(i = 0; i < value.length(); i++)
+        {
+            if(!Character.isDigit(value.charAt(i)))
+                break;
+        }
+        if(i != value.length())
+            value = value.substring(0,i);
+        return value;
+    }
+
+    private static short parseShort(@Nullable String value)
+    {
+        value = getLeadingDigits(value);
+        return TextUtils.isEmpty(value) ? 0 : Short.parseShort(value);
+    }
+
+    private static byte parseByte(@Nullable String value)
+    {
+        value = getLeadingDigits(value);
+        return TextUtils.isEmpty(value) ? 0 : Byte.parseByte(value);
+    }
+
+    private static byte parseChannel(String channel)
+    {
+        byte result = 0;
+        if(TextUtils.isEmpty(channel))
+            return result;
+        try
+        {
+            result = Byte.parseByte(channel);
+        }
+        catch(NumberFormatException e)
+        {
+            switch(channel.toLowerCase())
+            {
+                case "mono":
+                {
+                    result = 1;
+                    break;
+                }
+                case "stereo":
+                {
+                    result = 2;
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    private static boolean hasValidField(Tag tag,FieldKey field)
+    {
+        boolean result = false;
+        if(tag.hasField(field))
+            result = !TextUtils.isEmpty(tag.getFirstField(field).toString());
+        return result;
+    }
+
+    public String getAlbum()
+    {
+        return album;
+    }
+
+    public String getArtist()
+    {
+        return album;
+    }
+
+    public short getTrackN()
+    {
+        return trackN;
+    }
+
+    public short getTrackTotal()
+    {
+        return trackTotal;
+    }
+
+    public byte getTrackDisc()
+    {
+        return trackDisc;
+    }
+
+    public byte getTrackDiscTotal()
+    {
+        return trackDiscTotal;
+    }
+
+    public String getReleaseDate()
+    {
+        return releaseDate;
+    }
+
+    public String getOriginalDate()
+    {
+        return originalDate;
+    }
+
+    public String getGenre()
+    {
+        return genre;
+    }
+
+    public long getBitrate()
+    {
+        return bitrate;
+    }
+
+    public String getFormat()
+    {
+        return format;
+    }
+
+    public byte getChannels()
+    {
+        return channels;
+    }
+
+    public boolean getLossless()
+    {
+        return lossless;
+    }
+
+    public boolean getLike()
+    {
+        return like;
+    }
 }

@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Lucky Player</string>
+
+    <string name="notification_scan_title">Scanning media…</string>
+    <string name="notification_scan_text">Scanning media %d of %d</string>
+
+    <string name="notification_channel_main">Main</string>
+    <string name="notification_channel_info">Info</string>
+    <string name="notification_channel_status">Status</string>
 </resources>

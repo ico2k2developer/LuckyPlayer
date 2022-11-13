@@ -35,12 +35,15 @@ android
 
 dependencies
 {
-    implementation 'com.google.android.exoplayer:exoplayer-core:2.18.1'
-    implementation 'com.google.android.exoplayer:extension-mediasession:2.18.1'
+    //implementation 'com.google.android.exoplayer:exoplayer-core:2.18.1'
+    //implementation 'com.google.android.exoplayer:extension-mediasession:2.18.1'
     implementation 'com.google.android.material:material:1.7.0'
     implementation "androidx.media:media:1.6.0"
-    implementation 'androidx.room:room-runtime:2.4.3'
-    implementation "androidx.paging:paging-runtime:3.1.1"
-    implementation 'androidx.preference:preference:1.2.0'
+    implementation "androidx.room:room-runtime:2.4.3"
+    annotationProcessor "androidx.room:room-compiler:2.4.3"
+    implementation "androidx.room:room-paging:2.4.3"
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
+    //annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
+    //implementation 'androidx.preference:preference:1.2.0'
     implementation 'net.jthink:jaudiotagger:3.0.1'
 }

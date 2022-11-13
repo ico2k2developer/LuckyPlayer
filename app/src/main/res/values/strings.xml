@@ -7,4 +7,11 @@
     <string name="notification_channel_main">Main</string>
     <string name="notification_channel_info">Info</string>
     <string name="notification_channel_status">Status</string>
+
+    <string-array name="tabs">
+        <item>Songs</item>
+        <item>Albums</item>
+        <item>Artists</item>
+        <item>Years</item>
+    </string-array>
 </resources>

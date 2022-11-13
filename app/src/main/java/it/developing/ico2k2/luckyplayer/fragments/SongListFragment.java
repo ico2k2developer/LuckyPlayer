@@ -5,13 +5,13 @@ import android.util.Log;
 
 import androidx.fragment.app.Fragment;
 
-import it.developing.ico2k2.luckyplayer.database.file.media.MusicAdapter;
+import it.developing.ico2k2.luckyplayer.adapters.MediaAdapter;
 
 public class SongListFragment extends Fragment
 {
     private static final String TAG = SongListFragment.class.getSimpleName();
 
-    private MusicAdapter adapter;
+    private MediaAdapter adapter;
 
     public static SongListFragment create(String root)
     {
@@ -24,6 +24,6 @@ public class SongListFragment extends Fragment
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        adapter = new MusicAdapter();
+        adapter = new MediaAdapter();
     }
 }

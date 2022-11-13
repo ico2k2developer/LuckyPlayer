@@ -1,6 +1,9 @@
 package it.developing.ico2k2.luckyplayer.database.file.media;
 
+import android.annotation.SuppressLint;
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
@@ -8,8 +11,10 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 
+import java.io.File;
 import java.io.IOException;
 
+import it.developing.ico2k2.luckyplayer.adapters.PlayableItem;
 import it.developing.ico2k2.luckyplayer.database.file.BaseFile;
 
 @Entity(primaryKeys = {BaseMedia.COLUMN_VOLUME,BaseMedia.COLUMN_ID})
@@ -42,43 +47,6 @@ public class BaseMedia extends BaseFile
     @ColumnInfo(name = COLUMN_LENGTH)
     private final long lengthMs;
 
-    @Ignore
-    private final Timestamp timestamp;
-
-    public static class Timestamp
-    {
-        private final short hours;
-        private final byte minutes;
-        private final byte seconds;
-
-        private Timestamp(long lengthMs)
-        {
-            hours = (short)(lengthMs / (60 * 60 * 1000));
-            minutes = (byte)((lengthMs - hours * (60 * 60 * 1000)) / (60 * 1000));
-            seconds = (byte)((lengthMs - hours * (60 * 60 * 1000)
-                    - minutes * (60 * 1000)) / 1000);
-        }
-
-        public short getHours() {
-            return hours;
-        }
-
-        public byte getMinutes() {
-            return minutes;
-        }
-
-        public byte getSeconds() {
-            return seconds;
-        }
-
-        @NonNull
-        @Override
-        public String toString()
-        {
-            return hours + ":" + minutes + ":" + seconds;
-        }
-    }
-
     public BaseMedia(String uri,long size,long lastModified,short volume,long id,
                      String title,String releaseArtist,long lengthMs)
     {
@@ -88,11 +56,10 @@ public class BaseMedia extends BaseFile
         this.title = title;
         this.releaseArtist = releaseArtist;
         this.lengthMs = lengthMs;
-        timestamp = new Timestamp(lengthMs);
     }
 
     @Ignore
-    public BaseMedia(java.io.File file,short volume,long id, String title, String releaseArtist,
+    public BaseMedia(File file, short volume, long id, String title, String releaseArtist,
                      long lengthMs)
             throws IOException
     {
@@ -102,21 +69,78 @@ public class BaseMedia extends BaseFile
         this.title = title;
         this.releaseArtist = releaseArtist;
         this.lengthMs = lengthMs;
-        timestamp = new Timestamp(lengthMs);
+    }
+
+    public static class UniqueId implements Parcelable
+    {
+        private final long id;
+        private final short volume;
+
+        public UniqueId(short volume, long id)
+        {
+            this.volume = volume;
+            this.id = id;
+        }
+
+        public short getVolume()
+        {
+            return volume;
+        }
+
+        public long getId()
+        {
+            return id;
+        }
+
+        @Override
+        public void writeToParcel(@NonNull Parcel dest, int flags)
+        {
+            dest.writeInt(getVolume());
+            dest.writeLong(getId());
+        }
+
+        public static final Creator<UniqueId> CREATOR = new Creator<UniqueId>()
+        {
+            @Override
+            public UniqueId createFromParcel(Parcel in)
+            {
+                return new UniqueId((short)in.readInt(),in.readLong());
+            }
+
+            @Override
+            public UniqueId[] newArray(int size)
+            {
+                return new UniqueId[size];
+            }
+        };
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @NonNull
+        @Override
+        @SuppressLint("DefaultLocale")
+        public String toString()
+        {
+            return String.format("Volume %d, id: %d",getVolume(),getId());
+        }
     }
 
     public short getVolume()
     {
         return volume;
     }
+
     public long getId()
     {
         return id;
     }
 
-    public Timestamp getTimestamp()
+    public UniqueId getUniqueId()
     {
-        return timestamp;
+        return new UniqueId(getVolume(),getId());
     }
 
     public String getTitle()
@@ -129,7 +153,7 @@ public class BaseMedia extends BaseFile
         return releaseArtist;
     }
 
-    public long getLengthMs()
+    public long getLength()
     {
         return lengthMs;
     }

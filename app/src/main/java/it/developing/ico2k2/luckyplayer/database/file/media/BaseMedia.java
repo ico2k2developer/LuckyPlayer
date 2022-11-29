@@ -14,7 +14,6 @@ import androidx.room.Ignore;
 import java.io.File;
 import java.io.IOException;
 
-import it.developing.ico2k2.luckyplayer.adapters.PlayableItem;
 import it.developing.ico2k2.luckyplayer.database.file.BaseFile;
 
 @Entity(primaryKeys = {BaseMedia.COLUMN_VOLUME,BaseMedia.COLUMN_ID})

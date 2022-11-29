@@ -1,4 +1,4 @@
-package it.developing.ico2k2.luckyplayer.adapters;
+package it.developing.ico2k2.luckyplayer.adapters.items;
 
 import android.os.Build;
 import android.os.Parcel;
@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import java.util.Arrays;
 import java.util.Collection;
 
-public class AlbumItem extends BrowsableItem<SongItem> implements CreatedByArtist
+public class AlbumItem extends BrowsableItem<SongItem> implements CreatedByArtistItem
 {
     private final String artist;
 

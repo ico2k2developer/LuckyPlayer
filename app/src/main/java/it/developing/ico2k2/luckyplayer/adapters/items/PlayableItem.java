@@ -1,4 +1,4 @@
-package it.developing.ico2k2.luckyplayer.adapters;
+package it.developing.ico2k2.luckyplayer.adapters.items;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 
 import it.developing.ico2k2.luckyplayer.database.file.media.BaseMedia;
 
-public abstract class PlayableItem extends MediaItem implements CreatedByArtist
+public abstract class PlayableItem extends MediaItem implements CreatedByArtistItem
 {
     public static class Timestamp implements Parcelable
     {

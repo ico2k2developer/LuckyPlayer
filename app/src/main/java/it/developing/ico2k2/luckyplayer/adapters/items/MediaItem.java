@@ -1,4 +1,4 @@
-package it.developing.ico2k2.luckyplayer.adapters;
+package it.developing.ico2k2.luckyplayer.adapters.items;
 
 import android.os.Parcel;
 import android.os.Parcelable;

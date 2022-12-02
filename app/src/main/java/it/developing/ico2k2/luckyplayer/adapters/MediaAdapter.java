@@ -6,10 +6,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.view.LayoutInflaterCompat;
-
-import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,6 +40,7 @@ public class MediaAdapter<M extends MediaItem,H extends MediaAdapter.MediaItemHa
 
     @NonNull
     @Override
+    @SuppressWarnings("unchecked cast")
     public H onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
     {
         return (H)new MediaItemHandle(LayoutInflater.from(parent.getContext()).inflate(

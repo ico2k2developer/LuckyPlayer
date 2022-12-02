@@ -44,22 +44,22 @@ public class BaseMedia extends BaseFile
     private final String releaseArtist;
 
     @ColumnInfo(name = COLUMN_LENGTH)
-    private final long lengthMs;
+    private final long length;
 
     public BaseMedia(String uri,long size,long lastModified,short volume,long id,
-                     String title,String releaseArtist,long lengthMs)
+                     String title,String releaseArtist,long length)
     {
         super(uri,size,lastModified);
         this.id = id;
         this.volume = volume;
         this.title = title;
         this.releaseArtist = releaseArtist;
-        this.lengthMs = lengthMs;
+        this.length = length;
     }
 
     @Ignore
     public BaseMedia(File file, short volume, long id, String title, String releaseArtist,
-                     long lengthMs)
+                     long length)
             throws IOException
     {
         super(file);
@@ -67,7 +67,7 @@ public class BaseMedia extends BaseFile
         this.volume = volume;
         this.title = title;
         this.releaseArtist = releaseArtist;
-        this.lengthMs = lengthMs;
+        this.length = length;
     }
 
     public static class UniqueId implements Parcelable
@@ -154,6 +154,6 @@ public class BaseMedia extends BaseFile
 
     public long getLength()
     {
-        return lengthMs;
+        return length;
     }
 }

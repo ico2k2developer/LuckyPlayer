@@ -176,21 +176,15 @@ public class SettingsActivity extends BaseActivity
         Bundle bundle = new Bundle();
         bundle.putInt(ARGUMENT_PREFERENCE,headerTitle);
         bundle.putInt(ARGUMENT_INDEX,position);
-        FragmentFactory factory = activity.getSupportFragmentManager().getFragmentFactory();
+        //FragmentFactory factory = activity.getSupportFragmentManager().getFragmentFactory();
         String className;
-        switch(headerTitle)
+        if(headerTitle == R.string.settings_mediafile || headerTitle == R.string.settings_advanced || headerTitle == R.string.settings_licenses)
         {
-            case R.string.settings_mediafile:
-            case R.string.settings_advanced:
-            case R.string.settings_licenses:
-            {
-                className = SettingsPreferenceFragment.class.getName();
-                break;
-            }
-            default:
-            {
-                className = SettingsFragment.class.getName();
-            }
+            className = SettingsPreferenceFragment.class.getName();
+        }
+        else
+        {
+            className = SettingsFragment.class.getName();
         }
         fragment = activity.getSupportFragmentManager().getFragmentFactory().instantiate(activity.getClassLoader(),className);
         fragment.setArguments(bundle);
@@ -460,18 +454,13 @@ public class SettingsActivity extends BaseActivity
         public View onCreateView(@NonNull LayoutInflater inflater,ViewGroup container,Bundle savedInstance)
         {
             int layout = 0;
-            switch(preference)
+            if(preference == R.string.settings_theme)
             {
-                case R.string.settings_theme:
-                {
-                    layout = R.layout.preference_theme;
-                    break;
-                }
-                case R.string.settings_about:
-                {
-                    layout = R.layout.preference_about;
-                    break;
-                }
+                layout = R.layout.preference_theme;
+            }
+            else if(preference == R.string.settings_about)
+            {
+                layout = R.layout.preference_about;
             }
             View result;
             if(layout == 0)
@@ -487,100 +476,84 @@ public class SettingsActivity extends BaseActivity
             View parent = (View)view.getParent();
             if(parent != null)
                 parent.setPadding(0,0,0,0);
-            switch(preference)
+            if(preference == R.string.key_theme)
             {
-                case R.string.key_theme:
-                {
-                    final Prefs prefs = Prefs.getInstance(getContext(),Prefs.PREFS_SETTINGS);
-                    final AppCompatSpinner themeSpinner = view.findViewById(R.id.theme_spinner);
-                    final ArrayList<String> items = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.themes)));
-                    final ArrayList<Integer> themes = new ArrayList<>(items.size());
-                    int a;
-                    for(a = 0; a < items.size(); a++)
-                    {
-                        String item = items.get(a);
-                        try
-                        {
-                            themes.add(a, Resources.getThemeFromName(item));
-                        }
-                        catch(Exception e)
-                        {
-                            //themes.add(a,-1);
-                            items.remove(item);
-                        }
+                final Prefs prefs = Prefs.getInstance(getContext(), Prefs.PREFS_SETTINGS);
+                final AppCompatSpinner themeSpinner = view.findViewById(R.id.theme_spinner);
+                final ArrayList<String> items = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.themes)));
+                final ArrayList<Integer> themes = new ArrayList<>(items.size());
+                int a;
+                for (a = 0; a < items.size(); a++) {
+                    String item = items.get(a);
+                    try {
+                        themes.add(a, Resources.getThemeFromName(item));
+                    } catch (Exception e) {
+                        //themes.add(a,-1);
+                        items.remove(item);
                     }
-                    SimpleAdapter adapter = new SimpleAdapter(getActivity(),adapterMapsFromAdapterList(items,LIST_TITLE),android.R.layout.simple_list_item_1,new String[]{LIST_TITLE},new int[]{android.R.id.text1});
-                    themeSpinner.setAdapter(adapter);
-                    themeSpinner.setSelection(themes.indexOf(prefs.getInt(getString(R.string.key_theme),0)));
-                    themeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-                        @Override
-                        public void onItemSelected(AdapterView<?> parent,View v,int position,long id){
-                            int currentTheme = prefs.getInt(getString(R.string.key_theme),0);
-                            if(currentTheme == themes.get(position))
-                                view.findViewById(R.id.theme_apply).setVisibility(View.GONE);
-                            else
-                                view.findViewById(R.id.theme_apply).setVisibility(View.VISIBLE);
-
-                        }
-
-                        @Override
-                        public void onNothingSelected(AdapterView<?> parent){
-
-                        }
-                    });
-                    view.findViewById(R.id.theme_apply).setVisibility(View.GONE);
-                    view.findViewById(R.id.theme_apply).setOnClickListener(new View.OnClickListener(){
-                        @Override
-                        public void onClick(View v){
-                            prefs.edit().putInt(getString(R.string.key_theme),themes.get(themeSpinner.getSelectedItemPosition())).apply();
-                            Intent intent = new Intent(getActivity(),getActivity().getClass());
-                            intent.putExtra(ARGUMENT_PREFERENCE,preference);
-                            intent.putExtra(ARGUMENT_INDEX,preferenceIndex);
-                            startActivity(intent);
-                            getActivity().finish();
-                        }
-                    });
-                    break;
                 }
-                case R.string.settings_about:
-                {
-                    Button playStore = view.findViewById(R.id.about_play_store);
-                    Button share = view.findViewById(R.id.about_share);
-                    PackageManager manager = getActivity().getPackageManager();
-                    String name;
-                    try
-                    {
-                        name = manager.getApplicationInfo(getString(R.string.google_play_store_package),0).loadLabel(manager).toString();
+                SimpleAdapter adapter = new SimpleAdapter(getActivity(), adapterMapsFromAdapterList(items, LIST_TITLE), android.R.layout.simple_list_item_1, new String[]{LIST_TITLE}, new int[]{android.R.id.text1});
+                themeSpinner.setAdapter(adapter);
+                themeSpinner.setSelection(themes.indexOf(prefs.getInt(getString(R.string.key_theme), 0)));
+                themeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
+                        int currentTheme = prefs.getInt(getString(R.string.key_theme), 0);
+                        if (currentTheme == themes.get(position))
+                            view.findViewById(R.id.theme_apply).setVisibility(View.GONE);
+                        else
+                            view.findViewById(R.id.theme_apply).setVisibility(View.VISIBLE);
+
                     }
-                    catch(Exception e)
-                    {
-                        e.printStackTrace();
-                        name = "Google Play";
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
                     }
-                    playStore.setText(name);
-                    playStore.setOnClickListener(new View.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(View view)
-                        {
-                            Intent playPage = new Intent(Intent.ACTION_VIEW);
-                            playPage.setData(Uri.parse(getString(R.string.google_play_store_url)));
-                            startActivity(playPage);
-                        }
-                    });
-                    share.setOnClickListener(new View.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(View view)
-                        {
-                            Intent send = new Intent(Intent.ACTION_SEND);
-                            send.putExtra(Intent.EXTRA_TEXT,getString(R.string.app_about_share,getString(R.string.app_name),getString(R.string.google_play_store_url)));
-                            send.setType("text/*");
-                            startActivity(send);
-                        }
-                    });
-                    break;
+                });
+                view.findViewById(R.id.theme_apply).setVisibility(View.GONE);
+                view.findViewById(R.id.theme_apply).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        prefs.edit().putInt(getString(R.string.key_theme), themes.get(themeSpinner.getSelectedItemPosition())).apply();
+                        Intent intent = new Intent(getActivity(), getActivity().getClass());
+                        intent.putExtra(ARGUMENT_PREFERENCE, preference);
+                        intent.putExtra(ARGUMENT_INDEX, preferenceIndex);
+                        startActivity(intent);
+                        getActivity().finish();
+                    }
+                });
+            }
+            else if(preference == R.string.settings_about)
+            {
+                Button playStore = view.findViewById(R.id.about_play_store);
+                Button share = view.findViewById(R.id.about_share);
+                PackageManager manager = getActivity().getPackageManager();
+                String name;
+                try {
+                    name = manager.getApplicationInfo(getString(R.string.google_play_store_package), 0).loadLabel(manager).toString();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    name = "Google Play";
                 }
+                playStore.setText(name);
+                playStore.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent playPage = new Intent(Intent.ACTION_VIEW);
+                        playPage.setData(Uri.parse(getString(R.string.google_play_store_url)));
+                        startActivity(playPage);
+                    }
+                });
+                share.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent send = new Intent(Intent.ACTION_SEND);
+                        send.putExtra(Intent.EXTRA_TEXT, getString(R.string.app_about_share, getString(R.string.app_name), getString(R.string.google_play_store_url)));
+                        send.setType("text/*");
+                        startActivity(send);
+                    }
+                });
             }
         }
     }
@@ -607,23 +580,17 @@ public class SettingsActivity extends BaseActivity
                     preference = arguments.getInt(ARGUMENT_PREFERENCE);
                 }
             }
-            switch(preference)
+            if(preference == R.string.settings_mediafile)
             {
-                case R.string.settings_mediafile:
-                {
-                    addPreferencesFromResource(R.xml.mediafile_settings);
-                    break;
-                }
-                case R.string.settings_advanced:
-                {
-                    addPreferencesFromResource(R.xml.advanced_settings);
-                    break;
-                }
-                case R.string.settings_licenses:
-                {
-                    addPreferencesFromResource(R.xml.preference_licenses);
-                    break;
-                }
+                addPreferencesFromResource(R.xml.mediafile_settings);
+            }
+            else if(preference == R.string.settings_advanced)
+            {
+                addPreferencesFromResource(R.xml.advanced_settings);
+            }
+            else if(preference == R.string.settings_licenses)
+            {
+                addPreferencesFromResource(R.xml.preference_licenses);
             }
         }
 
@@ -632,70 +599,57 @@ public class SettingsActivity extends BaseActivity
         @Override
         public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState)
         {
-            switch(preference)
+            if(preference == R.string.settings_advanced)
             {
-                case R.string.settings_advanced:
-                {
-                    getPreferenceScreen().findPreference(getString(R.string.key_delete_all))
-                            .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
-                    {
-                        @Override
-                        public boolean onPreferenceClick(Preference preference)
-                        {
-                            ConfirmDialog dialog = new ConfirmDialog(getActivity());
-                            dialog.setTitleAndIcon(preference);
-                            dialog.setCancelable(true);
-                            dialog.setNegativeButton(android.R.string.cancel);
-                            dialog.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Prefs.getInstance(getContext(),Prefs.PREFS_SETTINGS).edit().clear().apply();
-                                    getActivity().onBackPressed();
-                                }
-                            });
-                            dialog.show();
-                            return true;
-                        }
-                    });
-                    getPreferenceScreen().findPreference(getString(R.string.key_prefs_data))
-                            .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
-                    {
-                        @Override
-                        public boolean onPreferenceClick(Preference preference)
-                        {
-                            startActivity(new Intent(getActivity(),PrefsViewActivity.class));
-                            return true;
-                        }
-                    });
-                    break;
-                }
-                case R.string.settings_licenses:
-                {
-                    int a;
-                    for(a = 0; a < getPreferenceScreen().getPreferenceCount(); a++)
-                    {
-                        getPreferenceScreen().getPreference(a).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener(){
+                getPreferenceScreen().findPreference(getString(R.string.key_delete_all))
+                        .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                             @Override
-                            public boolean onPreferenceClick(Preference preference){
-                                DefaultDialog dialog = new DefaultDialog(getActivity());
-                                switch(preference.getKey())
-                                {
-                                    case LICENSE_APACHE_2_0:
-                                    {
-                                        dialog.setMessage(getString(R.string.apache_2_0_license));
-                                        break;
+                            public boolean onPreferenceClick(Preference preference) {
+                                ConfirmDialog dialog = new ConfirmDialog(getActivity());
+                                dialog.setTitleAndIcon(preference);
+                                dialog.setCancelable(true);
+                                dialog.setNegativeButton(android.R.string.cancel);
+                                dialog.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Prefs.getInstance(getContext(), Prefs.PREFS_SETTINGS).edit().clear().apply();
+                                        getActivity().onBackPressed();
                                     }
-                                    default:
-                                    {
-                                        dialog.setMessage(getString(R.string.missing_license));
-                                    }
-                                }
+                                });
                                 dialog.show();
-                                return false;
+                                return true;
                             }
                         });
-                    }
-                    break;
+                getPreferenceScreen().findPreference(getString(R.string.key_prefs_data))
+                        .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                            @Override
+                            public boolean onPreferenceClick(Preference preference) {
+                                startActivity(new Intent(getActivity(), PrefsViewActivity.class));
+                                return true;
+                            }
+                        });
+            }
+            else if(preference == R.string.settings_licenses)
+            {
+                int a;
+                for (a = 0; a < getPreferenceScreen().getPreferenceCount(); a++) {
+                    getPreferenceScreen().getPreference(a).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                        @Override
+                        public boolean onPreferenceClick(Preference preference) {
+                            DefaultDialog dialog = new DefaultDialog(getActivity());
+                            switch (preference.getKey()) {
+                                case LICENSE_APACHE_2_0: {
+                                    dialog.setMessage(getString(R.string.apache_2_0_license));
+                                    break;
+                                }
+                                default: {
+                                    dialog.setMessage(getString(R.string.missing_license));
+                                }
+                            }
+                            dialog.show();
+                            return false;
+                        }
+                    });
                 }
             }
             return super.onCreateView(inflater,container,savedInstanceState);

@@ -25,11 +25,10 @@
             app:layout_collapseMode="parallax"
             android:scaleType="centerCrop">
 
-            <it.developing.ico2k2.luckyplayer.SquareImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/info_album_art"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:sizingMode="widthSized"/>
+                android:layout_height="match_parent"/>
 
             <View
                 android:layout_width="match_parent"

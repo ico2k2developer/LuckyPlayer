@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="it.developing.ico2k2.luckyplayer"
     android:installLocation="auto">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -9,7 +8,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
 
     <application
         android:name=".LuckyPlayer2"

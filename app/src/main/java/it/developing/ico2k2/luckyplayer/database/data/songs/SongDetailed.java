@@ -16,6 +16,7 @@ import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.Locale;
 
 import it.developing.ico2k2.luckyplayer.database.Database;
@@ -420,7 +421,14 @@ public class SongDetailed extends BaseSong
                     retrieveYear(retrieveField(retriever,MediaMetadataRetriever.METADATA_KEY_YEAR,"-1")),
                     retrieveField(retriever,MediaMetadataRetriever.METADATA_KEY_GENRE,null),
                     Integer.parseInt(retrieveField(retriever,MediaMetadataRetriever.METADATA_KEY_BITRATE,"-1")));
-            retriever.release();
+            try
+            {
+                retriever.release();
+            }
+            catch(IOException e)
+            {
+                e.printStackTrace();
+            }
         }
         return result;
     }

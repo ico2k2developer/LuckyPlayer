@@ -57,20 +57,16 @@ public class InitializeActivity extends BaseActivity
         int id = item.getItemId();
         boolean result = true;
 
-        switch(id)
+        if(id == R.id.menuShowEveryTime)
         {
-            case R.id.menuShowEveryTime:
-            {
-                item.setChecked(!item.isChecked());
-                getSettings().edit()
-                        .putBoolean(getString(R.string.key_show_init_every_time),item.isChecked())
-                        .apply();
-                break;
-            }
-            default:
-            {
-                result = super.onOptionsItemSelected(item);
-            }
+            item.setChecked(!item.isChecked());
+            getSettings().edit()
+                    .putBoolean(getString(R.string.key_show_init_every_time),item.isChecked())
+                    .apply();
+        }
+        else
+        {
+            result = super.onOptionsItemSelected(item);
         }
         return result;
     }

@@ -167,21 +167,21 @@ public abstract class BaseActivity extends AppCompatActivity
     protected int getColorAccent()
     {
         TypedValue value = new TypedValue();
-        getTheme().resolveAttribute(R.attr.colorAccent,value,true);
+        getTheme().resolveAttribute(androidx.appcompat.R.attr.colorAccent,value,true);
         return ContextCompat.getColor(this,value.resourceId);
     }
 
     protected int getColorPrimary()
     {
         TypedValue value = new TypedValue();
-        getTheme().resolveAttribute(R.attr.colorPrimary,value,true);
+        getTheme().resolveAttribute(androidx.appcompat.R.attr.colorPrimary,value,true);
         return ContextCompat.getColor(this,value.resourceId);
     }
 
     protected int getColorPrimaryDark()
     {
         TypedValue value = new TypedValue();
-        getTheme().resolveAttribute(R.attr.colorPrimaryDark,value,true);
+        getTheme().resolveAttribute(androidx.appcompat.R.attr.colorPrimaryDark,value,true);
         return ContextCompat.getColor(this,value.resourceId);
     }
 

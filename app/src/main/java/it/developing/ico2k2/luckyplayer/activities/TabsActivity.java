@@ -252,27 +252,21 @@ public class TabsActivity extends BasePlayingActivity implements ActivityCompat.
         int id = item.getItemId();
         boolean result = true;
 
-        switch(id)
+        if(id == R.id.menuSettings)
         {
-            case R.id.menuSettings:
-            {
-                startActivity(new Intent(this,SettingsActivity.class));
-                break;
-            }
-            case R.id.menuRefresh:
-            {
-                refresh();
-                break;
-            }
-            case R.id.menuExit:
-            {
-                sendMessageToService(MESSAGE_DESTROY);
-                break;
-            }
-            default:
-            {
-                result = super.onOptionsItemSelected(item);
-            }
+            startActivity(new Intent(this, SettingsActivity.class));
+        }
+        else if(id == R.id.menuRefresh)
+        {
+            refresh();
+        }
+        else if(id == R.id.menuExit)
+        {
+            sendMessageToService(MESSAGE_DESTROY);
+        }
+        else
+        {
+            result = super.onOptionsItemSelected(item);
         }
         return result;
     }

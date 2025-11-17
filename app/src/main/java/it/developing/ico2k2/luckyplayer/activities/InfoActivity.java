@@ -239,7 +239,7 @@ public class InfoActivity extends BaseActivity
                                 Palette.from(result).generate(new Palette.PaletteAsyncListener() {
                                     @Override
                                     public void onGenerated(Palette palette) {
-                                        toolbarLayout.setContentScrimColor(palette.getLightMutedColor(R.attr.colorPrimary));
+                                        toolbarLayout.setContentScrimColor(palette.getLightMutedColor(androidx.appcompat.R.attr.colorPrimary));
                                     }
                                 });
                             }

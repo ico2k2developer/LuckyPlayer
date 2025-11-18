@@ -11,6 +11,7 @@ import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,7 +58,14 @@ public class AlbumArtLoadWorker extends Worker
         {
             e.printStackTrace();
         }
-        retriever.release();
+        try
+        {
+            retriever.release();
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
         if(bitmap == null)
             return Result.failure();
         Map<String,Object> map = new HashMap<>();

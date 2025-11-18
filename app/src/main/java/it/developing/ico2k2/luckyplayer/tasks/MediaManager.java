@@ -24,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContentResolverCompat;
+import androidx.core.os.CancellationSignal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -313,12 +314,12 @@ public class MediaManager
                 for (tableId = 0; tableId < uris.length; tableId++) {
                     progress = 0;
                     Log.d(TAG, "Checking uri: " + uris[tableId].toString());
-                    cursor = ContentResolverCompat.query(resolver, uris[tableId], keys, query, null, null, null);
+                    cursor = ContentResolverCompat.query(resolver, uris[tableId], keys, query, null, null, (android.os.CancellationSignal) null);
                     Log.d(TAG, "Cursor contains " + cursor.getCount() + " elements");
                     columns.clear();
                     getBaseColumnIndexes(cursor,keys,columns);
-                    cursor = ContentResolverCompat.query(context.getContentResolver(),uris[tableId],keys,null,
-                                                         null,null,null);
+                    cursor = ContentResolverCompat.query(context.getContentResolver(),uris[tableId],keys, null,
+                            null, null, (android.os.CancellationSignal) null);
                     if(cursor == null)
                         Log.d(TAG,"Null cursor for uri " + uris[tableId].getPath());
                     else
@@ -517,7 +518,7 @@ public class MediaManager
     {
         Log.d(TAG,"Trying to load uri " + uri.getPath());
         Cursor cursor = ContentResolverCompat.query(context.getContentResolver(),uri,getBaseColumns(),
-                                                    null,null,null,null);
+                                                    null,null,null,(android.os.CancellationSignal)null);
         cursor.moveToFirst();
         return getRealPath(context,cursor,getBaseColumns());
     }
